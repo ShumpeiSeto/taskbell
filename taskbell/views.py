@@ -5,6 +5,7 @@ import datetime
 
 
 def insert(task_obj):
+
     with app.app_context():
         print("==========1件登録==========")
         task = Tasks(
