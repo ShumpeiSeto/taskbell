@@ -2,10 +2,11 @@
 {% block content %}
 <h3>マイタスク</h3>
 <ul>
-{% for task in  alltasks  %}
-  <li>{{ task['title'] }}</li>
-  
-{% endfor %}
-
+  {% for task in  alltasks  %}
+    <li>
+    <input type="checkbox" name="is_completed" id="is_completed">
+    {{ task['title'] }}
+    </li>
+  {% endfor %}
 </ul>
 {% endblock %}
