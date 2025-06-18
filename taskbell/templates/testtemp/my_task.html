@@ -1,0 +1,11 @@
+{% extends 'testtemp/layout.html' %}
+{% block content %}
+<h3>マイタスク</h3>
+<ul>
+{% for task in  alltasks  %}
+  <li>{{ task['title'] }}</li>
+  
+{% endfor %}
+
+</ul>
+{% endblock %}

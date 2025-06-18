@@ -11,7 +11,7 @@ class Tasks(db.Model):
     __tablename__ = "tasks"
     task_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     title = db.Column(db.String(255))
-    deadline = (db.Column(db.DateTime, nullable=True),)
+    deadline = db.Column(db.DateTime, nullable=True)
     is_completed = db.Column(db.Boolean, nullable=False)
     created_time = db.Column(db.DateTime, nullable=False, default=datetime.now)
     updated_time = db.Column(
