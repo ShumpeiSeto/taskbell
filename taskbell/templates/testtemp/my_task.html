@@ -1,12 +1,13 @@
 {% extends 'testtemp/layout.html' %}
 {% block content %}
 <h3>マイタスク</h3>
-<ul>
-  {% for task in  alltasks  %}
-    <li>
-    <input type="checkbox" name="is_completed" id="is_completed">
-    {{ task['title'] }}
-    </li>
+<ul class="list-group">
+  {% for index, task in  enumerate(alltasks) %}
+  <li class="list-group-item">
+    <input class="form-check-input me-1" type="checkbox" name="{{ index }}" value="" id="firstCheckbox">
+    <label class="form-check-label" for="firstCheckbox">{{ task['title']}}</label>
+    <label class="deadline" for="deadline">{{ task['deadline'] }}</label>
+  </li>
   {% endfor %}
 </ul>
 {% endblock %}

@@ -31,7 +31,9 @@ def index():
 def my_task():
     alltasks = Tasks.query.all()
     print(alltasks)
-    return render_template("testtemp/my_task.html", alltasks=alltasks)
+    return render_template(
+        "testtemp/my_task.html", alltasks=alltasks, enumerate=enumerate
+    )
 
 
 @app.route("/add_task", methods=["GET", "POST"])
@@ -39,7 +41,7 @@ def add_task():
     if request.method == "GET":
         return render_template("testtemp/new_task.html")
     elif request.method == "POST":
-        name = request.form.get("name")
+        name = request.form.get("title")
         dead_date = request.form.get("dead_date")
         dead_time = request.form.get("dead_time")
         s = f"{dead_date} {dead_time}"
