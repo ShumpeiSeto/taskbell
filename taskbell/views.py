@@ -9,15 +9,32 @@ def init_db():
     db.drop_all()
     db.create_all()
 
+def make_deadline(dead_date, dead_time):
+    s = f"{dead_date} {dead_time}"
+    s_format = "%Y-%m-%d %H:%M"
+    deadline = datetime.datetime.strptime(s, s_format)
+    return deadline
+
 
 def insert(task_obj):
     with app.app_context():
         print("==========1件登録==========")
         task = Tasks(
-            title=task_obj["name"], deadline=task_obj["deadline"], is_completed=False
+            title=task_obj["title"], deadline=task_obj["deadline"], is_completed=False
         )
         db.session.add(task)
         db.session.commit()
+    return redirect("/my_task")
+
+def update(task, update_info):
+    with app.app_context():
+        print("==========1件更新==========")
+        target_task = Tasks.query.filter(Tasks.task_id==task.id)
+        target_task.title = update_info['title']
+        target_task.deadline = update_info['dead_line']
+        db.session.commit()
+        print(f"データが更新されました。更新後タスク:task_id{task.task_id}")
+    return redirect("/my_task")
 
 
 # app オブジェにルートを登録する
@@ -41,30 +58,32 @@ def add_task():
     if request.method == "GET":
         return render_template("testtemp/new_task.html")
     elif request.method == "POST":
-        name = request.form.get("title")
+        title = request.form.get("title")
         dead_date = request.form.get("dead_date")
         dead_time = request.form.get("dead_time")
-        s = f"{dead_date} {dead_time}"
-        s_format = "%Y-%m-%d %H:%M"
-        deadline = datetime.datetime.strptime(s, s_format)
+        deadline = make_deadline(dead_date, dead_time)
         is_completed = False
-        # target_task = {"name": name, "deadline": deadline, "is_completed": is_completed}
-        target_task = dict(name=name, deadline=deadline, is_completed=is_completed)
+        target_task = dict(title=title, deadline=deadline, is_completed=is_completed)
         print(target_task)
         insert(target_task)
     return render_template("testtemp/new_task.html")
 
-@app.route('/edit_task/<int:index>')
+@app.route('/edit_task/<int:index>', methods=["GET", "POST"])
 def edit_task(index):
     task = Tasks.query.filter(Tasks.task_id==index+1).first()
-    # if request.method == "GET":
-    #     return render_template('testtemp/edit_task.html', task)
-    # elif request.method == "POST":
-    #     pass
+    if request.method == "GET":
+        return render_template('testtemp/edit_task.html', task=task)
+    elif request.method == "POST":
+        print("更新がはじまります。")
+        title = request.form.get('title')
+        dead_date = request.form.get('dead_date')
+        dead_time = request.form.get('dead_time')
+        dead_line = make_deadline(dead_date, dead_time)
+        update_info = { 'title': title, 'dead_line': dead_line }
+        update(task, update_info)
     print(index, task)
     return render_template('testtemp/edit_task.html', task=task)
 
-    # alltasks = Tasks.query.filter(task_id==)
 
 
 # アクセスするとテーブル削除と作成
