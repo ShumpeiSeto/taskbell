@@ -4,9 +4,12 @@
 <ul class="list-group">
   {% for index, task in  enumerate(alltasks) %}
   <li class="list-group-item">
-    <input class="form-check-input me-1" type="checkbox" name="{{ index }}" value="" id="firstCheckbox">
+    <input class="form-check-input me-1" type="checkbox" name="task-{{ index }}" value="" id="firstCheckbox">
     <label class="form-check-label" for="firstCheckbox">{{ task['title']}}</label>
     <label class="deadline" for="deadline">{{ task['deadline'] }}</label>
+    {# <button type="button" class="btn-edit-{{ index }}">編集</button>
+    <button type="button" class="btn-delete-{{ index }}">削除</button> #}
+    <a href="{{ url_for('edit_task', index=index ) }}">編集</a>
   </li>
   {% endfor %}
 </ul>

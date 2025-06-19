@@ -54,6 +54,18 @@ def add_task():
         insert(target_task)
     return render_template("testtemp/new_task.html")
 
+@app.route('/edit_task/<int:index>')
+def edit_task(index):
+    task = Tasks.query.filter(Tasks.task_id==index+1).first()
+    # if request.method == "GET":
+    #     return render_template('testtemp/edit_task.html', task)
+    # elif request.method == "POST":
+    #     pass
+    print(index, task)
+    return render_template('testtemp/edit_task.html', task=task)
+
+    # alltasks = Tasks.query.filter(task_id==)
+
 
 # アクセスするとテーブル削除と作成
 @app.route("/make_table")
