@@ -12,8 +12,17 @@ def init_db():
 
 def make_deadline(dead_date, dead_time):
     s = f"{dead_date} {dead_time}"
-    s_format = "%Y-%m-%d %H:%M:%S"
+    s_format = "%Y-%m-%d %H:%M"
     deadline = datetime.datetime.strptime(s, s_format)
+    print(deadline)
+    return deadline
+
+
+def make_deadline2(dead_date, dead_time):
+    s = f"{dead_date} {dead_time}"
+    s_format = "%Y-%m-%d %H:%M"
+    deadline = datetime.datetime.strptime(s, s_format)
+    print(deadline)
     return deadline
 
 
@@ -37,18 +46,20 @@ def update(task, update_info):
         task.title = update_info["title"]
         task.deadline = update_info["dead_line"]
         task.is_completed = update_info["is_completed"]
+        print(f"task-->{task}")
+        print(f"update_info-->{update_info}")
         try:
-            db.session.add(task)
+            # db.session.add(task)
+            db.session.merge(task)
             db.session.commit()
             print("データ更新に成功しました")
             print(
-                f"更新後タスク:task_id:{task.task_id}, task_name:{task.title}, task_deadline:{task.deadline}"
+                f"更新後タスク:task_id:{task.task_id}, title:{task.title}, deadline:{task.deadline}"
             )
         except Exception as e:
             db.session.rollback()
             print(f"更新エラーしました：{e}")
-        print("更新処理がおわりました")
-        return redirect("/my_task")
+    print("更新処理がおわりました")
 
 
 # app オブジェにルートを登録する
@@ -86,6 +97,7 @@ def add_task():
 @app.route("/edit_task/<int:index>", methods=["GET", "POST"])
 def edit_task(index):
     task = Tasks.query.filter(Tasks.task_id == index + 1).first()
+    print(task)
     if request.method == "GET":
         return render_template("testtemp/edit_task.html", task=task)
     elif request.method == "POST":
@@ -93,7 +105,7 @@ def edit_task(index):
         title = request.form.get("title")
         dead_date = request.form.get("dead_date")
         dead_time = request.form.get("dead_time")
-        dead_line = make_deadline(dead_date, dead_time)
+        dead_line = make_deadline2(dead_date, dead_time)
         is_completed = False
         update_info = {
             "title": title,
@@ -102,6 +114,8 @@ def edit_task(index):
         }
         update(task, update_info)
     # print(index, task)
+    # return render_template("testtemp/edit_task.html", task=task)
+    # return redirect("/my_task")
     # return render_template("testtemp/edit_task.html", task=task)
     return redirect("/my_task")
 
