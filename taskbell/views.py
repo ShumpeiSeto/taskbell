@@ -10,6 +10,7 @@ def init_db():
     db.create_all()
 
 
+# 期限日時設定関数。秒以下の扱いでエラーあるので、%Sのないものも用意
 def make_deadline(dead_date, dead_time):
     s = f"{dead_date} {dead_time}"
     s_format = "%Y-%m-%d %H:%M"
@@ -41,9 +42,6 @@ def insert(task_obj):
 def update(task, update_info):
     with app.app_context():
         print("==========1件更新==========")
-        # target_task = Tasks.query.filter(Tasks.task_id == task.task_id).first()
-        # task_id = task.task_id
-        # target_task = Tasks.query.get(task_id)
         task.title = update_info["title"]
         task.deadline = update_info["dead_line"]
         task.is_completed = update_info["is_completed"]
@@ -128,10 +126,6 @@ def edit_task(task_id):
             "is_completed": is_completed,
         }
         update(task, update_info)
-    # print(index, task)
-    # return render_template("testtemp/edit_task.html", task=task)
-    # return redirect("/my_task")
-    # return render_template("testtemp/edit_task.html", task=task)
     return redirect("/my_task")
 
 
