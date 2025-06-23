@@ -34,6 +34,7 @@ def insert(task_obj):
         )
         db.session.add(task)
         db.session.commit()
+        db.session.close()
     return redirect("/my_task")
 
 
@@ -46,8 +47,6 @@ def update(task, update_info):
         task.title = update_info["title"]
         task.deadline = update_info["dead_line"]
         task.is_completed = update_info["is_completed"]
-        print(f"task-->{task}")
-        print(f"update_info-->{update_info}")
         try:
             # db.session.add(task)
             db.session.merge(task)
@@ -59,8 +58,24 @@ def update(task, update_info):
         except Exception as e:
             db.session.rollback()
             print(f"更新エラーしました：{e}")
+        finally:
+            db.session.close()
     print("更新処理がおわりました")
 
+
+def delete(task):
+    with app.app_context():
+        print("==========1件更新==========")
+        try:
+            db.session.delete(task)
+            db.session.commit()
+            print("データ削除成功しました")
+        except Exception as e:
+            db.session.rollback()
+            print(f"削除エラーしました：{e}")
+        finally:
+            db.session.close()
+    print("削除完了しました")
 
 # app オブジェにルートを登録する
 @app.route("/")
@@ -117,6 +132,17 @@ def edit_task(index):
     # return render_template("testtemp/edit_task.html", task=task)
     # return redirect("/my_task")
     # return render_template("testtemp/edit_task.html", task=task)
+    return redirect("/my_task")
+
+@app.route("/delete_task/<int:index>", methods=["GET", "POST"])
+def delete_task(index):
+    task = Tasks.query.filter(Tasks.task_id == index + 1).first()
+    if request.method == "GET":
+        return render_template("testtemp/delete_confirm_task.html", index=index)
+    elif request.method == "POST":
+        print("削除処理がはじまります")
+        delete(task)
+    # return render_template("testtemp/delete_confirm_task.html", index=index)
     return redirect("/my_task")
 
 

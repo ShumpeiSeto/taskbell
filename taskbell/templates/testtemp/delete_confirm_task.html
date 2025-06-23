@@ -1,0 +1,12 @@
+{% extends 'testtemp/layout.html' %}
+{% block content %}
+<form method="post">
+    <h1>削除確認</h1>
+    <p>本当に削除しますか？</p>
+    {# <label for="task_name">タスク名：</label>
+    <input value="{{ task['title'] }}" name="title"> #}
+    <a href="{{ url_for('my_task')}}">いいえ</a>
+    {# <a href="{{ url_for('delete_task', index=index, _method='POST')}}">はい</a> #}
+    <button type="submit">はい</button>
+</form>
+{% endblock %}
