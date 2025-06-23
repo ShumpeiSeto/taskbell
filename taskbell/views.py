@@ -20,7 +20,7 @@ def make_deadline(dead_date, dead_time):
 
 def make_deadline2(dead_date, dead_time):
     s = f"{dead_date} {dead_time}"
-    s_format = "%Y-%m-%d %H:%M"
+    s_format = "%Y-%m-%d %H:%M:%S"
     deadline = datetime.datetime.strptime(s, s_format)
     print(deadline)
     return deadline
@@ -63,9 +63,10 @@ def update(task, update_info):
     print("更新処理がおわりました")
 
 
-def delete(task):
+def delete(task_id):
     with app.app_context():
-        print("==========1件更新==========")
+        task = Tasks.query.filter(Tasks.task_id == task_id).first()
+        print("==========1件削除==========")
         try:
             db.session.delete(task)
             db.session.commit()
@@ -76,6 +77,7 @@ def delete(task):
         finally:
             db.session.close()
     print("削除完了しました")
+
 
 # app オブジェにルートを登録する
 @app.route("/")
@@ -88,9 +90,7 @@ def index():
 def my_task():
     alltasks = Tasks.query.all()
     print(alltasks)
-    return render_template(
-        "testtemp/my_task.html", alltasks=alltasks, enumerate=enumerate
-    )
+    return render_template("testtemp/my_task.html", alltasks=alltasks)
 
 
 @app.route("/add_task", methods=["GET", "POST"])
@@ -109,9 +109,9 @@ def add_task():
     return render_template("testtemp/new_task.html")
 
 
-@app.route("/edit_task/<int:index>", methods=["GET", "POST"])
-def edit_task(index):
-    task = Tasks.query.filter(Tasks.task_id == index + 1).first()
+@app.route("/edit_task/<int:task_id>", methods=["GET", "POST"])
+def edit_task(task_id):
+    task = Tasks.query.filter(Tasks.task_id == task_id).first()
     print(task)
     if request.method == "GET":
         return render_template("testtemp/edit_task.html", task=task)
@@ -134,14 +134,14 @@ def edit_task(index):
     # return render_template("testtemp/edit_task.html", task=task)
     return redirect("/my_task")
 
-@app.route("/delete_task/<int:index>", methods=["GET", "POST"])
-def delete_task(index):
-    task = Tasks.query.filter(Tasks.task_id == index + 1).first()
+
+@app.route("/delete_task/<int:task_id>", methods=["GET", "POST"])
+def delete_task(task_id):
     if request.method == "GET":
-        return render_template("testtemp/delete_confirm_task.html", index=index)
+        return render_template("testtemp/delete_confirm_task.html", task_id=task_id)
     elif request.method == "POST":
         print("削除処理がはじまります")
-        delete(task)
+        delete(task_id)
     # return render_template("testtemp/delete_confirm_task.html", index=index)
     return redirect("/my_task")
 
