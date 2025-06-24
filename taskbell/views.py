@@ -160,17 +160,29 @@ def delete_task(task_id):
     return redirect("/my_task")
 
 
-@app.route("/checked/<int:task_id>", methods=["POST"])
+# @app.route("/checked/<int:task_id>", methods=["POST"])
+# def check_task(task_id):
+#     # checked = request.form.get('task-' + str(task_id))
+#     task = Tasks.query.filter(Tasks.task_id == task_id).first()
+#     target_task = f"task-{task_id}"
+#     checked = request.form.get(target_task)
+#     if checked == "on":
+#         print(f"{task_id}:{checked}:{task}")
+#         check(task_id, task)
+#     else:
+#         pass
+#     return redirect("/my_task")
+
+
+@app.route("/checked/<int:task_id>")
 def check_task(task_id):
     # checked = request.form.get('task-' + str(task_id))
     task = Tasks.query.filter(Tasks.task_id == task_id).first()
-    target_task = f"task-{task_id}"
-    checked = request.form.get(target_task)
-    if checked == "on":
-        print(f"{task_id}:{checked}:{task}")
-        check(task_id, task)
-    else:
-        pass
+    # target_task = f"task-{task_id}"
+    # checked = request.form.get(target_task)
+    # if checked == "on":
+    print(f"{task_id}:{task}")
+    check(task_id, task)
     return redirect("/my_task")
 
 
