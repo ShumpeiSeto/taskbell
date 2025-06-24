@@ -77,6 +77,26 @@ def delete(task_id):
     print("削除完了しました")
 
 
+def check(task_id, task):
+    with app.app_context():
+        print("==========1件チェック済==========")
+        task.is_completed = 1
+        try:
+            # db.session.add(task)
+            db.session.merge(task)
+            db.session.commit()
+            print("タスクチェックに成功しました")
+            print(
+                f"タスクチェック:task_id:{task.task_id}, title:{task.title}, is_completed:{task.is_completed}"
+            )
+        except Exception as e:
+            db.session.rollback()
+            print(f"更新エラーしました：{e}")
+        finally:
+            db.session.close()
+    print("チェック処理がおわりました")
+
+
 # app オブジェにルートを登録する
 @app.route("/")
 def index():
@@ -86,7 +106,7 @@ def index():
 
 @app.route("/my_task")
 def my_task():
-    alltasks = Tasks.query.all()
+    alltasks = Tasks.query.filter(Tasks.is_completed == 0)
     print(alltasks)
     return render_template("testtemp/my_task.html", alltasks=alltasks)
 
@@ -139,16 +159,20 @@ def delete_task(task_id):
     # return render_template("testtemp/delete_confirm_task.html", index=index)
     return redirect("/my_task")
 
+
 @app.route("/checked/<int:task_id>", methods=["POST"])
 def check_task(task_id):
     # checked = request.form.get('task-' + str(task_id))
-    checked = request.form.get(f"task-{task_id}")
-    if checked != None:
-        print(f"{task_id}:{checked}")
+    task = Tasks.query.filter(Tasks.task_id == task_id).first()
+    target_task = f"task-{task_id}"
+    checked = request.form.get(target_task)
+    if checked == "on":
+        print(f"{task_id}:{checked}:{task}")
+        check(task_id, task)
     else:
         pass
     return redirect("/my_task")
-    
+
 
 # アクセスするとテーブル削除と作成
 @app.route("/make_table")
