@@ -7,7 +7,7 @@
     {# <form action="{{ url_for('check_task', task['task_id']) }}" method="post"> #}
     <form action="{{ url_for('check_task', task_id=task['task_id']) }}" method="post">
     {# <form method="post"> #}
-    <input class="form-check-input me-1" type="checkbox" name="task-{{ task['task_id'] }}" value="" id="firstCheckbox">
+    <input class="form-check-input me-1" type="checkbox" name="task-{{ task['task_id'] }}" id="firstCheckbox">
     <button type="submit">完了</button>
     </form>
     <label class="form-check-label" for="firstCheckbox">{{ task['title']}}</label>
