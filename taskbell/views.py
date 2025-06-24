@@ -139,6 +139,16 @@ def delete_task(task_id):
     # return render_template("testtemp/delete_confirm_task.html", index=index)
     return redirect("/my_task")
 
+@app.route("/checked/<int:task_id>", methods=["POST"])
+def check_task(task_id):
+    # checked = request.form.get('task-' + str(task_id))
+    checked = request.form.get(f"task-{task_id}")
+    if checked != None:
+        print(f"{task_id}:{checked}")
+    else:
+        pass
+    return redirect("/my_task")
+    
 
 # アクセスするとテーブル削除と作成
 @app.route("/make_table")
