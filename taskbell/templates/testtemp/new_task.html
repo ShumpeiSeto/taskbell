@@ -1,16 +1,24 @@
 {% extends 'testtemp/layout.html' %}
 {% block content %}
-<h1>新規タスクを追加</h1>
-<p>入力後登録ボタンを押してください</p>
-<form action="add_task" method="post">
-  <label for="task_name">タスク名：</label>
-  <input type="text" name="title" id="title">
-  <br >
-  <label for="dead_day">期限日</label>
-  <input type="date" name="dead_date" id="dead_date">
-  <label for="dead_time">期限時間：</label>
-  <input type="time" name="dead_time" id="dead_time">
-  <br >
-  <button type="submit">登録</button>
-</form>
+<section class="add_new_task">
+  <h1>新規タスクを追加</h1>
+  <p>入力後登録ボタンを押してください</p>
+  <form action="add_task" method="post" class="add_task_form">
+  <ul>
+    <li>
+      <label for="task_name">タスク名：</label>
+      <input type="text" name="title" id="title">
+    </li>
+    <li>
+      <label for="dead_day">期限日：</label>
+      <input type="date" name="dead_date" id="dead_date">
+    </li>
+    <li>
+      <label for="dead_time">期限時間：</label>
+      <input type="time" name="dead_time" id="dead_time">
+    </li>
+  </ul>
+    <button type="submit" class="btn btn-primary">登録</button>
+  </form>
+</section>
 {% endblock %}

@@ -1,7 +1,10 @@
+/* 全体レイアウト設定 */
 * {
   padding: 0;
   margin: 0;
 }
+
+/* 1. タスク一覧ページ設定 */
 .alltask {
   text-align: center;
 }
@@ -11,4 +14,71 @@
 }
 section {
   margin: 20px 20px;
+}
+
+.check_box_b {
+  border: 1px solid gray;
+}
+.check_box_a {
+  text-decoration: none;
+}
+
+/* 1.2 タスク一覧ページ - 新規タスク登録ボタン */
+.add_new_task_button {
+  margin: 20px auto;
+  text-align: center;
+}
+
+/* 1.3 完了タスクセクション */
+.comp_task_name,
+.comp_task_deadline {
+  text-decoration: line-through;
+}
+
+/* 2. 新規タスク登録画面設定 */
+.add_new_task {
+  margin: 20px 50px;
+  padding: 20px 20px;
+  border: 1px solid gray;
+  border-radius: 10px;
+}
+
+.add_new_task > h1,
+.add_new_task > p {
+  text-align: center;
+}
+.add_task_form > ul > li {
+  list-style: none;
+  margin-bottom: 8px;
+}
+.add_task_form > ul > li > input {
+  text-align: center;
+}
+.add_task_form > button {
+  display: block;
+  margin: auto;
+}
+
+/* 3. タスク編集画面設定 */
+.edit_task {
+  margin: 20px 50px;
+  padding: 20px 20px;
+  border: 1px solid gray;
+  border-radius: 10px;
+}
+
+.edit_task > h1,
+.edit_task > p {
+  text-align: center;
+}
+.edit_task_form > ul > li {
+  list-style: none;
+  margin-bottom: 8px;
+}
+.edit_task_form > ul > li > input {
+  text-align: center;
+}
+.edit_task_form > button {
+  display: block;
+  margin: auto;
 }

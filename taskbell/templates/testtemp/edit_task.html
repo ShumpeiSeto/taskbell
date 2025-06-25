@@ -1,17 +1,24 @@
 {% extends 'testtemp/layout.html' %}
 {% block content %}
-<h1>タスクを編集</h1>
-<p>タスク編集しましょう</p>
-<form method="post">
-  <label for="task_name">タスク名：</label>
-  <input type="text" name="title" id="title" value="{{ task.title }}">
-  <br >
-  <label for="dead_day">期限日</label>
-  <input type="date" name="dead_date" id="dead_date" value="{{ task.deadline.date() }}">
-  <label for="dead_time">期限時間：</label>
-  <input type="time" name="dead_time" id="dead_time" value="{{ task.deadline.time() }}">
-  <br >
-  <br >
-  <button type="submit">更新</button>
-</form>
+<section class="edit_task">
+  <h1>タスクを編集</h1>
+  <p>タスク編集しましょう</p>
+  <form method="post" class="edit_task_form">
+  <ul>
+    <li>
+      <label for="task_name">タスク名：</label>
+      <input type="text" name="title" id="title" value="{{ task.title }}">
+    </li>
+    <li>
+      <label for="dead_day">期限日</label>
+      <input type="date" name="dead_date" id="dead_date" value="{{ task.deadline.date() }}">
+    </li>
+    <li>
+      <label for="dead_time">期限時間：</label>
+      <input type="time" name="dead_time" id="dead_time" value="{{ task.deadline.time() }}">
+    </li>
+  </ul>
+    <button type="submit" class="btn btn-success">更新</button>
+  </form>
+</section>
 {% endblock %}
