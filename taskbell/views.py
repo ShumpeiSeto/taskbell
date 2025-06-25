@@ -2,6 +2,7 @@ from flask import render_template, request, redirect
 from taskbell import app, db
 from .models.add_task import Tasks
 import datetime
+from sqlalchemy import desc
 
 
 def init_db():
@@ -80,7 +81,7 @@ def delete(task_id):
 def check(task_id, task):
     with app.app_context():
         print("==========1件チェック済==========")
-        task.is_completed = 1
+        task.is_completed = task.is_completed ^ 1
         try:
             # db.session.add(task)
             db.session.merge(task)
@@ -106,9 +107,10 @@ def index():
 
 @app.route("/my_task")
 def my_task():
-    alltasks = Tasks.query.filter(Tasks.is_completed == 0)
-    print(alltasks)
-    return render_template("testtemp/my_task.html", alltasks=alltasks)
+    nc_tasks = Tasks.query.order_by(Tasks.deadline).filter(Tasks.is_completed == 0)
+    c_tasks = Tasks.query.order_by(Tasks.deadline).filter(Tasks.is_completed == 1)
+    # print(alltasks)
+    return render_template("testtemp/my_task.html", nc_tasks=nc_tasks, c_tasks=c_tasks)
 
 
 @app.route("/add_task", methods=["GET", "POST"])

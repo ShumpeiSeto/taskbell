@@ -1,24 +1,40 @@
 {% extends 'testtemp/layout.html' %}
 {% block content %}
-<h3>マイタスク</h3>
-<ul class="list-group">
-  {% for task in alltasks %}
-  <li class="list-group-item">
-    {# <form action="{{ url_for('check_task', task['task_id']) }}" method="post"> #}
-    <a href="{{ url_for('check_task', task_id=task['task_id']) }}" style="text-decoration: none;">
-  <button>✓</button>
-    </a>
-    {# <form action="{{ url_for('check_task', task_id=task['task_id']) }}" method="post"> #}
-    {# <form method="post"> #}
-    {# <input class="form-check-input me-1" type="checkbox" name="task-{{ task['task_id'] }}" id="firstCheckbox"> #}
-    {# <button type="submit">完了</button> #}
-    {# </form> #}
-    <label class="form-check-label" for="firstCheckbox">{{ task['title']}}</label>
-    <label class="deadline" for="deadline">{{ task['deadline'] }}</label>
-    <a href="{{ url_for('edit_task', task_id=task['task_id']) }}">編集</a>
-    <a href="{{ url_for('delete_task', task_id=task['task_id']) }}">削除</a>
-  </li>
-  {% endfor %}
-  <a href="{{ url_for('add_task')}}">タスク登録</a>
-</ul>
+<div class="alltask">
+  <section class="uncompleted">
+    <h3>マイタスク</h3>
+    <h4>未完了タスク</h4>
+    <ul class="list-group">
+      {% for nc_task in nc_tasks %}
+      <li class="list-group-item">
+        {# <form action="{{ url_for('check_task', task['task_id']) }}" method="post"> #}
+        <a href="{{ url_for('check_task', task_id=nc_task['task_id']) }}" style="text-decoration: none;">
+      <button type="button" class="btn btn-light rounded-circl p-0" style="border: 1px solid gray;">✔</button>
+        </a>
+        <label class="form-check-label" for="firstCheckbox">{{ nc_task['title']}}</label>
+        <label class="deadline" for="deadline">{{ nc_task['deadline'] }}</label>
+        <a href="{{ url_for('edit_task', task_id=nc_task['task_id']) }}">編集</a>
+        <a href="{{ url_for('delete_task', task_id=nc_task['task_id']) }}">削除</a>
+      </li>
+      {% endfor %}
+      <a href="{{ url_for('add_task')}}">タスク登録</a>
+    </ul>
+  </section>
+
+  <section class="completed">
+    <h4>完了済タスク</h4>
+    <ul class="list-group">
+      {% for c_task in c_tasks %}
+      <li class="list-group-item">
+        <a href="{{ url_for('check_task', task_id=c_task['task_id']) }}" style="text-decoration: none;">
+      <button type="button" class="btn btn-light rounded-circl p-0" style="border: 1px solid gray;">済</button>
+        </a>
+        <label class="form-check-label" for="firstCheckbox" style="text-decoration: line-through;">{{ c_task['title']}}</label>
+        <label class="deadline" for="deadline" style="text-decoration: line-through;">{{ c_task['deadline'] }}</label>
+        <a href="{{ url_for('delete_task', task_id=c_task['task_id']) }}">削除</a>
+      </li>
+      {% endfor %}
+    </ul>
+  </section>
+</div>
 {% endblock %}
