@@ -8,8 +8,8 @@
       {% for nc_task in nc_tasks %}
       <li class="list-group-item">
         {# <form action="{{ url_for('check_task', task['task_id']) }}" method="post"> #}
-        <a href="{{ url_for('check_task', task_id=nc_task['task_id']) }}" style="text-decoration: none;">
-      <button type="button" class="btn btn-light rounded-circl p-0" style="border: 1px solid gray;">✔</button>
+        <a href="{{ url_for('check_task', task_id=nc_task['task_id']) }}" class="check_box_a">
+      <button type="button" class="btn btn-light rounded-circl p-0 check_box_b">✔</button>
         </a>
         <label class="form-check-label" for="firstCheckbox">{{ nc_task['title']}}</label>
         <label class="deadline" for="deadline">{{ nc_task['deadline'] }}</label>
@@ -17,7 +17,12 @@
         <a href="{{ url_for('delete_task', task_id=nc_task['task_id']) }}">削除</a>
       </li>
       {% endfor %}
-      <a href="{{ url_for('add_task')}}">タスク登録</a>
+      <div class="add_new_task_button">
+      <a href="{{ url_for('add_task')}}">
+      <button type="button" class="btn btn-primary">
+      新規タスク登録
+      </button></a>
+      </div>
     </ul>
   </section>
 
@@ -26,11 +31,11 @@
     <ul class="list-group">
       {% for c_task in c_tasks %}
       <li class="list-group-item">
-        <a href="{{ url_for('check_task', task_id=c_task['task_id']) }}" style="text-decoration: none;">
-      <button type="button" class="btn btn-light rounded-circl p-0" style="border: 1px solid gray;">済</button>
+        <a href="{{ url_for('check_task', task_id=c_task['task_id']) }}" class="check_box_a">
+      <button type="button" class="btn btn-light rounded-circl p-0 check_box_b">済</button>
         </a>
-        <label class="form-check-label" for="firstCheckbox" style="text-decoration: line-through;">{{ c_task['title']}}</label>
-        <label class="deadline" for="deadline" style="text-decoration: line-through;">{{ c_task['deadline'] }}</label>
+        <label class="comp_task_name" for="firstCheckbox">{{ c_task['title']}}</label>
+        <label class="comp_task_deadline" for="deadline">{{ c_task['deadline'] }}</label>
         <a href="{{ url_for('delete_task', task_id=c_task['task_id']) }}">削除</a>
       </li>
       {% endfor %}

@@ -140,7 +140,7 @@ def edit_task(task_id):
         title = request.form.get("title")
         dead_date = request.form.get("dead_date")
         dead_time = request.form.get("dead_time")
-        dead_line = make_deadline2(dead_date, dead_time)
+        dead_line = make_deadline(dead_date, dead_time)
         is_completed = False
         update_info = {
             "title": title,
