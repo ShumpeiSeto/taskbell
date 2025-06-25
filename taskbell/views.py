@@ -1,5 +1,5 @@
 from flask import render_template, request, redirect
-from taskbell import app, db
+from taskbell import app, db, login_manager
 from .models.add_task import Tasks
 import datetime
 from sqlalchemy import desc
