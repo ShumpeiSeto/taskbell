@@ -1,8 +1,10 @@
-from flask import render_template, request, redirect
-from taskbell import app, db, login_manager
+from flask import render_template, request, redirect, Flask
+from taskbell import app, db
 from .models.add_task import Tasks
+from .models.login_user import User
 import datetime
 from sqlalchemy import desc
+from flask_login import login_user, current_user
 
 
 def init_db():
@@ -97,6 +99,14 @@ def check(task_id, task):
             db.session.close()
     print("チェック処理がおわりました")
 
+def signup_user(target_user):
+    with app.app_context():
+        print("==========1件ユーザー登録==========")
+        user = User(username=target_user['username'], password=target_user['password'])
+        db.session.add(user)
+        db.session.commit()
+        db.session.close()
+    return redirect("/")
 
 # app オブジェにルートを登録する
 @app.route("/")
@@ -109,7 +119,6 @@ def index():
 def my_task():
     nc_tasks = Tasks.query.order_by(Tasks.deadline).filter(Tasks.is_completed == 0)
     c_tasks = Tasks.query.order_by(Tasks.deadline).filter(Tasks.is_completed == 1)
-    # print(alltasks)
     return render_template("testtemp/my_task.html", nc_tasks=nc_tasks, c_tasks=c_tasks)
 
 
@@ -162,19 +171,6 @@ def delete_task(task_id):
     return redirect("/my_task")
 
 
-# @app.route("/checked/<int:task_id>", methods=["POST"])
-# def check_task(task_id):
-#     # checked = request.form.get('task-' + str(task_id))
-#     task = Tasks.query.filter(Tasks.task_id == task_id).first()
-#     target_task = f"task-{task_id}"
-#     checked = request.form.get(target_task)
-#     if checked == "on":
-#         print(f"{task_id}:{checked}:{task}")
-#         check(task_id, task)
-#     else:
-#         pass
-#     return redirect("/my_task")
-
 
 @app.route("/checked/<int:task_id>")
 def check_task(task_id):
@@ -193,4 +189,44 @@ def check_task(task_id):
 def make_table():
     with app.app_context():
         init_db()
-    return redirect("/add_task")
+    return redirect("/")
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == "GET":
+        return render_template('testtemp/login.html')
+    elif request.method == "POST":
+        if current_user.is_authenticated:
+            return redirect('/')
+        
+        # ユーザーが存在するかユーザ名で検索する
+        username = request.form.get('username')
+        user = User.query.filter(User.username == username).one_or_none()
+        if user:
+            print(f"こんにちは！{username}さん")
+        else:
+            print(f"あなたは存在しません。帰ってください")
+        # password = request.form.get('password')
+
+        # instanceつくる
+        login_user(user)
+
+        Flask.flash('ログイン成功しました')
+        next = request.args.get('next')
+        return redirect('/')
+        # return redirect(next)
+        # return render_template('testtemp/login.html')
+    return render_template('testtemp/login.html')
+
+    
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    if request.method == "GET":
+        return render_template("testtemp/signup.html")
+    elif request.method == "POST":
+        username = request.form.get('username')
+        password = request.form.get('password')
+        target_user = dict(username=username, password=password)
+        signup_user(target_user)
+    return render_template("testtemp/signup.html")
