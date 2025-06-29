@@ -1,7 +1,9 @@
 from taskbell import db, login_manager
 from datetime import datetime
 from flask_login import UserMixin
+
 # from flask_login import login_manager
+
 
 class User(UserMixin, db.Model):
     def __init__(self, username=None, password=None):
@@ -9,7 +11,7 @@ class User(UserMixin, db.Model):
         self.password = password
 
     __tablename__ = "users"
-    user_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(100))
     password = db.Column(db.String(255))
     created_time = db.Column(db.DateTime, nullable=False, default=datetime.now)
@@ -17,8 +19,20 @@ class User(UserMixin, db.Model):
         db.DateTime, nullable=False, default=datetime.now, onupdate=datetime.now
     )
 
+    def is_authenticated(self):
+        return True
+
+    def is_active(self):
+        return True
+
+    def is_annonymous(self):
+        pass
+
+    def get_id(self):
+        return int(self.id)
+
+
 # sessionに保存されているuser_idからユーザーオブジェクトを返す
 @login_manager.user_loader
-def load_user(user_id):
-    return User.query.get(int(user_id))
-
+def load_user(id):
+    return User.query.get(int(id))
