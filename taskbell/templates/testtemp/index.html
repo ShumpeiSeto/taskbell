@@ -1,5 +1,13 @@
 {% extends 'testtemp/layout.html' %}
 {% block content %}
-<h2>ようこそ、Taskbellへ！</h2>
-<p>こんにちは！{{ current_user.username }}さん！</p>
+{% if current_user.username == None %}
+    <h2>ようこそ、Taskbellへ！</h2>
+    <p>こんにちは！{{ current_user.username }}さん！</p>
+    {% print(current_user.username) %}
+{% else %}
+    <h2>ようこそ、Taskbellへ！</h2>
+    <p>こんにちは！ゲストさん！</p>
+    {% print(current_user.username) %}
+
+{% endif %}
 {% endblock %}

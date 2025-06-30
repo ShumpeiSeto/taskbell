@@ -4,7 +4,7 @@ from .models.add_task import Tasks
 from .models.login_user import User
 import datetime
 from sqlalchemy import desc
-from flask_login import login_user, current_user
+from flask_login import login_user, current_user, login_required, logout_user
 
 
 def init_db():
@@ -113,7 +113,8 @@ def signup_user(target_user):
 # app オブジェにルートを登録する
 @app.route("/")
 def index():
-    return "Hello World"
+    return render_template('testtemp/index.html')
+    # return "Hello World"
     # return render_template("testtemp/index.html", title="Index Page")
 
 
@@ -198,27 +199,35 @@ def login():
     if request.method == "GET":
         return render_template("testtemp/login.html")
     elif request.method == "POST":
-        if current_user.is_authenticated:
-            return render_template("testtemp/index.html", current_user=current_user)
+        # if current_user.is_authenticated:
+        #     return render_template("testtemp/index.html", current_user=current_user)
 
         # ユーザーが存在するかユーザ名で検索する
         username = request.form.get("username")
         user = User.query.filter(User.username == username).one_or_none()
-        if user:
-            print(f"こんにちは！{username}さん")
-        else:
-            print(f"あなたは存在しません。帰ってください")
-        # password = request.form.get('password')
+        password = request.form.get('password')
 
         # instanceつくる
-        login_user(user)
+        if user.is_authenticated(username, password):
+            login_user(user)
+            print('認証成しました\n')
+            flash('認証成しました\n')
+            print(f'あなたは{user.username}です\n')
+        else:
+            print('ユーザー名パスワードが一致していません\n')
+            print('認証できませんでした\n')
 
-        flash("ログイン成功しました")
         next = request.args.get("next")
         return redirect("/")
         # return redirect(next)
         # return render_template('testtemp/login.html')
     return render_template("testtemp/login.html")
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect('/')
 
 
 @app.route("/signup", methods=["GET", "POST"])

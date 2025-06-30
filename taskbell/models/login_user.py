@@ -19,8 +19,12 @@ class User(UserMixin, db.Model):
         db.DateTime, nullable=False, default=datetime.now, onupdate=datetime.now
     )
 
-    def is_authenticated(self):
-        return True
+    def is_authenticated(self, input_username, input_password):
+        if self.username == input_username and self.password == input_password:
+            return True
+        else:
+            return False
+        # return None
 
     def is_active(self):
         return True
