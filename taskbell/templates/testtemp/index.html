@@ -1,12 +1,25 @@
 {% extends 'testtemp/layout.html' %}
 {% block content %}
-    <h2>ようこそ、Taskbellへ！</h2>
-{% if current_user.is_authenticated %}
-    <p>こんにちは！{{ current_user.username }}さん！</p>
-    {% print(current_user.username) %}
-{% else %}
-    <p>こんにちは！ゲストさん！</p>
-    {% print(current_user.username) %}
-
-{% endif %}
+    <section class="index_page">
+    {% if current_user.is_authenticated %}
+    <div class="message">
+        <h1>ようこそ、Taskbellへ！</h1>
+        <p>こんにちは！{{ current_user.username }}さん！</p>
+    </div>
+    {% else %}
+    <div class="message">
+        <h1>ようこそ、Taskbellへ！</h1>
+        <p>こんにちは！ゲストさん！</p>
+    </div>
+    {% endif %}
+    <div class="button_field">
+        <ul class="index_list">
+            <li>
+                <a href="{{ url_for('signup') }}"><button type="button" class="btn btn-success signup_button">新規登録</button></a>
+            </li>
+            <li>
+                <a href="{{ url_for('login') }}"><button type="button" class="btn btn-primary login_button">ログイン</button></a>
+            </li>
+        </ul>
+    </div>
 {% endblock %}
