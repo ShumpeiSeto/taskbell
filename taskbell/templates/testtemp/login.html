@@ -1,6 +1,6 @@
 {% extends "testtemp/layout.html" %}
 {% block content %}
-<section class="add_new_task">
+<section class="login_page">
   <h1>ログインフォーム</h1>
   <p>ユーザ名とパスワードを入力してログインボタンを押してください</p>
   <form action="login" method="post" class="login_form">
@@ -14,7 +14,8 @@
       <input type="text" name="password" id="password">
     </li>
   </ul>
-    <button type="submit" class="btn btn-primary">登録</button>
+    <button type="submit" class="btn btn-primary">ログイン</button>
+    <a href="{{ url_for('signup') }}"><button type="button" class="btn btn-secondary">新規ユーザー登録へ</button></a>
   </form>
 </section>
 

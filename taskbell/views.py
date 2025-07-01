@@ -231,7 +231,7 @@ def login():
             print("認証できませんでした\n")
 
         next = request.args.get("next")
-        return redirect("/")
+        return redirect("/my_task")
         # return redirect(next)
         # return render_template('testtemp/login.html')
     return render_template("testtemp/login.html")
@@ -253,4 +253,5 @@ def signup():
         password = request.form.get("password")
         target_user = dict(username=username, password=password)
         signup_user(target_user)
+        return redirect('/login')
     return render_template("testtemp/signup.html")
