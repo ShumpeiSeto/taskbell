@@ -9,6 +9,7 @@ class User(UserMixin, db.Model):
     def __init__(self, username=None, password=None):
         self.username = username
         self.password = password
+        self.user_id = None
 
     __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -18,13 +19,13 @@ class User(UserMixin, db.Model):
     updated_time = db.Column(
         db.DateTime, nullable=False, default=datetime.now, onupdate=datetime.now
     )
+    task_id = db.relationship("Tasks", backref="users")
 
     def is_authenticated(self, input_username, input_password):
         if self.username == input_username and self.password == input_password:
             return True
         else:
             return False
-        # return None
 
     def is_active(self):
         return True

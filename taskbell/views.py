@@ -34,7 +34,10 @@ def insert(task_obj):
     with app.app_context():
         print("==========1件登録==========")
         task = Tasks(
-            title=task_obj["title"], deadline=task_obj["deadline"], is_completed=False
+            title=task_obj["title"],
+            deadline=task_obj["deadline"],
+            is_completed=False,
+            user_id=task_obj["user_id"],
         )
         db.session.add(task)
         db.session.commit()
@@ -113,15 +116,20 @@ def signup_user(target_user):
 # app オブジェにルートを登録する
 @app.route("/")
 def index():
-    return render_template('testtemp/index.html')
+    return render_template("testtemp/index.html")
     # return "Hello World"
     # return render_template("testtemp/index.html", title="Index Page")
 
 
 @app.route("/my_task")
 def my_task():
-    nc_tasks = Tasks.query.order_by(Tasks.deadline).filter(Tasks.is_completed == 0)
-    c_tasks = Tasks.query.order_by(Tasks.deadline).filter(Tasks.is_completed == 1)
+    all_tasks = Tasks.query.order_by(Tasks.deadline)
+    nc_tasks = all_tasks.filter(Tasks.user_id == current_user.id).filter(
+        Tasks.is_completed == 0
+    )
+    c_tasks = all_tasks.filter(Tasks.user_id == current_user.id).filter(
+        Tasks.is_completed == 1
+    )
     return render_template("testtemp/my_task.html", nc_tasks=nc_tasks, c_tasks=c_tasks)
 
 
@@ -135,7 +143,10 @@ def add_task():
         dead_time = request.form.get("dead_time")
         deadline = make_deadline(dead_date, dead_time)
         is_completed = False
-        target_task = dict(title=title, deadline=deadline, is_completed=is_completed)
+        user_id = current_user.id
+        target_task = dict(
+            title=title, deadline=deadline, is_completed=is_completed, user_id=user_id
+        )
         print(target_task)
         insert(target_task)
     return render_template("testtemp/new_task.html")
@@ -205,17 +216,17 @@ def login():
         # ユーザーが存在するかユーザ名で検索する
         username = request.form.get("username")
         user = User.query.filter(User.username == username).one_or_none()
-        password = request.form.get('password')
+        password = request.form.get("password")
 
         # instanceつくる
         if user.is_authenticated(username, password):
             login_user(user)
-            print('認証成しました\n')
-            flash('認証成しました\n')
-            print(f'あなたは{user.username}です\n')
+            print("認証成しました\n")
+            flash("認証成しました\n")
+            print(f"あなたは{user.username}です\n")
         else:
-            print('ユーザー名パスワードが一致していません\n')
-            print('認証できませんでした\n')
+            print("ユーザー名パスワードが一致していません\n")
+            print("認証できませんでした\n")
 
         next = request.args.get("next")
         return redirect("/")
@@ -223,11 +234,12 @@ def login():
         # return render_template('testtemp/login.html')
     return render_template("testtemp/login.html")
 
-@app.route('/logout')
+
+@app.route("/logout")
 @login_required
 def logout():
     logout_user()
-    return redirect('/')
+    return redirect("/")
 
 
 @app.route("/signup", methods=["GET", "POST"])
