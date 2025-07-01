@@ -1,7 +1,7 @@
 {% extends 'testtemp/layout.html' %}
 {% block content %}
     <h2>ようこそ、Taskbellへ！</h2>
-{% if current_user.username != None %}
+{% if current_user.is_authenticated %}
     <p>こんにちは！{{ current_user.username }}さん！</p>
     {% print(current_user.username) %}
 {% else %}

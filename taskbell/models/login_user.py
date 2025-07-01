@@ -21,11 +21,17 @@ class User(UserMixin, db.Model):
     )
     task_id = db.relationship("Tasks", backref="users")
 
-    def is_authenticated(self, input_username, input_password):
-        if self.username == input_username and self.password == input_password:
-            return True
-        else:
-            return False
+    # is_authenticated をoverrideし、username, passwordチェックをしていたが、
+    # どうやら継承元UserMinxinのis_authenticatedの方で比較してくれているみたいだ
+
+    # def is_authenticated(self, input_username, input_password):
+    #     if self.username == input_username and self.password == input_password:
+    #         return True
+    #     else:
+    #         return False
+
+    def is_authenticated(self):
+        return True
 
     def is_active(self):
         return True

@@ -219,7 +219,9 @@ def login():
         password = request.form.get("password")
 
         # instanceつくる
-        if user.is_authenticated(username, password):
+        # overrrideしていたが継承元UserMixinのものでOKだった
+        # if user.is_authenticated(username, password):
+        if user.is_authenticated:
             login_user(user)
             print("認証成しました\n")
             flash("認証成しました\n")
