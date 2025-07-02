@@ -3,6 +3,39 @@
   padding: 0;
   margin: 0;
 }
+.header {
+  width: 100%;
+}
+.header > nav {
+  display: flex;
+  justify-content: right;
+}
+
+/* 0.  indexページ画面設定*/
+.index_page {
+  margin: 20px 50px;
+  padding: 20px 20px;
+  border: 1px solid gray;
+  border-radius: 10px;
+}
+.message {
+  text-align: center;
+}
+.index_list {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.index_list > li {
+  list-style: none;
+  margin-bottom: 8px;
+}
+
+.signup_button,
+.login_button {
+  text-align: center;
+}
 
 /* 1. タスク一覧ページ設定 */
 .alltask {
@@ -81,4 +114,74 @@ section {
 .edit_task_form > button {
   display: block;
   margin: auto;
+}
+/* ログイン画面設定 */
+
+.login_page {
+  margin: 20px 50px;
+  padding: 20px 20px;
+  border: 1px solid gray;
+  border-radius: 10px;
+}
+
+.login_page > h1,
+.login_page > p {
+  text-align: center;
+}
+.login_form > ul {
+  margin-left: 20%;
+}
+.login_form > ul > li {
+  list-style: none;
+  margin-bottom: 8px;
+}
+.login_form > ul > li > input {
+  text-align: center;
+}
+.login_form > button {
+  display: block;
+  margin: 10px auto;
+}
+.login_form > a > button {
+  display: block;
+  margin: 10px auto;
+  text-decoration: none;
+}
+
+.login_form > a {
+  text-decoration: none;
+}
+
+/* 新規ユーザー登録画設定* */
+.signup_page {
+  margin: 20px 50px;
+  padding: 20px 20px;
+  border: 1px solid gray;
+  border-radius: 10px;
+}
+
+.signup_page > h1,
+.signup_page > p {
+  text-align: center;
+}
+.signup_form > ul {
+  margin-left: 20%;
+}
+.signup_form > ul > li {
+  list-style: none;
+  margin-bottom: 8px;
+}
+.signup_form > ul > li > input {
+  text-align: center;
+}
+.signup_form > button {
+  display: block;
+  margin: 10px auto;
+}
+.signup_form > a > button {
+  display: block;
+  margin: 10px auto;
+}
+.signup_form > a {
+  text-decoration: none;
 }
