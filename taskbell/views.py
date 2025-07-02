@@ -1,8 +1,10 @@
-from flask import render_template, request, redirect
+from flask import render_template, request, redirect, Flask, flash
 from taskbell import app, db
 from .models.add_task import Tasks
+from .models.login_user import User
 import datetime
 from sqlalchemy import desc
+from flask_login import login_user, current_user, login_required, logout_user
 
 
 def init_db():
@@ -32,7 +34,10 @@ def insert(task_obj):
     with app.app_context():
         print("==========1件登録==========")
         task = Tasks(
-            title=task_obj["title"], deadline=task_obj["deadline"], is_completed=False
+            title=task_obj["title"],
+            deadline=task_obj["deadline"],
+            is_completed=False,
+            user_id=task_obj["user_id"],
         )
         db.session.add(task)
         db.session.commit()
@@ -98,18 +103,33 @@ def check(task_id, task):
     print("チェック処理がおわりました")
 
 
+def signup_user(target_user):
+    with app.app_context():
+        print("==========1件ユーザー登録==========")
+        user = User(username=target_user["username"], password=target_user["password"])
+        db.session.add(user)
+        db.session.commit()
+        db.session.close()
+    return redirect("/")
+
+
 # app オブジェにルートを登録する
 @app.route("/")
 def index():
-    return "Hello World"
+    return render_template("testtemp/index.html")
+    # return "Hello World"
     # return render_template("testtemp/index.html", title="Index Page")
 
 
 @app.route("/my_task")
 def my_task():
-    nc_tasks = Tasks.query.order_by(Tasks.deadline).filter(Tasks.is_completed == 0)
-    c_tasks = Tasks.query.order_by(Tasks.deadline).filter(Tasks.is_completed == 1)
-    # print(alltasks)
+    all_tasks = Tasks.query.order_by(Tasks.deadline)
+    nc_tasks = all_tasks.filter(Tasks.user_id == current_user.id).filter(
+        Tasks.is_completed == 0
+    )
+    c_tasks = all_tasks.filter(Tasks.user_id == current_user.id).filter(
+        Tasks.is_completed == 1
+    )
     return render_template("testtemp/my_task.html", nc_tasks=nc_tasks, c_tasks=c_tasks)
 
 
@@ -123,7 +143,10 @@ def add_task():
         dead_time = request.form.get("dead_time")
         deadline = make_deadline(dead_date, dead_time)
         is_completed = False
-        target_task = dict(title=title, deadline=deadline, is_completed=is_completed)
+        user_id = current_user.id
+        target_task = dict(
+            title=title, deadline=deadline, is_completed=is_completed, user_id=user_id
+        )
         print(target_task)
         insert(target_task)
     return render_template("testtemp/new_task.html")
@@ -162,20 +185,6 @@ def delete_task(task_id):
     return redirect("/my_task")
 
 
-# @app.route("/checked/<int:task_id>", methods=["POST"])
-# def check_task(task_id):
-#     # checked = request.form.get('task-' + str(task_id))
-#     task = Tasks.query.filter(Tasks.task_id == task_id).first()
-#     target_task = f"task-{task_id}"
-#     checked = request.form.get(target_task)
-#     if checked == "on":
-#         print(f"{task_id}:{checked}:{task}")
-#         check(task_id, task)
-#     else:
-#         pass
-#     return redirect("/my_task")
-
-
 @app.route("/checked/<int:task_id>")
 def check_task(task_id):
     # checked = request.form.get('task-' + str(task_id))
@@ -193,4 +202,56 @@ def check_task(task_id):
 def make_table():
     with app.app_context():
         init_db()
-    return redirect("/add_task")
+    return redirect("/")
+
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "GET":
+        return render_template("testtemp/login.html")
+    elif request.method == "POST":
+        # if current_user.is_authenticated:
+        #     return render_template("testtemp/index.html", current_user=current_user)
+
+        # ユーザーが存在するかユーザ名で検索する
+        username = request.form.get("username")
+        user = User.query.filter(User.username == username).one_or_none()
+        password = request.form.get("password")
+
+        # instanceつくる
+        # overrrideしていたが継承元UserMixinのものでOKだった
+        # if user.is_authenticated(username, password):
+        if user.is_authenticated:
+            login_user(user)
+            print("認証成しました\n")
+            flash("認証成しました\n")
+            print(f"あなたは{user.username}です\n")
+        else:
+            print("ユーザー名パスワードが一致していません\n")
+            print("認証できませんでした\n")
+
+        next = request.args.get("next")
+        return redirect("/my_task")
+        # return redirect(next)
+        # return render_template('testtemp/login.html')
+    return render_template("testtemp/login.html")
+
+
+@app.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    return redirect("/")
+
+
+@app.route("/signup", methods=["GET", "POST"])
+def signup():
+    if request.method == "GET":
+        return render_template("testtemp/signup.html")
+    elif request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+        target_user = dict(username=username, password=password)
+        signup_user(target_user)
+        return redirect('/login')
+    return render_template("testtemp/signup.html")

@@ -1,0 +1,22 @@
+{% extends "testtemp/layout.html" %}
+{% block content %}
+<section class="login_page">
+  <h1>ログインフォーム</h1>
+  <p>ユーザ名とパスワードを入力してログインボタンを押してください</p>
+  <form action="login" method="post" class="login_form">
+  <ul>
+    <li>
+      <label for="username">ユーザ名：</label>
+      <input type="text" name="username" id="username">
+    </li>
+    <li>
+      <label for="password">パスワード：</label>
+      <input type="text" name="password" id="password">
+    </li>
+  </ul>
+    <button type="submit" class="btn btn-primary">ログイン</button>
+    <a href="{{ url_for('signup') }}"><button type="button" class="btn btn-secondary">新規ユーザー登録へ</button></a>
+  </form>
+</section>
+
+{% endblock %}
