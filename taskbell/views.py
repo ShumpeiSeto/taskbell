@@ -220,18 +220,18 @@ def login():
 
         # instanceつくる
         # overrrideしていたが継承元UserMixinのものでOKだった
-        # if user.is_authenticated(username, password):
-        if user.is_authenticated:
+        if user.is_authenticated(username, password):
+            # if user.is_authenticated:
             login_user(user)
-            print("認証成しました\n")
             flash("認証成しました\n")
-            print(f"あなたは{user.username}です\n")
+            flash(f"あなたは{user.username}です\n")
+            return redirect("/my_task")
         else:
-            print("ユーザー名パスワードが一致していません\n")
-            print("認証できませんでした\n")
+            flash("ユーザー名パスワードが一致していません")
+            flash("認証できませんでした")
+            return redirect("/login")
 
-        next = request.args.get("next")
-        return redirect("/my_task")
+        # next = request.args.get("next")
         # return redirect(next)
         # return render_template('testtemp/login.html')
     return render_template("testtemp/login.html")
@@ -253,5 +253,5 @@ def signup():
         password = request.form.get("password")
         target_user = dict(username=username, password=password)
         signup_user(target_user)
-        return redirect('/login')
+        return redirect("/login")
     return render_template("testtemp/signup.html")
