@@ -1,59 +1,65 @@
+# Flask2 セットアップガイド
 
+## セットアップ方法
 
----------セットアップ方法---------
-
-1. リポジトリのクローン
-
+### 1. リポジトリのクローン
+```bash
 git clone ShumpeiSeto/flask2
 cd flask2
+```
+> **注意**: 以下の操作は全てflask2フォルダ内で実行してください
 
-
-下記はflask2フォルダ内にて
-
-2. 仮想環境の作成と有効化
-
-(Windowsの場合)
+### 2. 仮想環境の作成と有効化
+**Windowsの場合:**
+```bash
 python -m venv venv
 venv\Scripts\activate
+```
 
-
-3. 依存関係のインストール
+### 3. 依存関係のインストール
+```bash
 pip install -r requirements.txt
+```
 
-4. データベースの初期化（）
-※相談できておりませんでした。
-※外部キー設定（テーブル連携）で何度もユーザー＆タスク登録しなおす手間があり、migrationに挑戦しました。
-※下記でうまく動かない場合はpython server.pyで起動後に、/make_tableにアクセスすると、テーブル削除＆作成できるのでしてください。
+### 4. データベースの初期化
 
-# マイグレーションファイルが既にある場合
+> **⚠️ 重要な注意事項**
+> - マイグレーション機能はまだ調整中です
+> - 外部キー設定（テーブル連携）の関係で、何度もユーザー＆タスクを登録し直す手間が発生する可能性があります
+> - 下記の方法でうまく動かない場合は、`python server.py`で起動後に `/make_table` にアクセスすると、テーブル削除＆作成ができます
+
+#### マイグレーションファイルが既にある場合
+```bash
 flask db upgrade
+```
 
-# 初回セットアップの場合（必要に応じて）
+#### 初回セットアップの場合
+```bash
 flask db init
 flask db migrate -m "Initial migration"
 flask db upgrade
+```
 
-
-5. アプリケーションの起動
-flask2フォルダ内にて、
-
+### 5. アプリケーションの起動
+flask2フォルダ内で以下を実行:
+```bash
 python server.py
+```
 
+## 起動に関しての注意点
 
+> **Git除外設定について**  
+> gitの除外設定が不完全で、データベースファイルなどが追跡されている状態です。  
+> 何か問題が発生した場合は、`/make_table` にアクセスしてテーブルの削除＆作成を行ってください。
 
-【起動に関して】
-gitの除外設定が甘くデータベースファイルなどが引き続き追跡されているので、なにかあれば/make_tableにアクセスして、
-テーブル削除＆作成してください。
+## プロジェクト構成
 
+主な機能は `flask2/taskbell/` フォルダ内に実装されています。
 
+> **命名について**  
+> Flaskでは通常、メインファイルを `app.py` と命名するのが慣例ですが、このプロジェクトでは `views.py` としています。
 
-------------中身の構成------------
-
-
-主にflask2内のtaskbellフォルダ内に内容があります。まぎらわしい感じになっています。
-flaskで主に起動させるファイルはapp.pyと名前をつけるのが慣例だったようですが、
-私の場合はviews.pyとなっています。
-
+```
 flask2/
 ├── .vscode/              # VSCode設定
 │   └── launch.json
@@ -68,11 +74,31 @@ flask2/
 │   │   └── login_user.py # ユーザーモデル
 │   ├── static/          # 静的ファイル（CSSなど）
 │   ├── templates/       # HTMLテンプレート
-│   ├── __init__.py      # はじめに動くもの
+│   ├── __init__.py      # 初期化ファイル
 │   ├── config.py        # 設定ファイル
-│   └── views.py         # ビュー関数(Routingなどここに多く記述）
+│   └── views.py         # ビュー関数（ルーティングなど）
 ├── venv/                # 仮想環境
 ├── .gitignore           # Git除外設定
 ├── .sqliterc            # SQLite設定
 ├── requirements.txt     # Python依存関係
 └── server.py           # アプリケーション起動ファイル
+```
+
+## トラブルシューティング
+
+### データベースの問題が発生した場合
+1. アプリケーションを起動: `python server.py`
+2. ブラウザで `/make_table` にアクセス
+3. テーブルの削除＆再作成が実行されます
+
+### マイグレーションがうまくいかない場合
+```bash
+# マイグレーション環境をリセット
+rm -rf migrations/
+rm instance/sample_tasks.db
+
+# 再初期化
+flask db init
+flask db migrate -m "Initial migration"
+flask db upgrade
+```
