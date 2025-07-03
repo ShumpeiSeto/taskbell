@@ -16,6 +16,10 @@ db = SQLAlchemy(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 
+# dbできた後でモデルをインポート
+from taskbell.models.add_task import Tasks
+from taskbell.models.login_user import User
+
 # Migration 設定
 migrate = Migrate(app, db)
 

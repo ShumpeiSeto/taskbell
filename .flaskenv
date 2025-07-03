@@ -1,0 +1,2 @@
+FLASK_APP=taskbell
+FLASK_ENV=development

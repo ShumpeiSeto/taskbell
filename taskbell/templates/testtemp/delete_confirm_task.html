@@ -6,7 +6,7 @@
     {# <label for="task_name">タスク名：</label>
     <input value="{{ task['title'] }}" name="title"> #}
     <a href="{{ url_for('my_task')}}">いいえ</a>
-    {# <a href="{{ url_for('delete_task', index=index, _method='POST')}}">はい</a> #}
     <button type="submit">はい</button>
+    {# <a href="{{ url_for('delete_task', index=index, _method='POST')}}">はい</a> #}
 </form>
 {% endblock %}

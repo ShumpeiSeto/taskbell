@@ -24,20 +24,20 @@ class User(UserMixin, db.Model):
     # is_authenticated をoverrideし、username, passwordチェックをしていたが、
     # どうやら継承元UserMinxinのis_authenticatedの方で比較してくれているみたいだ
 
-    # def is_authenticated(self, input_username, input_password):
-    #     if self.username == input_username and self.password == input_password:
-    #         return True
-    #     else:
-    #         return False
+    def is_authenticated(self, input_username, input_password):
+        if self.username == input_username and self.password == input_password:
+            return True
+        else:
+            return False
 
-    def is_authenticated(self):
-        return True
+    # def is_authenticated(self):
+    #     return True
 
-    def is_active(self):
-        return True
+    # def is_active(self):
+    #     return True
 
-    def is_annonymous(self):
-        pass
+    # def is_annonymous(self):
+    #     pass
 
     def get_id(self):
         return int(self.id)

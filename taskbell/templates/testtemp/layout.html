@@ -10,6 +10,11 @@
 <body>
   <header class="header">
     <nav>
+      {% if current_user.is_authenticated %}
+        <p>ユーザー：{{ current_user.username }}</p>
+      {% else %}
+        <p>ユーザー：ゲスト</p>
+      {% endif %}
       <a href="{{ url_for('logout') }}"><button type="button" class="btn btn-danger">ログアウト</button></a>
     </nav>
   </header>
