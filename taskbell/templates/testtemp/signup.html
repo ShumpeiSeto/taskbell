@@ -18,6 +18,15 @@
         <input type="text" name="conf_password" id="conf_password">
         </li>
     </ul>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <ul class="flash_message">
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
         <button type="submit" class="btn btn-primary">新規登録</button>
         <a href="{{ url_for('login') }}"><button type="button" class="btn btn-secondary">ログインへ</button></a>
     </form>

@@ -227,8 +227,8 @@ def login():
             flash(f"あなたは{user.username}です\n")
             return redirect("/my_task")
         else:
-            flash("ユーザー名パスワードが一致していません")
-            flash("認証できませんでした")
+            flash("ユーザー名とパスワードが一致していません")
+            flash("もう一度入力してください")
             return redirect("/login")
 
         # next = request.args.get("next")
@@ -241,6 +241,8 @@ def login():
 @login_required
 def logout():
     logout_user()
+    flash('')
+    flash('')
     return redirect("/")
 
 
@@ -251,7 +253,22 @@ def signup():
     elif request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
+        c_password = request.form.get('conf_password')
         target_user = dict(username=username, password=password)
-        signup_user(target_user)
-        return redirect("/login")
+        # ユーザー存在有無を確認し重複のチェック
+        match_user = User.query.filter(User.username == username).first()
+        if password != c_password:
+            flash('パスワードが一致しません')
+            flash('もう一度入力してください')
+            return redirect('/signup')
+        if match_user == None:
+            signup_user(target_user)
+            return redirect("/login")
+        else:
+            flash('そのユーザー名は既に存在します')
+            flash('別のユーザー名で登録してください')
+            return redirect('/signup')
+
+        # 重複するユーザーが存在する場合は赤メッセージで遷移させない
+        # return redirect("/login")
     return render_template("testtemp/signup.html")
