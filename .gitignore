@@ -1,3 +1,4 @@
 venv/
 __pycache__
 /taskbell/__pycache__
+*.db
