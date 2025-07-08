@@ -193,3 +193,7 @@ section {
   border: 1px solid gray;
   border-radius: 10px;
 }
+
+.flash_message {
+  color: red;
+}

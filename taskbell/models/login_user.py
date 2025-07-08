@@ -13,7 +13,7 @@ class User(UserMixin, db.Model):
 
     __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    username = db.Column(db.String(100))
+    username = db.Column(db.String(100), unique=True)
     password = db.Column(db.String(255))
     created_time = db.Column(db.DateTime, nullable=False, default=datetime.now)
     updated_time = db.Column(
