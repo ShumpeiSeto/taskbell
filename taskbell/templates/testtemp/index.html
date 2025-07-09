@@ -1,25 +1,48 @@
 {% extends 'testtemp/layout.html' %}
 {% block content %}
-    <section class="index_page">
-    {% if current_user.is_authenticated %}
-    <div class="message">
-        <h1>ようこそ、Taskbellへ！</h1>
-        <p>こんにちは！{{ current_user.username }}さん！</p>
-    </div>
-    {% else %}
-    <div class="message">
-        <h1>ようこそ、Taskbellへ！</h1>
-        <p>こんにちは！ゲストさん！</p>
-    </div>
-    {% endif %}
-    <div class="button_field">
-        <ul class="index_list">
-            <li>
-                <a href="{{ url_for('signup') }}"><button type="button" class="btn btn-success signup_button">新規登録</button></a>
-            </li>
-            <li>
-                <a href="{{ url_for('login') }}"><button type="button" class="btn btn-primary login_button">ログイン</button></a>
-            </li>
-        </ul>
+    {# <section class="index_page">
+        {% if current_user.is_authenticated %}
+        <div class="message">
+            <h1>ようこそ、Taskbellへ！</h1>
+            <p>こんにちは！{{ current_user.username }}さん！</p>
+        </div>
+        {% else %}
+        <div class="message">
+            <h1>ようこそ、Taskbellへ！</h1>
+            <p>こんにちは！ゲストさん！</p>
+        </div>
+        {% endif %}
+        <div class="button_field">
+            <ul class="index_list">
+                <li>
+                    <a href="{{ url_for('signup') }}"><button type="button" class="btn btn-success signup_button">新規登録</button></a>
+                </li>
+                <li>
+                    <a href="{{ url_for('login') }}"><button type="button" class="btn btn-primary login_button">ログイン</button></a>
+                </li>
+            </ul>
+        </div>
+    </section> #}
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-8 border border-secondary border-1 rounded px-5 py-4">
+                {% if current_user.is_authenticated %}
+                <div class="message">
+                    <h1>ようこそ、Taskbellへ！</h1>
+                    <p>こんにちは！{{ current_user.username }}さん！</p>
+                </div>
+                {% else %}
+                <div class="message">
+                    <h1>ようこそ、Taskbellへ！</h1>
+                    <p>こんにちは！ゲストさん！</p>
+                </div>
+                {% endif %}
+                    <div class="buttons text-center">
+                      <button type="submit" class="btn btn-primary">ログイン</button>
+                      <a href="{{ url_for('signup') }}"><button type="button" class="btn btn-secondary">新規ユーザー登録へ</button></a>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 {% endblock %}
