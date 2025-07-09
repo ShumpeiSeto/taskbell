@@ -1,6 +1,6 @@
 {% extends "testtemp/layout.html" %}
 {% block content %}
-    <section class="signup_page">
+    {# <div class="signup_page">
     <h1>新規ユーザー登録</h1>
     <p>ユーザ名とパスワードを入力して登録ボタンを押してください</p>
     <form action="signup" method="post" class="signup_form">
@@ -17,18 +17,52 @@
         <label for="conf_password">パスワード（確認）：</label>
         <input type="text" name="conf_password" id="conf_password">
         </li>
-    </ul>
-    {% with messages = get_flashed_messages() %}
-    {% if messages %}
-    <ul class="flash_message">
-        {% for message in messages %}
-        <li>{{ message }}</li>
-        {% endfor %}
-    </ul>
-    {% endif %}
-    {% endwith %}
-        <button type="submit" class="btn btn-primary">新規登録</button>
-        <a href="{{ url_for('login') }}"><button type="button" class="btn btn-secondary">ログインへ</button></a>
-    </form>
-    </section>
+    </ul> #}
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-8 border border-secondary border-1 rounded px-5 py-4">
+                <h1>新規ユーザー登録</h1>
+                <p>ユーザ名とパスワードを入力して登録ボタンを押してください</p>
+                <form action="signup" method="post" class="signup_form">
+                    <div class="row mb-2">
+                    <div class="col-4">
+                        <label for="username">ユーザ名：</label>
+                    </div>
+                    <div class="col-8">
+                        <input type="text" name="username" id="username">
+                    </div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-4">
+                            <label for="password">パスワード：</label>
+                        </div>
+                        <div class="col-8">
+                            <input type="text" name="password" id="password">
+                        </div>
+                    </div>
+                    <div class="row mb-4">
+                        <div class="col-4">
+                            <label for="conf_password">パスワード確認：</label>
+                        </div>
+                        <div class="col-8">
+                            <input type="text" name="conf_password" id="conf_password">
+                        </div>
+                    </div>
+                    {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                    <ul class="flash_message">
+                        {% for message in messages %}
+                        <li>{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                    {% endwith %}
+                    <div class="buttons text-center">
+                        <button type="submit" class="btn btn-primary">新規登録</button>
+                        <a href="{{ url_for('login') }}"><button type="button" class="btn btn-secondary">ログインへ</button></a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 {% endblock %}
