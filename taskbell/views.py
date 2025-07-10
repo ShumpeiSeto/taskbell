@@ -163,7 +163,7 @@ def edit_task(task_id):
         title = request.form.get("title")
         dead_date = request.form.get("dead_date")
         dead_time = request.form.get("dead_time")
-        dead_line = make_deadline(dead_date, dead_time)
+        dead_line = make_deadline2(dead_date, dead_time)
         is_completed = False
         update_info = {
             "title": title,
@@ -230,10 +230,6 @@ def login():
             flash("ユーザー名とパスワードが一致していません")
             flash("もう一度入力してください")
             return redirect("/login")
-
-        # next = request.args.get("next")
-        # return redirect(next)
-        # return render_template('testtemp/login.html')
     return render_template("testtemp/login.html")
 
 
