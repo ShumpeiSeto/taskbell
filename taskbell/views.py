@@ -1,4 +1,4 @@
-from flask import render_template, request, redirect, Flask, flash
+from flask import render_template, request, redirect, Flask, flash, session
 from taskbell import app, db
 from .models.add_task import Tasks
 from .models.login_user import User
@@ -241,8 +241,7 @@ def login():
 @login_required
 def logout():
     logout_user()
-    flash('')
-    flash('')
+    session.pop("_flashes", None)
     return redirect("/")
 
 
@@ -253,21 +252,21 @@ def signup():
     elif request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
-        c_password = request.form.get('conf_password')
+        c_password = request.form.get("conf_password")
         target_user = dict(username=username, password=password)
         # ユーザー存在有無を確認し重複のチェック
         match_user = User.query.filter(User.username == username).first()
         if password != c_password:
-            flash('パスワードが一致しません')
-            flash('もう一度入力してください')
-            return redirect('/signup')
+            flash("パスワードが一致しません")
+            flash("もう一度入力してください")
+            return redirect("/signup")
         if match_user == None:
             signup_user(target_user)
             return redirect("/login")
         else:
-            flash('そのユーザー名は既に存在します')
-            flash('別のユーザー名で登録してください')
-            return redirect('/signup')
+            flash("そのユーザー名は既に存在します")
+            flash("別のユーザー名で登録してください")
+            return redirect("/signup")
 
         # 重複するユーザーが存在する場合は赤メッセージで遷移させない
         # return redirect("/login")

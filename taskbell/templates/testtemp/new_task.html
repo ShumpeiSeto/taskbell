@@ -5,30 +5,38 @@
     <div class="col-8 border border-secondary border-1 rounded px-5 py-4">
       <h1>新規タスクを追加</h1>
       <p>入力後登録ボタンを押してください</p>
-      <div class="row mb-3">
-        <div class="col-5">
-            <label for="task_name">タスク名：</label>
+      <form action="add_task" method="post" class="add_task_form">
+        <div class="row mb-3">
+          <div class="col-5">
+              <label for="task_name">タスク名：</label>
+          </div>
+          <div class="col-7">
+              <input type="text" name="title" id="title">
+          </div>
         </div>
-        <div class="col-7">
-            <input type="text" name="title" id="title">
+        <div class="row mb-3">
+          <div class="col-5">
+            <label for="dead_day">期限日：</label>
+          </div>
+          <div class="col-7">
+            <input type="date" name="dead_date" id="dead_date">
+          </div>
         </div>
-      </div>
-      <div class="row mb-3">
-        <div class="col-5">
-          <label for="dead_day">期限日：</label>
+        <div class="row mb-3">
+          <div class="col-5">
+            <label for="dead_time">期限時間：</label>
+          </div>
+          <div class="col-7">
+            <input type="time" name="dead_time" id="dead_time">
+          </div>
         </div>
-        <div class="col-7">
-          <input type="date" name="dead_date" id="dead_date">
+        <div class="buttons text-center">
+          <button type="submit" class="btn btn-primary mb-3">登録</button>
+          <p>
+          <a href="{{ url_for('my_task') }}"><button type="button" class="btn btn-secondary">タスク一覧へ</button></a>
+          </p>
         </div>
-      </div>
-      <div class="row mb-3">
-        <div class="col-5">
-          <label for="dead_time">期限時間：</label>
-        </div>
-        <div class="col-7">
-          <input type="time" name="dead_time" id="dead_time">
-        </div>
-      </div>
+      </form>
 
     </div>
   </div>
