@@ -35,20 +35,20 @@
                 <p>ユーザ名とパスワードを入力してログインボタンを押してください</p>
                 <form action="login" method="post" class="login_form">
                     <div class="row mb-2">
-                    <div class="col-4">
-                        <label for="username">ユーザ名：</label>
-                    </div>
-                    <div class="col-8">
-                        <input type="text" name="username" id="username">
-                    </div>
+                      <div class="col-4">
+                          <label for="username">ユーザ名：</label>
+                      </div>
+                      <div class="col-8">
+                          <input type="text" name="username" id="username">
+                      </div>
                     </div>
                     <div class="row mb-2">
-                        <div class="col-4">
-                            <label for="password">パスワード：</label>
-                        </div>
-                        <div class="col-8">
-                            <input type="text" name="password" id="password">
-                        </div>
+                      <div class="col-4">
+                          <label for="password">パスワード：</label>
+                      </div>
+                      <div class="col-8">
+                          <input type="text" name="password" id="password">
+                      </div>
                     </div>
                     {% with messages = get_flashed_messages() %}
                     {% if messages %}
