@@ -1,12 +1,17 @@
 {% extends 'testtemp/layout.html' %}
 {% block content %}
-<form method="post">
-    <h1>削除確認</h1>
-    <p>本当に削除しますか？</p>
-    {# <label for="task_name">タスク名：</label>
-    <input value="{{ task['title'] }}" name="title"> #}
-    <a href="{{ url_for('my_task')}}">いいえ</a>
-    <button type="submit">はい</button>
-    {# <a href="{{ url_for('delete_task', index=index, _method='POST')}}">はい</a> #}
-</form>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-8 border border-secondary border-1 rounded px-5 py-4">
+            <form method="post">
+                <h1>削除確認</h1>
+                <p>本当に削除しますか？</p>
+                <div class="buttons text-center">
+                    <a href="{{ url_for('my_task') }}"><button type="button" class="btn btn-secondary">いいえ</button></a>
+                    <button type="submit" class="btn btn-primary">はい</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 {% endblock %}

@@ -196,4 +196,9 @@ section {
 
 .flash_message {
   color: red;
+  text-align: center;
+}
+.flash_message > li {
+  list-style: none;
+  font-style: bold;
 }
