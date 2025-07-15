@@ -14,7 +14,7 @@
         <p>ユーザー：{{ current_user.username }}</p>
         <a href="{{ url_for('logout') }}"><button type="button" class="btn btn-danger">ログアウト</button></a>
       {% else %}
-        <p>ユーザー：ゲスト</p>
+        <p></p>
       {% endif %}
       {# <a href="{{ url_for('logout') }}"><button type="button" class="btn btn-danger">ログアウト</button></a> #}
     </nav>
