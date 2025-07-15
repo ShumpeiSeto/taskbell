@@ -122,6 +122,7 @@ def index():
 
 
 @app.route("/my_task")
+@login_required
 def my_task():
     all_tasks = Tasks.query.order_by(Tasks.deadline)
     nc_tasks = all_tasks.filter(Tasks.user_id == current_user.id).filter(
@@ -134,6 +135,7 @@ def my_task():
 
 
 @app.route("/add_task", methods=["GET", "POST"])
+@login_required
 def add_task():
     if request.method == "GET":
         return render_template("testtemp/new_task.html")
@@ -153,6 +155,7 @@ def add_task():
 
 
 @app.route("/edit_task/<int:task_id>", methods=["GET", "POST"])
+@login_required
 def edit_task(task_id):
     task = Tasks.query.filter(Tasks.task_id == task_id).first()
     print(task)
@@ -175,6 +178,7 @@ def edit_task(task_id):
 
 
 @app.route("/delete_task/<int:task_id>", methods=["GET", "POST"])
+@login_required
 def delete_task(task_id):
     if request.method == "GET":
         return render_template("testtemp/delete_confirm_task.html", task_id=task_id)
@@ -186,6 +190,7 @@ def delete_task(task_id):
 
 
 @app.route("/checked/<int:task_id>")
+@login_required
 def check_task(task_id):
     # checked = request.form.get('task-' + str(task_id))
     task = Tasks.query.filter(Tasks.task_id == task_id).first()
