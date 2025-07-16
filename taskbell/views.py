@@ -5,6 +5,7 @@ from .models.login_user import User
 import datetime
 from sqlalchemy import desc
 from flask_login import login_user, current_user, login_required, logout_user
+
 # from werkzeug.exceptions import HTTPException, Forbidden, InternalServerError, Unauthorized
 
 
@@ -113,23 +114,26 @@ def signup_user(target_user):
         db.session.close()
     return redirect("/")
 
+
 # Error Handling
 @app.errorhandler(400)
-def page_not_found(e):
-    return render_template('testtemp/400.html'), 400
+def handle_bad_request(e):
+    return render_template("testtemp/400.html"), 400
+
 
 @app.errorhandler(401)
-def page_not_found(e):
-    return render_template('testtemp/401.html'), 401
+def handle_unauthorized(e):
+    return render_template("testtemp/401.html"), 401
+
 
 @app.errorhandler(403)
-def page_not_found(e):
-    return render_template('testtemp/401.html'), 403
+def handle_forbidden(e):
+    return render_template("testtemp/401.html"), 403
+
 
 @app.errorhandler(404)
-def page_not_found(e):
-    return render_template('testtemp/404.html'), 404
-
+def handle_not_found(e):
+    return render_template("testtemp/404.html"), 404
 
 
 # app オブジェにルートを登録する

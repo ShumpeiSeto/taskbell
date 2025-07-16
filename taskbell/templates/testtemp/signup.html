@@ -1,67 +1,47 @@
 {% extends "testtemp/layout.html" %}
 {% block content %}
-    {# <div class="signup_page">
-    <h1>新規ユーザー登録</h1>
-    <p>ユーザ名とパスワードを入力して登録ボタンを押してください</p>
-    <form action="signup" method="post" class="signup_form">
-    <ul>
-        <li>
-        <label for="username">ユーザ名：</label>
-        <input type="text" name="username" id="username">
-        </li>
-        <li>
-        <label for="password">パスワード：</label>
-        <input type="text" name="password" id="password">
-        </li>
-        <li>
-        <label for="conf_password">パスワード（確認）：</label>
-        <input type="text" name="conf_password" id="conf_password">
-        </li>
-    </ul> #}
     <div class="container vh-100 px-2 py-4">
-        <div class="row justify-content-center">
-            <div class="col-12 px-5 py-4">
-                <h1>新規ユーザー登録</h1>
-                <p>ユーザ名とパスワードを入力して登録ボタンを押してください</p>
-                <form action="signup" method="post" class="signup_form">
-                    <div class="row mb-2">
-                    <div class="col-5">
-                        <label for="username">ユーザ名：</label>
-                    </div>
-                    <div class="col-7">
-                        <input type="text" name="username" id="username">
-                    </div>
-                    </div>
-                    <div class="row mb-2">
-                        <div class="col-5">
-                            <label for="password">パスワード：</label>
+        <div class="row h-100 justify-content-center align-items-center">
+            <div class="col-12 col-md-8 col-lg-5 col-xl-4">
+                <div class="card border-0">
+                    <div class="card-body p-4 p-md-5">
+                        <div class="text-center">
+                            <h1>新規ユーザー登録</h1>
+                            <p>ユーザ名とパスワードを入力して登録ボタンを押してください</p>
                         </div>
-                        <div class="col-7">
-                            <input type="text" name="password" id="password">
-                        </div>
+                        <form action="signup" method="post" class="signup_form">
+                            {# ユーザ名 #}
+                            <div class="mb-2">
+                                <label for="username" class="form-label fw-bold">ユーザ名：</label>
+                                <input type="text" name="username" id="username" class="form-control form-control-lg" placeholder="ユーザー名を入力" required>
+                            </div> 
+                            {# パスワード #}
+                            <div class="mb-4">
+                                <label for="password" class="form-label fw-bold">パスワード：</label>
+                                <input type="password" name="password" id="password" class="form-control form-control-lg" placeholder="パスワードを入力" required>
+                            </div>
+                            {# 確認パスワード #}
+                            <div class="mb-4">
+                                <label for="conf_password" class="form-label fw-bold">パスワード確認：</label>
+                                <input type="password" name="conf_password" id="conf_password" class="form-control form-control-lg" placeholder="パスワードを入力" required>
+                            </div>
+                            {% with messages = get_flashed_messages() %}
+                            {% if messages %}
+                            <ul class="flash_message">
+                                {% for message in messages %}
+                                <li>{{ message }}</li>
+                                {% endfor %}
+                            </ul>
+                            {% endif %}
+                            {% endwith %}
+                            {# ボタンエリア #}
+                            <div class="d-grid buttons gap-3">
+                                <button type="submit" class="btn btn-primary btn-lg rounded-pill">新規登録</button>
+                                <a href="{{ url_for('login') }}"><button type="button" class="btn btn-secondary btn-lg w-100 rounded-pill">ログインへ</button></a>
+                            </div>
+                        </form>
                     </div>
-                    <div class="row mb-4">
-                        <div class="col-5">
-                            <label for="conf_password">パスワード確認：</label>
-                        </div>
-                        <div class="col-7">
-                            <input type="text" name="conf_password" id="conf_password">
-                        </div>
-                    </div>
-                    {% with messages = get_flashed_messages() %}
-                    {% if messages %}
-                    <ul class="flash_message">
-                        {% for message in messages %}
-                        <li>{{ message }}</li>
-                        {% endfor %}
-                    </ul>
-                    {% endif %}
-                    {% endwith %}
-                    <div class="buttons text-center mt-5">
-                        <button type="submit" class="btn btn-primary mb-3 w-100">新規登録</button>
-                        <a href="{{ url_for('login') }}"><button type="button" class="btn btn-secondary w-100">ログインへ</button></a>
-                    </div>
-                </form>
+                </div>
             </div>
         </div>
     </div>
