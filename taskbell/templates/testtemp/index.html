@@ -1,28 +1,33 @@
 {% extends 'testtemp/layout.html' %}
 {% block content %}
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-8 border border-secondary border-1 rounded px-5 py-4 bg-info bg-gradient">
+    <div class="container vh-100 px-2 py-4 bg-info ">
+        <div class="row vh-100 d-flex flex-md-column">
+            <div class="col-12 col-md-10 d-flex flex-column justify-content-center">
                 {% if current_user.is_authenticated %}
-                <div class="message">
-                    <h1>ようこそ、Taskbellへ！</h1>
-                    <p>こんにちは！{{ current_user.username }}さん！</p>
+                <div class="message text-center my-2">
+                    <div class="todo_image my-2">
+                        <img src="{{ url_for('static', filename='images/todo_image.png') }}" alt="アプリ画像です" class="img-fluid">
+                    </div>
+                    <div class="messages">
+                        <h1>Taskbell</h1>
+                        <p>ようこそ！{{ current_user.username }}さん</p>
+                    </div>
                 </div>
                 {% else %}
-                <div class="message">
-                <div class="todo_image">
-                    <img src="{{ url_for('static', filename='images/todo_image.png') }}" alt="アプリ画像です" class="img-fluid">
-                </div>
-                <div class="messages text-center">
-                    <h1>TaskBell</h1>
-                </div>
+                <div class="message text-center my-2">
+                    <div class="todo_image my-2">
+                        <img src="{{ url_for('static', filename='images/todo_image.png') }}" alt="アプリ画像です" class="img-fluid">
+                    </div>
+                    <div class="messages">
+                        <h1>TaskBell</h1>
+                        <p>あなたのタスク管理をスマートに</p>
+                    </div>
                 </div>
                 {% endif %}
-                <div class="buttons text-center">
-                    <a href="{{ url_for('login') }}"><button type="button" class="btn btn-primary">ログイン</button></a>
-                    <a href="{{ url_for('signup') }}"><button type="button" class="btn btn-secondary">新規ユーザー登録へ</button></a>
-                </div>
-                </form>
+            </div>
+            <div class="col buttons d-flex flex-column flex-md-row gap-3 justify-content-center">
+                <a href="{{ url_for('login') }}" class="w-100"><button type="button" class="btn btn-primary w-100 p-3 rounded-pill">ログイン</button></a>
+                <a href="{{ url_for('signup') }}" class="w-100"><button type="button" class="btn btn-secondary w-100 p-3 rounded-pill">新規ユーザー登録へ</button></a>
             </div>
         </div>
     </div>

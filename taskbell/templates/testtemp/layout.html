@@ -7,14 +7,16 @@
    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
   <title>{{ title }}</title>
 </head>
-<body>
+<body class="bg-info">
   <header class="header">
-    <nav>
+    <nav class="text-end mx-3 my-2">
       {% if current_user.is_authenticated %}
-        <p>ユーザー：{{ current_user.username }}</p>
+      <ul class="list-unstyled">
+        <li class="mb-2">ユーザー：{{ current_user.username }}</li>
+        <li class="mb-2">
         <a href="{{ url_for('logout') }}"><button type="button" class="btn btn-danger">ログアウト</button></a>
-      {% else %}
-        <p></p>
+        </li>
+      </ul>
       {% endif %}
       {# <a href="{{ url_for('logout') }}"><button type="button" class="btn btn-danger">ログアウト</button></a> #}
     </nav>

@@ -18,33 +18,33 @@
         <input type="text" name="conf_password" id="conf_password">
         </li>
     </ul> #}
-    <div class="container">
+    <div class="container vh-100 px-2 py-4">
         <div class="row justify-content-center">
-            <div class="col-8 border border-secondary border-1 rounded px-5 py-4">
+            <div class="col-12 px-5 py-4">
                 <h1>新規ユーザー登録</h1>
                 <p>ユーザ名とパスワードを入力して登録ボタンを押してください</p>
                 <form action="signup" method="post" class="signup_form">
                     <div class="row mb-2">
-                    <div class="col-4">
+                    <div class="col-5">
                         <label for="username">ユーザ名：</label>
                     </div>
-                    <div class="col-8">
+                    <div class="col-7">
                         <input type="text" name="username" id="username">
                     </div>
                     </div>
                     <div class="row mb-2">
-                        <div class="col-4">
+                        <div class="col-5">
                             <label for="password">パスワード：</label>
                         </div>
-                        <div class="col-8">
+                        <div class="col-7">
                             <input type="text" name="password" id="password">
                         </div>
                     </div>
                     <div class="row mb-4">
-                        <div class="col-4">
+                        <div class="col-5">
                             <label for="conf_password">パスワード確認：</label>
                         </div>
-                        <div class="col-8">
+                        <div class="col-7">
                             <input type="text" name="conf_password" id="conf_password">
                         </div>
                     </div>
@@ -57,9 +57,9 @@
                     </ul>
                     {% endif %}
                     {% endwith %}
-                    <div class="buttons text-center">
-                        <button type="submit" class="btn btn-primary">新規登録</button>
-                        <a href="{{ url_for('login') }}"><button type="button" class="btn btn-secondary">ログインへ</button></a>
+                    <div class="buttons text-center mt-5">
+                        <button type="submit" class="btn btn-primary mb-3 w-100">新規登録</button>
+                        <a href="{{ url_for('login') }}"><button type="button" class="btn btn-secondary w-100">ログインへ</button></a>
                     </div>
                 </form>
             </div>
