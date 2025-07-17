@@ -6,6 +6,7 @@ import datetime
 from sqlalchemy import desc
 from flask_login import login_user, current_user, login_required, logout_user
 import locale
+
 # from werkzeug.exceptions import HTTPException, Forbidden, InternalServerError, Unauthorized
 
 
@@ -281,7 +282,7 @@ def signup():
         # ユーザー存在有無を確認し重複のチェック
         match_user = User.query.filter(User.username == username).first()
         if password != c_password:
-            flash("パスワードが一致しません")
+            flash("パスワードが一致していません")
             flash("もう一度入力してください")
             return redirect("/signup")
         if match_user == None:

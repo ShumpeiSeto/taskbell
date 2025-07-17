@@ -1,24 +1,50 @@
 {% extends 'testtemp/layout.html' %}
 {% block content %}
-<section class="edit_task">
-  <h1>タスクを編集</h1>
-  <p>タスク編集しましょう</p>
-  <form method="post" class="edit_task_form">
-  <ul>
-    <li>
-      <label for="task_name">タスク名：</label>
-      <input type="text" name="title" id="title" value="{{ task.title }}">
-    </li>
-    <li>
-      <label for="dead_day">期限日</label>
-      <input type="date" name="dead_date" id="dead_date" value="{{ task.deadline.date() }}">
-    </li>
-    <li>
-      <label for="dead_time">期限時間：</label>
-      <input type="time" name="dead_time" id="dead_time" value="{{ task.deadline.time() }}">
-    </li>
-  </ul>
-    <button type="submit" class="btn btn-success">更新</button>
-  </form>
-</section>
+<div class="container vh-100 px-2 py-4">
+  <div class="row h-100 justify-content-center align-items-start">
+    <div class="col-12 col-md-8 col-lg-5 col-xl-4">
+      <div class="card border-0">
+        <div class="card-body p-4 p-md-5">
+          <div class="text-center">
+            <h1>タスクを編集</h1>
+            <p>編集し更新ボタンを押して下さい</p>
+          </div>
+          <form method="post" class="edit_task_form">
+            <div class="row mb-3">
+              <div class="col-5">
+                  <label for="task_name">タスク名：</label>
+              </div>
+              <div class="col-7">
+                  <input type="text" name="title" id="title">
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-5">
+                <label for="dead_day">期限日：</label>
+              </div>
+              <div class="col-7">
+                <input type="date" name="dead_date" id="dead_date">
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-5">
+                <label for="dead_time">期限時間：</label>
+              </div>
+              <div class="col-7">
+                <input type="time" name="dead_time" id="dead_time">
+              </div>
+            </div>
+            {# ボタンエリア #}
+            <div class="d-grid buttons gap-3">
+              <button type="submit" class="btn btn-primary btn-lg rounded-pill">更新</button>
+              <p>
+              <a href="{{ url_for('my_task') }}"><button type="button" class="btn btn-secondary btn-lg w-100 rounded-pill">タスク一覧へ</button></a>
+              </p>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}
