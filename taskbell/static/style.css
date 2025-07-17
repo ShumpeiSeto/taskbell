@@ -218,3 +218,10 @@ p {
   list-style: none;
   font-style: bold;
 }
+
+/* @media screen and (max-width: 450) {
+  .table th,
+  .table td {
+    padding: 0;
+  }
+} */
