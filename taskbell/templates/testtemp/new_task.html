@@ -1,66 +1,50 @@
 {% extends 'testtemp/layout.html' %}
 {% block content %}
 <div class="container vh-100 px-2 py-4">
-  <div class="row vh-100 d-flex flex-md-column justify-content-center">
-    <div class="col-12 col-md-10 d-flex flex-column justify-content-start">
-      <h1>新規タスクを追加</h1>
-      <p>入力後登録ボタンを押してください</p>
-      <form action="add_task" method="post" class="add_task_form">
-        <div class="row mb-3">
-          <div class="col-5">
-              <label for="task_name">タスク名：</label>
+  <div class="row h-100 justify-content-center align-items-start">
+    <div class="col-12 col-md-8 col-lg-5 col-xl-4">
+      <div class="card border-0">
+        <div class="card-body p-4 p-md-5">
+          <div class="text-center">
+            <h1>新規タスクを追加</h1>
+            <p>入力後登録ボタンを押してください</p>
           </div>
-          <div class="col-7">
-              <input type="text" name="title" id="title">
-          </div>
+          <form action="add_task" method="post" class="add_task_form">
+            <div class="row mb-3">
+              <div class="col-5">
+                  <label for="task_name">タスク名：</label>
+              </div>
+              <div class="col-7">
+                  <input type="text" name="title" id="title">
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-5">
+                <label for="dead_day">期限日：</label>
+              </div>
+              <div class="col-7">
+                <input type="date" name="dead_date" id="dead_date">
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-5">
+                <label for="dead_time">期限時間：</label>
+              </div>
+              <div class="col-7">
+                <input type="time" name="dead_time" id="dead_time">
+              </div>
+            </div>
+            {# ボタンエリア #}
+            <div class="d-grid buttons gap-3">
+              <button type="submit" class="btn btn-primary btn-lg rounded-pill">登録</button>
+              <p>
+              <a href="{{ url_for('my_task') }}"><button type="button" class="btn btn-secondary btn-lg w-100 rounded-pill">タスク一覧へ</button></a>
+              </p>
+            </div>
+          </form>
         </div>
-        <div class="row mb-3">
-          <div class="col-5">
-            <label for="dead_day">期限日：</label>
-          </div>
-          <div class="col-7">
-            <input type="date" name="dead_date" id="dead_date">
-          </div>
-        </div>
-        <div class="row mb-3">
-          <div class="col-5">
-            <label for="dead_time">期限時間：</label>
-          </div>
-          <div class="col-7">
-            <input type="time" name="dead_time" id="dead_time">
-          </div>
-        </div>
-        <div class="buttons text-center">
-          <button type="submit" class="btn btn-primary mb-3 w-100">登録</button>
-          <p>
-          <a href="{{ url_for('my_task') }}"><button type="button" class="btn btn-secondary w-100">タスク一覧へ</button></a>
-          </p>
-        </div>
-      </form>
-
+      </div>
     </div>
   </div>
 </div>
-{# <section class="add_new_task">
-  <h1>新規タスクを追加</h1>
-  <p>入力後登録ボタンを押してください</p>
-  <form action="add_task" method="post" class="add_task_form">
-  <ul>
-    <li>
-      <label for="task_name">タスク名：</label>
-      <input type="text" name="title" id="title">
-    </li>
-    <li>
-      <label for="dead_day">期限日：</label>
-      <input type="date" name="dead_date" id="dead_date">
-    </li>
-    <li>
-      <label for="dead_time">期限時間：</label>
-      <input type="time" name="dead_time" id="dead_time">
-    </li>
-  </ul>
-    <button type="submit" class="btn btn-primary">登録</button>
-    <a href="{{ url_for('my_task') }}"><button type="button" class="btn btn-secondary">タスク一覧へ</button></a>
-  </form>
-</section> #}
 {% endblock %}

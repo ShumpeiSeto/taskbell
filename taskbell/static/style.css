@@ -210,14 +210,14 @@ p {
 .buttons button {
   font-size: 1.3rem;
 }
-.flash_message {
+/* .flash_message {
   color: red;
   text-align: center;
 }
 .flash_message > li {
   list-style: none;
   font-style: bold;
-}
+} */
 
 /* @media screen and (max-width: 450) {
   .table th,

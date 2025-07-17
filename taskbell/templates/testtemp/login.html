@@ -23,7 +23,7 @@
                       </div>
                       {% with messages = get_flashed_messages() %}
                       {% if messages %}
-                      <ul class="flash_message">
+                      <ul class="alert alert-danger list-unstyled text-center flash_message fw-bold">
                           {% for message in messages %}
                           <li>{{ message }}</li>
                           {% endfor %}
