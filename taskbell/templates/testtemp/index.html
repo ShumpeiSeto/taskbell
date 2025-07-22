@@ -1,6 +1,6 @@
 {% extends 'testtemp/layout.html' %}
 {% block content %}
-    <div class="container vh-100 px-2 py-4 bg-info ">
+    <div class="container vh-100 px-2 py-4 ">
         <div class="row vh-100 d-flex flex-column">
             <div class="col-12 d-flex flex-column justify-content-center flex-grow-1">
                 {% if current_user.is_authenticated %}
@@ -19,8 +19,8 @@
                         <img src="{{ url_for('static', filename='images/todo_image.png') }}" alt="アプリ画像です" class="img-fluid">
                     </div>
                     <div class="messages">
-                        <h1>TaskBell</h1>
-                        <p>あなたのタスク管理をスマートに</p>
+                        <h1 class="text-light">TaskBell</h1>
+                        <p class="text-light">あなたのタスク管理をスマートに</p>
                     </div>
                 </div>
                 {% endif %}
