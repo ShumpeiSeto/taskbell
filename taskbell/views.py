@@ -44,6 +44,7 @@ def insert(task_obj):
             deadline=task_obj["deadline"],
             is_completed=False,
             user_id=task_obj["user_id"],
+            importance=task_obj["importance"],
         )
         db.session.add(task)
         db.session.commit()
@@ -178,8 +179,13 @@ def add_task():
         deadline = make_deadline(dead_date, dead_time)
         is_completed = False
         user_id = current_user.id
+        importance = request.form.get("importance")
         target_task = dict(
-            title=title, deadline=deadline, is_completed=is_completed, user_id=user_id
+            title=title,
+            deadline=deadline,
+            is_completed=is_completed,
+            user_id=user_id,
+            importance=importance,
         )
         print(target_task)
         insert(target_task)
