@@ -5,9 +5,12 @@ from .models.login_user import User
 import datetime
 from sqlalchemy import desc
 from flask_login import login_user, current_user, login_required, logout_user
-import locale
+
+# import locale
 
 # from werkzeug.exceptions import HTTPException, Forbidden, InternalServerError, Unauthorized
+
+# locale.setlocale(locale.LC_TIME, "ja_JP.UTF-8")
 
 
 def init_db():
@@ -136,9 +139,11 @@ def handle_forbidden(e):
 def handle_not_found(e):
     return render_template("testtemp/error.html"), 404
 
+
 @app.errorhandler(500)
 def internal_server_error(e):
     return render_template("testtemp/error.html"), 500
+
 
 # app オブジェにルートを登録する
 @app.route("/")

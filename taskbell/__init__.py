@@ -1,7 +1,9 @@
+# coding: utf-8
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_migrate import Migrate
+import locale
 
 
 print("__init__.pyがじっこうされました")
@@ -19,6 +21,15 @@ login_manager.init_app(app)
 # dbできた後でモデルをインポート
 from taskbell.models.add_task import Tasks
 from taskbell.models.login_user import User
+
+
+# 言語設定のためのカスタムフィルター書いてみる
+@app.template_filter("add_weekday")
+def str_add_weekday(date):
+    weekdays = ["月", "火", "水", "木", "金", "土", "日"]
+    weekday = weekdays[date.weekday()]
+    return f"{date.strftime('%y/%m/%d')}({weekday})"
+
 
 # Migration 設定
 migrate = Migrate(app, db)

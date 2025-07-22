@@ -1,9 +1,9 @@
 /* 全体レイアウト設定 */
-/* * {
+* {
   padding: 0;
   margin: 0;
 }
-*/
+
 body {
   background-color: #25606f;
 }
@@ -11,12 +11,53 @@ h3,
 h4 {
   color: white;
 }
-h1 {
+@media screen and (max-width: 768px) {
+  .font-size-s {
+    font-size: 1.2rem;
+  }
+  .font-size-m {
+    font-size: 1.6rem;
+  }
+  .font-size-l {
+    font-size: 2.5rem;
+  }
+}
+
+@media screen and (min-width: 768px) and (max-width: 991px) {
+  .font-size-s {
+    font-size: 1.4rem;
+  }
+  .font-size-m {
+    font-size: 1.8rem;
+  }
+  .font-size-l {
+    font-size: 2.7rem;
+  }
+}
+
+@media screen and (min-width: 992px) {
+  .font-size-s {
+    font-size: 1.7rem;
+  }
+  .font-size-m {
+    font-size: 2.1rem;
+  }
+  .font-size-l {
+    font-size: 3rem;
+  }
+}
+
+.todo_image img {
+  max-width: 130px;
+  max-height: 130px;
+}
+/* h1 {
   font-size: 2.7rem;
 }
 p {
   font-size: 1.6rem;
-}
+} */
+
 /*
 .header {
   width: 100%;
@@ -51,11 +92,6 @@ p {
 .login_button {
   text-align: center;
 } */
-
-.todo_image img {
-  max-width: 200px;
-  max-height: 200px;
-}
 
 /* 1. タスク一覧ページ設定 */
 /* .alltask {
