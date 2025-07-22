@@ -19,13 +19,13 @@
                         <img src="{{ url_for('static', filename='images/todo_image.png') }}" alt="アプリ画像です" class="img-fluid">
                     </div>
                     <div class="messages">
-                        <h1 class="text-light">TaskBell</h1>
-                        <p class="text-light">あなたのタスク管理をスマートに</p>
+                        <h1 class="text-light font-size-l">TaskBell</h1>
+                        <p class="text-light font-size-m">あなたのタスク管理をスマートに</p>
                     </div>
                 </div>
                 {% endif %}
             </div>
-            <div class="col-12 buttons col-md-8 col-lg-6 mx-auto">
+            <div class="col-12 buttons col-md-8 col-lg-6 mx-auto mb-5">
                 <div class="d-flex flex-column flex-md-row gap-3 justify-content-center">
                     <a href="{{ url_for('login') }}" class="w-100"><button type="button" class="btn btn-primary w-100 p-3 p-md-2 rounded-pill">ログイン</button></a>
                     <a href="{{ url_for('signup') }}" class="w-100"><button type="button" class="btn btn-secondary w-100 p-3 p-md-2 rounded-pill">新規ユーザー登録へ</button></a>

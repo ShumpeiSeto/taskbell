@@ -2,6 +2,9 @@
 from taskbell import app
 import os
 
+# os.environ["LANG"] = "ja_JP.UTF-8"
+# os.environ["LC_ALL"] = "C.UTF-8"
+
 if __name__ == "__main__":
     # app.run()
     # Render.comが提供するポートを取得（なければ5000）
