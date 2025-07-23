@@ -23,13 +23,14 @@ from taskbell.models.add_task import Tasks
 from taskbell.models.login_user import User
 
 
-# 言語設定のためのカスタムフィルター書いてみる
+# 言語設定のためのカスタムフィルター
 @app.template_filter("add_weekday")
 def str_add_weekday(date):
     weekdays = ["月", "火", "水", "木", "金", "土", "日"]
     weekday = weekdays[date.weekday()]
     return f"{date.strftime('%m/%d')}({weekday})"
 
+# 重要度から漢字重要度を出すフィルター
 @app.template_filter("convert_importance")
 def str_convert_importance(num_importance):
     importances = ["低", "中", "高"]
