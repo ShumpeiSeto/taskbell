@@ -28,8 +28,13 @@ from taskbell.models.login_user import User
 def str_add_weekday(date):
     weekdays = ["月", "火", "水", "木", "金", "土", "日"]
     weekday = weekdays[date.weekday()]
-    return f"{date.strftime('%y/%m/%d')}({weekday})"
+    return f"{date.strftime('%m/%d')}({weekday})"
 
+@app.template_filter("convert_importance")
+def str_convert_importance(num_importance):
+    importances = ["低", "中", "高"]
+    importance = importances[num_importance]
+    return importance
 
 # Migration 設定
 migrate = Migrate(app, db)

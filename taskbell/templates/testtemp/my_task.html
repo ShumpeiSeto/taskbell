@@ -37,7 +37,7 @@
                   <label class="deadline my-auto" for="deadline">{{ nc_task['deadline'].strftime('%H:%m') }}</label>
                 </td>
                 <td class="px-0 p-md-2 text-center align-middle">
-                  <label class="importance my-auto" for="importance">{{ nc_task['importance'] }}</label>
+                  <label class="importance my-auto" for="importance">{{ nc_task['importance'] | convert_importance }}</label>
                 </td>
                 <td class="d-flex flex-row px-0 p-md-2 text-center justify-content-evenly align-middle gap-3">
                   <a href="{{ url_for('edit_task', task_id=nc_task['task_id']) }}" class="mb-1"><button type="button" class="btn btn-primary py-1 px-0">編集</button></a>
