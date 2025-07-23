@@ -58,6 +58,7 @@ def update(task, update_info):
         task.title = update_info["title"]
         task.deadline = update_info["dead_line"]
         task.is_completed = update_info["is_completed"]
+        task.importance = update_info["importance"]
         try:
             # db.session.add(task)
             db.session.merge(task)
@@ -205,11 +206,13 @@ def edit_task(task_id):
         dead_date = request.form.get("dead_date")
         dead_time = request.form.get("dead_time")
         dead_line = make_deadline2(dead_date, dead_time)
+        importance = int(request.form.get("importance"))
         is_completed = False
         update_info = {
             "title": title,
             "dead_line": dead_line,
             "is_completed": is_completed,
+            "importance": importance
         }
         update(task, update_info)
     return redirect("/my_task")
