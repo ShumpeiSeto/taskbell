@@ -6,34 +6,75 @@
       <div class="card border-0">
         <div class="card-body p-4 p-md-5">
           <div class="text-center">
-            <h1>タスクを編集</h1>
-            <p>編集し更新ボタンを押して下さい</p>
+            <h1 class="font-size-l">タスクを編集</h1>
+            <p class="font-size-s">編集し更新ボタンを押して下さい</p>
           </div>
           <form method="post" class="edit_task_form">
             <div class="row mb-3">
-              <div class="col-5">
+              <div class="col-4">
                   <label for="task_name">タスク名：</label>
               </div>
-              <div class="col-7">
-                  <input type="text" name="title" id="title">
+              <div class="col-6">
+                  <input type="text" name="title" id="title" value="{{ task.title }}">
               </div>
             </div>
             <div class="row mb-3">
-              <div class="col-5">
+              <div class="col-4">
                 <label for="dead_day">期限日：</label>
               </div>
               <div class="col-7">
-                <input type="date" name="dead_date" id="dead_date">
+                <input type="date" name="dead_date" id="dead_date" value="{{ task.deadline.date() }}">
               </div>
             </div>
             <div class="row mb-3">
-              <div class="col-5">
+              <div class="col-4">
                 <label for="dead_time">期限時間：</label>
               </div>
               <div class="col-7">
-                <input type="time" name="dead_time" id="dead_time">
+                <input type="time" name="dead_time" id="dead_time" value="{{ task.deadline.time() }}">
               </div>
             </div>
+            <div class="row mb-3">
+              <div class="col-3">
+                <label for="importance">重要度：</label>
+              </div>
+              {% if task.importance == 0 %}
+              <div class="col-8">
+              <label class="pe-1">
+                <input type="radio" name="importance" id="importance" value="0" checked>普通
+              </label>
+              <label class="pe-1">
+                <input type="radio" name="importance" id="importance" value="1">重要
+              </label>
+              <label>
+                <input type="radio" name="importance" id="importance" value="2">最重要
+              </label>
+              </div>
+              {% elif task.importance == 1 %}
+              <div class="col-8">
+              <label class="pe-1">
+                <input type="radio" name="importance" id="importance" value="0">普通
+              </label>
+              <label class="pe-1">
+                <input type="radio" name="importance" id="importance" value="1" checked>重要
+              </label>
+              <label>
+                <input type="radio" name="importance" id="importance" value="2">最重要
+              </label>
+              </div>
+              {% elif task.importance == 2 %}
+              <div class="col-8">
+              <label class="pe-1">
+                <input type="radio" name="importance" id="importance" value="0">普通
+              </label>
+              <label class="pe-1">
+                <input type="radio" name="importance" id="importance" value="1">重要
+              </label>
+              <label>
+                <input type="radio" name="importance" id="importance" value="2" checked>最重要
+              </label>
+              </div>
+            {% endif %}
             {# ボタンエリア #}
             <div class="d-grid buttons gap-3">
               <button type="submit" class="btn btn-primary btn-lg rounded-pill">更新</button>
