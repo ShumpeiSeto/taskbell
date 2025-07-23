@@ -3,7 +3,6 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_migrate import Migrate
-import locale
 
 
 print("__init__.pyがじっこうされました")
@@ -30,12 +29,14 @@ def str_add_weekday(date):
     weekday = weekdays[date.weekday()]
     return f"{date.strftime('%m/%d')}({weekday})"
 
+
 # 重要度から漢字重要度を出すフィルター
 @app.template_filter("convert_importance")
 def str_convert_importance(num_importance):
     importances = ["低", "中", "高"]
     importance = importances[num_importance]
     return importance
+
 
 # Migration 設定
 migrate = Migrate(app, db)
