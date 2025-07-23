@@ -6,8 +6,8 @@
       <div class="col-12 col-md-8 col-lg-5 col-xl-4">
         <h4 class="font-size-m">未完了タスク</h4>
         <div class="sort_buttons d-flex flex-row justify-content-end px-0 py-1 gap-2"> 
-        <a href="{{ url_for('my_task', mode=1) }}"><button type="button" class="btn btn-warning">重要度順</button></a>
-        <a href="{{ url_for('my_task', mode=0) }}"><button type="button" class="btn btn-light">日付順</button></a>
+        <a href="{{ url_for('my_task_i_sorted') }}"><button type="button" class="btn btn-warning">重要度順</button></a>
+        <a href="{{ url_for('my_task') }}"><button type="button" class="btn btn-light">日付順</button></a>
         </div>
         <table class="table table-light table-hover table-bordered">
           <thead>

@@ -3,7 +3,10 @@ from taskbell import app, db
 from .models.add_task import Tasks
 from .models.login_user import User
 import datetime
+
 from sqlalchemy import desc
+
+# from flask_sqlalchemy import desc
 from flask_login import login_user, current_user, login_required, logout_user
 
 # import locale
@@ -168,6 +171,19 @@ def my_task():
     return render_template("testtemp/my_task.html", nc_tasks=nc_tasks, c_tasks=c_tasks)
 
 
+@app.route("/my_task/sorted")
+@login_required
+def my_task_i_sorted():
+    all_tasks = Tasks.query.order_by(desc(Tasks.importance))
+    nc_tasks = all_tasks.filter(Tasks.user_id == current_user.id).filter(
+        Tasks.is_completed == 0
+    )
+    c_tasks = all_tasks.filter(Tasks.user_id == current_user.id).filter(
+        Tasks.is_completed == 1
+    )
+    return render_template("testtemp/my_task.html", nc_tasks=nc_tasks, c_tasks=c_tasks)
+
+
 @app.route("/add_task", methods=["GET", "POST"])
 @login_required
 def add_task():
@@ -206,13 +222,13 @@ def edit_task(task_id):
         dead_date = request.form.get("dead_date")
         dead_time = request.form.get("dead_time")
         dead_line = make_deadline2(dead_date, dead_time)
-        importance = int(request.form.get("importance"))
+        importance = request.form.get("importance")
         is_completed = False
         update_info = {
             "title": title,
             "dead_line": dead_line,
             "is_completed": is_completed,
-            "importance": importance
+            "importance": importance,
         }
         update(task, update_info)
     return redirect("/my_task")
