@@ -154,20 +154,38 @@ def internal_server_error(e):
 @app.route("/")
 def index():
     return render_template("testtemp/index.html")
-    # return "Hello World"
-    # return render_template("testtemp/index.html", title="Index Page")
+
+
+@app.before_request
+def initialize_session():
+    if "nc_mode" not in session and "c_mode" not in session:
+        session["nc_mode"] = 0
+        session["c_mode"] = 0
 
 
 @app.route("/my_task")
 @login_required
 def my_task():
     all_tasks = Tasks.query.order_by(Tasks.deadline)
-    nc_tasks = all_tasks.filter(Tasks.user_id == current_user.id).filter(
-        Tasks.is_completed == 0
-    )
-    c_tasks = all_tasks.filter(Tasks.user_id == current_user.id).filter(
-        Tasks.is_completed == 1
-    )
+    all_tasks_desc = Tasks.query.order_by(desc(Tasks.importance))
+    if session["nc_mode"] == 0:
+        nc_tasks = all_tasks.filter(Tasks.user_id == current_user.id).filter(
+            Tasks.is_completed == 0
+        )
+    elif session["nc_mode"] == 1:
+        nc_tasks = all_tasks_desc.filter(Tasks.user_id == current_user.id).filter(
+            Tasks.is_completed == 0
+        )
+
+    if session["c_mode"] == 0:
+        c_tasks = all_tasks.filter(Tasks.user_id == current_user.id).filter(
+            Tasks.is_completed == 1
+        )
+    elif session["c_mode"] == 1:
+        c_tasks = all_tasks_desc.filter(Tasks.user_id == current_user.id).filter(
+            Tasks.is_completed == 1
+        )
+
     return render_template("testtemp/my_task.html", nc_tasks=nc_tasks, c_tasks=c_tasks)
 
 
@@ -184,6 +202,21 @@ def my_task_i_sorted():
     return render_template("testtemp/my_task.html", nc_tasks=nc_tasks, c_tasks=c_tasks)
 
 
+@app.route("/my_task/<int:flg>")
+@login_required
+def button_click(flg):
+    if flg == 1:
+        session["nc_mode"] = 1
+    if flg == 2:
+        session["nc_mode"] = 0
+    if flg == 3:
+        session["c_mode"] = 1
+    if flg == 4:
+        session["c_mode"] = 0
+    return redirect("/my_task")
+
+
+@app.route("/")
 @app.route("/add_task", methods=["GET", "POST"])
 @login_required
 def add_task():
@@ -299,7 +332,8 @@ def login():
 @login_required
 def logout():
     logout_user()
-    session.pop("_flashes", None)
+    # session.pop("_flashes", None)
+    session.clear()
     return redirect("/")
 
 
