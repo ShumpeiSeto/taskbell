@@ -269,8 +269,11 @@ def edit_task(task_id):
 @app.route("/delete_task/<int:task_id>", methods=["GET", "POST"])
 @login_required
 def delete_task(task_id):
+    task = Tasks.query.filter(Tasks.task_id == task_id).first()
     if request.method == "GET":
-        return render_template("testtemp/delete_confirm_task.html", task_id=task_id)
+        return render_template(
+            "testtemp/delete_confirm_task.html", task_id=task_id, task=task
+        )
     elif request.method == "POST":
         print("削除処理がはじまります")
         delete(task_id)
