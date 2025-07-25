@@ -43,9 +43,11 @@
                 <td class="px-0 p-md-2 text-center align-middle">
                   <label class="importance my-auto" for="importance">{{ nc_task['importance'] | convert_importance }}</label>
                 </td>
-                <td class="d-flex flex-row px-0 py-auto p-md-2 text-center justify-content-evenly align-middle gap-3 flex-grow">
+                <td class="px-0 p-md-2 text-center align-middle">
+                <div class="d-flex flex-row px-0 py-auto p-md-2 text-center justify-content-evenly align-middle gap-3 flex-grow">
                   <a href="{{ url_for('edit_task', task_id=nc_task['task_id']) }}" class="mb-1"><button type="button" class="btn btn-primary py-2 px-1">編集</button></a>
                   <a href="{{ url_for('delete_task', task_id=nc_task['task_id']) }}"><button type="button" class="btn btn-danger py-2 px-1">削除</button></a>
+                  </div>
                 </td>
               </tr>
             {% endfor %}
