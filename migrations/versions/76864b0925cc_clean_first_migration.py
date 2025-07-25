@@ -1,8 +1,8 @@
-"""Initial migration
+"""Clean first migration
 
-Revision ID: b89851f973df
+Revision ID: 76864b0925cc
 Revises: 
-Create Date: 2025-07-02 12:03:05.753623
+Create Date: 2025-07-25 12:33:41.947473
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'b89851f973df'
+revision = '76864b0925cc'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -24,7 +24,8 @@ def upgrade():
     sa.Column('password', sa.String(length=255), nullable=True),
     sa.Column('created_time', sa.DateTime(), nullable=False),
     sa.Column('updated_time', sa.DateTime(), nullable=False),
-    sa.PrimaryKeyConstraint('id')
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('username')
     )
     op.create_table('tasks',
     sa.Column('task_id', sa.Integer(), autoincrement=True, nullable=False),
@@ -32,6 +33,7 @@ def upgrade():
     sa.Column('deadline', sa.DateTime(), nullable=True),
     sa.Column('is_completed', sa.Boolean(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
+    sa.Column('importance', sa.Integer(), nullable=False),
     sa.Column('created_time', sa.DateTime(), nullable=False),
     sa.Column('updated_time', sa.DateTime(), nullable=False),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),

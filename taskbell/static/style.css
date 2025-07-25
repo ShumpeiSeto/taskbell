@@ -1,3 +1,39 @@
+/* 配色のための変数用意 */
+:root {
+  --primary-dark: #1b3c53;
+  --primary-medium: #4a7c7e;
+  --primary-light: #6b9b9c;
+  --card-bg: #ffffff;
+  --btn-edit: #5dade2;
+  --btn-delete: #cd6155;
+  --btn-success: #58d68d;
+  --text-dark: #2c3e50;
+  --text-muted: #7f8c8d;
+  --accent-warm: #d4a574;
+}
+
+/* bootstrap付属色の上書き */
+.btn-danger {
+  background-color: var(--btn-delete) !important;
+  border-color: var(--btn-delete) !important;
+}
+.btn-success {
+  background-color: var(--btn-success) !important;
+  border-color: var(--btn-success) !important;
+}
+.btn-primary {
+  background-color: var(--btn-edit) !important;
+  border-color: var(--btn-edit) !important;
+}
+.btn-warning {
+  background-color: var(--accent-warm) !important;
+  border-color: var(--accent-warm) !important;
+}
+.btn-light {
+  background-color: var(--primary-light) !important;
+  border-color: var(--primary-light) !important;
+}
+
 /* 全体レイアウト設定 */
 * {
   padding: 0;
@@ -5,7 +41,18 @@
 }
 
 body {
-  background-color: #25606f;
+  background-color: var(--primary-dark);
+  color: var(--text-dark) !important;
+}
+.table,
+.table th,
+.table td {
+  color: var(--text-dark) !important;
+}
+h1,
+p,
+label {
+  color: var(--text-dark) !important;
 }
 h3,
 h4 {
