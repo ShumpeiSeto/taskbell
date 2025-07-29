@@ -163,7 +163,7 @@ def initialize_session():
 @login_required
 def my_task():
     all_tasks = Tasks.query.order_by(Tasks.deadline)
-    all_tasks_desc = Tasks.query.order_by(desc(Tasks.importance))
+    all_tasks_desc = Tasks.query.order_by(desc(Tasks.importance), Tasks.deadline)
     if session["nc_mode"] == 0:
         nc_tasks = all_tasks.filter(Tasks.user_id == current_user.id).filter(
             Tasks.is_completed == 0

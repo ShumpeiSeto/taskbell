@@ -72,9 +72,10 @@
         <table class="table table-light table-hover table-bordered">
           <thead>
             <tr>
-              <th rowspan="2" scope="col" class="p-0 p-md-2 text-center align-middle">#</th>
+              {# <th rowspan="2" scope="col" class="p-0 p-md-2 text-center align-middle">#</th> #}
               <th rowspan="2" scope="col" class="p-0 p-md-2 text-center align-middle">タスク名</th>
               <th colspan="2" scope="col" class="p-0 p-md-2 text-center align-middle">期限</th>
+              <th rowspan="2" scope="col" class="p-0 p-md-2 text-center align-middle">重要度</th>
               <th rowspan="2" scope="col" class="p-0 p-md-2 text-center align-middle">操作</th>
             </tr>
             <tr>
@@ -85,11 +86,6 @@
           <tbody>
             {% for c_task in c_tasks %}
               <tr>
-                <th scope="row" class="px-0 p-md-2 text-center align-middle">
-                  <a href="{{ url_for('check_task', task_id=c_task['task_id']) }}" class="check_box_a">
-                <button type="button" class="btn btn-light rounded-circl p-0 check_box_b">済</button>
-                  </a>
-                </th>
                 <td class="px-0 p-md-2 text-center align-middle">
                   <label class="comp_task_name text-decoration-line-through" for="firstCheckbox">{{ c_task['title']}}</label>
                 </td>
@@ -100,7 +96,17 @@
                   <label class="comp_task_deadline text-decoration-line-through" for="deadline">{{ c_task['deadline'].strftime('%H:%M')}}</label>
                 </td>
                 <td class="px-0 p-md-2 text-center align-middle">
-                  <a href="{{ url_for('delete_task', task_id=c_task['task_id']) }}"><button type="button" class="btn btn-danger p-0">削除</button></a>
+                  <label class="importance my-auto text-decoration-line-through" for="importance">{{ c_task['importance'] | convert_importance }}</label>
+                </td>
+                <td class="px-0 p-md-2 text-center align-middle">
+                <div class="d-flex flex-row px-0 py-auto p-md-2 text-center justify-content-evenly align-middle gap-3 flex-grow">
+
+                  <a href="{{ url_for('check_task', task_id=c_task['task_id']) }}" class="mb-1">
+                <button type="button" class="btn btn-light py-2 px-1">戻す</button>
+                  </a>
+                  <a href="{{ url_for('delete_task', task_id=c_task['task_id']) }}"><button type="button" class="btn btn-danger py-2 px-1">削除</button></a>
+                  </div>
+
                 </td>
               </tr>
             {% endfor %}
