@@ -31,7 +31,7 @@
                 <label for="dead_time">期限時間：</label>
               </div>
               <div class="col-7">
-                <input type="time" name="dead_time" id="dead_time" value="{{ task.deadline.time() }}">
+                <input type="time" name="dead_time" id="dead_time" value="{{ task.deadline.strftime('%H:%M') }}">
               </div>
             </div>
             <div class="row mb-3">
