@@ -9,13 +9,8 @@ from sqlalchemy import desc
 # from flask_sqlalchemy import desc
 from flask_login import login_user, current_user, login_required, logout_user
 
-# import locale
 
-# from werkzeug.exceptions import HTTPException, Forbidden, InternalServerError, Unauthorized
-
-# locale.setlocale(locale.LC_TIME, "ja_JP.UTF-8")
-
-
+# 手動テーブル削除と作成用（テスト時）
 def init_db():
     # DB作成する(一旦削除したうえで)
     db.drop_all()
@@ -161,6 +156,7 @@ def initialize_session():
     if "nc_mode" not in session and "c_mode" not in session:
         session["nc_mode"] = 0
         session["c_mode"] = 0
+    session.pop("_flashes", None)
 
 
 @app.route("/my_task")
@@ -237,6 +233,7 @@ def add_task():
             importance=importance,
         )
         print(target_task)
+        flash(f"「{title}」が登録されました")
         insert(target_task)
     return render_template("testtemp/new_task.html")
 
