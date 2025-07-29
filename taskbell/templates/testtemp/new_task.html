@@ -50,6 +50,15 @@
               </label>
               </div>
             </div>
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <ul class="alert alert-success list-unstyled text-center flash_message fw-bold">
+                {% for message in messages %}
+                <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+            {% endwith %}
             {# ボタンエリア #}
             <div class="d-grid buttons gap-3">
               <button type="submit" class="btn btn-primary btn-lg rounded-pill">登録</button>
