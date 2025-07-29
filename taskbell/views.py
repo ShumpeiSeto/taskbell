@@ -308,9 +308,9 @@ def login():
         #     return render_template("testtemp/index.html", current_user=current_user)
 
         # ユーザーが存在するかユーザ名で検索する
-        username = request.form.get("username")
+        username = request.form.get("username", "").strip()
         user = User.query.filter(User.username == username).one_or_none()
-        password = request.form.get("password")
+        password = request.form.get("password", "").strip()
 
         # instanceつくる
         # overrrideしていたが継承元UserMixinのものでOKだった
@@ -341,10 +341,13 @@ def signup():
     if request.method == "GET":
         return render_template("testtemp/signup.html")
     elif request.method == "POST":
-        username = request.form.get("username")
-        password = request.form.get("password")
-        c_password = request.form.get("conf_password")
+        username = request.form.get("username", "").strip()
+        password = request.form.get("password", "").strip()
+        c_password = request.form.get("conf_password", "").strip()
         target_user = dict(username=username, password=password)
+
+        # Validation
+        # データチェック
         # ユーザー存在有無を確認し重複のチェック
         match_user = User.query.filter(User.username == username).first()
         if password != c_password:
