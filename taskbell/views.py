@@ -148,6 +148,8 @@ def internal_server_error(e):
 # app オブジェにルートを登録する
 @app.route("/")
 def index():
+    logout_user()
+    session.clear()
     return render_template("testtemp/index.html")
 
 
@@ -156,7 +158,7 @@ def initialize_session():
     if "nc_mode" not in session and "c_mode" not in session:
         session["nc_mode"] = 0
         session["c_mode"] = 0
-    session.pop("_flashes", None)
+    # session.pop("_flashes", None)
 
 
 @app.route("/my_task")
@@ -215,6 +217,7 @@ def button_click(flg):
 @app.route("/add_task", methods=["GET", "POST"])
 @login_required
 def add_task():
+    session.pop("_flashes", None)
     if request.method == "GET":
         return render_template("testtemp/new_task.html")
     elif request.method == "POST":
@@ -311,10 +314,11 @@ def login():
         username = request.form.get("username", "").strip()
         user = User.query.filter(User.username == username).one_or_none()
         password = request.form.get("password", "").strip()
+        print(user)
 
         # instanceつくる
         # overrrideしていたが継承元UserMixinのものでOKだった
-        if user.is_authenticated(username, password):
+        if (user is not None) and (user.is_authenticated(username, password)):
             # if user.is_authenticated:
             login_user(user)
             flash("認証成しました\n")
