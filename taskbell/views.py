@@ -217,6 +217,7 @@ def button_click(flg):
 @app.route("/add_task", methods=["GET", "POST"])
 @login_required
 def add_task():
+    # flash message残っていることがあるため削除
     session.pop("_flashes", None)
     if request.method == "GET":
         return render_template("testtemp/new_task.html")
