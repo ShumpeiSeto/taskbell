@@ -4,6 +4,7 @@
   --primary-dark: #1b3c53;
   --primary-medium: #4a7c7e;
   --primary-light: #6b9b9c;
+  --primary-gray: #9ca3af;
   --primary-blue: #3b82f6;
   --primary-blue-dark: #2563eb;
   --primary-blue-light: #60a5fa;
@@ -11,9 +12,11 @@
   --btn-edit: #5dade2;
   --btn-delete: #cd6155;
   --btn-success: #10b981;
+  --btn-gray: #6b7280;
   --text-dark: #2c3e50;
   --text-muted: #7f8c8d;
   --accent-warm: #d4a574;
+  --card-bg: #f8f9fa;
 }
 
 /* bootstrap付属色の上書き */
@@ -34,7 +37,11 @@
   border-color: var(--accent-warm) !important;
 }
 .btn-light {
-  background-color: var(--primary-light) !important;
+  background-color: var(--primary-gray) !important;
+  border-color: var(--primary-light) !important;
+}
+.btn-gray {
+  background-color: var(--btn-gray) !important;
   border-color: var(--primary-light) !important;
 }
 
@@ -112,8 +119,8 @@ h4 {
 
 .fixed_button {
   position: fixed;
-  right: 40px;
-  bottom: 40px;
+  right: 30px;
+  bottom: 30px;
   z-index: 9999;
   text-align: center !important;
 }
@@ -124,6 +131,10 @@ h4 {
   justify-content: center !important;
   align-items: center !important;
   opacity: 0.7;
+}
+
+.card {
+  background-color: var(--card-bg) !important;
 }
 /* h1 {
   font-size: 2.7rem;

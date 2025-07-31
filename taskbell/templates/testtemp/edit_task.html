@@ -3,7 +3,7 @@
 <div class="container vh-100 px-2 py-4">
   <div class="row h-100 justify-content-center align-items-start">
     <div class="col-12 col-md-8 col-lg-5 col-xl-4">
-      <div class="card border-0">
+      <div class="card border border-secondary">
         <div class="card-body p-4 p-md-5">
           <div class="text-center">
             <h1 class="font-size-l">タスクを編集</h1>
@@ -35,7 +35,7 @@
               </div>
             </div>
             <div class="row mb-3">
-              <div class="col-3">
+              <div class="col-4">
                 <label for="importance">重要度：</label>
               </div>
               {% if task.importance == 0 %}
@@ -74,7 +74,8 @@
                 <input type="radio" name="importance" id="importance" value="2" checked>最重要
               </label>
               </div>
-            {% endif %}
+              {% endif %}
+            </div>
             {# ボタンエリア #}
             <div class="d-grid buttons gap-3">
               <button type="submit" class="btn btn-primary btn-lg rounded-pill">更新</button>
