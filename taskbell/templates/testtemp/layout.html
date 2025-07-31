@@ -12,7 +12,7 @@
     <nav class="text-end mx-3 my-2">
       {% if current_user.is_authenticated %}
       <ul class="list-unstyled text-dark">
-        <li class="font-size-s">ユーザー：{{ current_user.username }}</li>
+        <li class="font-size-s mb-2">ユーザー：{{ current_user.username }}</li>
         <li class="font-size-s">
         <a href="{{ url_for('logout') }}"><button type="button" class="btn btn-danger font-size-s">ログアウト</button></a>
         </li>
