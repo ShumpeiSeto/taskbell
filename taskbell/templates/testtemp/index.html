@@ -9,8 +9,8 @@
                         <img src="{{ url_for('static', filename='images/todo_image.png') }}" alt="アプリ画像です" class="img-fluid">
                     </div>
                     <div class="messages">
-                        <h1 class="text-light font-size-l">Taskbell</h1>
-                        <p class="text-light font-size-m">ようこそ！{{ current_user.username }}さん</p>
+                        <h1 class="font-size-l">Taskbell</h1>
+                        <p class="font-size-m">ようこそ！{{ current_user.username }}さん</p>
                     </div>
                 </div>
                 {% else %}
@@ -19,8 +19,8 @@
                         <img src="{{ url_for('static', filename='images/todo_image.png') }}" alt="アプリ画像です" class="img-fluid">
                     </div>
                     <div class="messages">
-                        <h1 class="text-light font-size-l">TaskBell</h1>
-                        <p class="text-light font-size-m">あなたのタスク管理をスマートに</p>
+                        <h1 class="font-size-l">TaskBell</h1>
+                        <p class="font-size-m">あなたのタスク管理をスマートに</p>
                     </div>
                 </div>
                 {% endif %}

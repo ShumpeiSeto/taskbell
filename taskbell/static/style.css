@@ -1,12 +1,16 @@
 /* 配色のための変数用意 */
 :root {
+  --primary-white: #ffffff;
   --primary-dark: #1b3c53;
   --primary-medium: #4a7c7e;
   --primary-light: #6b9b9c;
+  --primary-blue: #3b82f6;
+  --primary-blue-dark: #2563eb;
+  --primary-blue-light: #60a5fa;
   --card-bg: #ffffff;
   --btn-edit: #5dade2;
   --btn-delete: #cd6155;
-  --btn-success: #58d68d;
+  --btn-success: #10b981;
   --text-dark: #2c3e50;
   --text-muted: #7f8c8d;
   --accent-warm: #d4a574;
@@ -41,8 +45,11 @@
 }
 
 body {
-  background-color: var(--primary-dark);
+  background-color: var(--primary-white);
   color: var(--text-dark) !important;
+}
+.table thead tr th {
+  background-color: var(--primary-blue-light);
 }
 .table,
 .table th,
@@ -56,7 +63,7 @@ label {
 }
 h3,
 h4 {
-  color: white;
+  color: var(--text-dark) !important;
 }
 @media screen and (max-width: 768px) {
   .font-size-s {
@@ -97,6 +104,26 @@ h4 {
 .todo_image img {
   max-width: 130px;
   max-height: 130px;
+}
+
+.message {
+  color: var(--text-dark) !important;
+}
+
+.fixed_button {
+  position: fixed;
+  right: 40px;
+  bottom: 40px;
+  z-index: 9999;
+  text-align: center !important;
+}
+.fixed_button a button {
+  line-height: 1 !important;
+  height: 60px;
+  width: 60px;
+  justify-content: center !important;
+  align-items: center !important;
+  opacity: 0.7;
 }
 /* h1 {
   font-size: 2.7rem;

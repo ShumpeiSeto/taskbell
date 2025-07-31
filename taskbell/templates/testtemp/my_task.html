@@ -1,11 +1,11 @@
 {% extends 'testtemp/layout.html' %}
 {% block content %}
   <div class="container vh-100 px-2 py-0">
-    <h3 class="text-center font-size-l">マイタスク</h3>
-    <div class="row h-auto justify-content-center align-items-start">
+    <h3 class="text-center font-size-l mb-3">マイタスク</h3>
+    <div class="row h-auto justify-content-center align-items-start mb-4">
       <div class="col-12 col-md-8 col-lg-5 col-xl-4">
-        <h4 class="font-size-m">未完了タスク</h4>
         <div class="sort_buttons d-flex flex-row justify-content-end px-0 py-1 gap-2"> 
+        <h4 class="font-size-m m-auto">未完了タスク</h4>
         <a href="{{ url_for('button_click', flg=1) }}"><button type="button" class="btn btn-warning">重要度順</button></a>
         <a href="{{ url_for('button_click', flg=2) }}"><button type="button" class="btn btn-light">日付順</button></a>
         </div>
@@ -53,19 +53,17 @@
             {% endfor %}
           </tbody>
         </table>
-        <div class="add_new_task_button text-center">
-          <a href="{{ url_for('add_task')}}">
-          <button type="button" class="btn btn-primary">
-          新規タスク登録
-            </button></a>
-        </div>
       </div>
+    </div>
+    <div class="fixed_button text-center align-middle">
+      <a href="{{ url_for('add_task')}}">
+      <button type="button" class="btn btn-primary font-size-l rounded-circle">+</button></a>
     </div>
 
     <div class="row h-auto justify-content-center align-items-start">
       <div class="col-12 col-md-8 col-lg-5 col-xl-4">
-        <h4 class="font-size-m">完了済みタスク</h4>
         <div class="sort_buttons d-flex flex-row justify-content-end px-0 py-1 gap-2"> 
+        <h4 class="font-size-m m-auto">完了済みタスク</h4>
         <a href="{{ url_for('button_click', flg=3) }}"><button type="button" class="btn btn-warning">重要度順</button></a>
         <a href="{{ url_for('button_click', flg=4) }}"><button type="button" class="btn btn-light">日付順</button></a>
         </div>
