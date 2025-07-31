@@ -1,52 +1,52 @@
 {% extends 'testtemp/layout.html' %}
 {% block content %}
   <div class="container vh-100 px-2 py-0">
-    <h3 class="text-center font-size-l mb-3">マイタスク</h3>
     <div class="row h-auto justify-content-center align-items-start mb-4">
-      <div class="col-12 col-md-8 col-lg-5 col-xl-4">
+      <h3 class="text-center font-size-l mb-3">マイタスク</h3>
+      <div class="col-12 col-md-8 col-lg-6 col-xl-5">
         <div class="sort_buttons d-flex flex-row justify-content-end px-0 py-1 gap-2"> 
         <h4 class="font-size-m m-auto">未完了タスク</h4>
-        <a href="{{ url_for('button_click', flg=1) }}"><button type="button" class="btn btn-warning">重要度順</button></a>
-        <a href="{{ url_for('button_click', flg=2) }}"><button type="button" class="btn btn-light">日付順</button></a>
+        <a href="{{ url_for('button_click', flg=1) }}"><button type="button" class="btn btn-warning text-light">重要度順</button></a>
+        <a href="{{ url_for('button_click', flg=2) }}"><button type="button" class="btn btn-light text-light">日付順</button></a>
         </div>
         <table class="table table-light table-hover table-bordered">
           <thead>
             <tr>
-              <th rowspan="2" scope="col" class="p-0 p-md-2 text-center align-middle">#</th>
-              <th rowspan="2" scope="col" class="p-0 p-md-2 text-center align-middle">タスク名</th>
-              <th colspan="2" scope="col" class="p-0 p-md-2 text-center align-middle">期限</th>
-              <th rowspan="2" scope="col" class="p-0 p-md-2 text-center align-middle">重要度</th>
-              <th rowspan="2" scope="col" class="p-0 p-md-2 text-center align-middle">操作</th>
+              <th rowspan="2" scope="col" class="p-0 p-md-0 text-center align-middle">#</th>
+              <th rowspan="2" scope="col" class="p-0 p-md-0 text-center align-middle">タスク名</th>
+              <th colspan="2" scope="col" class="p-0 p-md-0 text-center align-middle">期限</th>
+              <th rowspan="2" scope="col" class="p-0 p-md-0 text-center align-middle">重要度</th>
+              <th rowspan="2" scope="col" class="p-0 p-md-0 text-center align-middle">操作</th>
             </tr>
             <tr>
-              <th scope="col" class="p-0 p-md-2 text-center">日</th>
-              <th scope="col" class="p-0 p-md-2 text-center">時間</th>
+              <th scope="col" class="p-0 p-md-0 text-center align-middle">日</th>
+              <th scope="col" class="p-0 p-md-0 text-center align-middle">時間</th>
             </tr>
           </thead>
           <tbody>
             {% for nc_task in nc_tasks %}
               <tr>
-                <th scope="row" class="px-0 p-md-2 text-center align-middle">
+                <th width="10%" scope="row" class="px-0 p-md-2 text-center align-middle">
                   <a href="{{ url_for('check_task', task_id=nc_task['task_id']) }}" class="check_box_a">
                     <button type="button" class="btn btn-success rounded-circl px-1 py-2 check_box_b">完了</button>
                   </a>
                 </th>
-                <td class="px-0 p-md-2 text-center align-middle">
+                <td width="45%" class="px-0 p-md-0 text-center align-middle">
                   <label class="form-check-label my-auto" for="firstCheckbox">{{ nc_task['title']}}</label>
                 </td>
-                <td class="px-0 p-md-2 text-center align-middle">
+                <td width="15%" class="px-0 p-md-0 text-center align-middle">
                   <label class="deadline my-auto" for="deadline">{{ nc_task['deadline'] | add_weekday }}</label>
                 </td>
-                <td class="px-0 p-md-2 text-center align-middle">
+                <td width="10%" class="px-0 p-md-0 text-center align-middle">
                   <label class="deadline my-auto" for="deadline">{{ nc_task['deadline'].strftime('%H:%M') }}</label>
                 </td>
-                <td class="px-0 p-md-2 text-center align-middle">
+                <td width="5%" class="px-0 p-md-0 text-center align-middle">
                   <label class="importance my-auto" for="importance">{{ nc_task['importance'] | convert_importance }}</label>
                 </td>
-                <td class="px-0 p-md-2 text-center align-middle">
-                <div class="d-flex flex-row px-0 py-auto p-md-2 text-center justify-content-evenly align-middle gap-3 flex-grow">
-                  <a href="{{ url_for('edit_task', task_id=nc_task['task_id']) }}" class="mb-1"><button type="button" class="btn btn-primary py-2 px-1">編集</button></a>
-                  <a href="{{ url_for('delete_task', task_id=nc_task['task_id']) }}"><button type="button" class="btn btn-danger py-2 px-1">削除</button></a>
+                <td width="15%" class="px-0 p-md-0 text-center align-middle">
+                  <div class="d-flex flex-row px-0 py-auto p-md-2 text-center justify-content-evenly align-middle gap-3 flex-grow">
+                    <a href="{{ url_for('edit_task', task_id=nc_task['task_id']) }}" class="mb-1"><button type="button" class="btn btn-primary py-2 px-1">編集</button></a>
+                    <a href="{{ url_for('delete_task', task_id=nc_task['task_id']) }}"><button type="button" class="btn btn-danger py-2 px-1">削除</button></a>
                   </div>
                 </td>
               </tr>
@@ -64,45 +64,45 @@
       <div class="col-12 col-md-8 col-lg-5 col-xl-4">
         <div class="sort_buttons d-flex flex-row justify-content-end px-0 py-1 gap-2"> 
         <h4 class="font-size-m m-auto">完了済みタスク</h4>
-        <a href="{{ url_for('button_click', flg=3) }}"><button type="button" class="btn btn-warning">重要度順</button></a>
-        <a href="{{ url_for('button_click', flg=4) }}"><button type="button" class="btn btn-light">日付順</button></a>
+        <a href="{{ url_for('button_click', flg=3) }}"><button type="button" class="btn btn-warning text-light">重要度順</button></a>
+        <a href="{{ url_for('button_click', flg=4) }}"><button type="button" class="btn btn-light text-light">日付順</button></a>
         </div>
-        <table class="table table-light table-hover table-bordered">
+        <table width="100%" class="table table-light table-hover table-bordered">
           <thead>
             <tr>
               {# <th rowspan="2" scope="col" class="p-0 p-md-2 text-center align-middle">#</th> #}
-              <th rowspan="2" scope="col" class="p-0 p-md-2 text-center align-middle">タスク名</th>
-              <th colspan="2" scope="col" class="p-0 p-md-2 text-center align-middle">期限</th>
-              <th rowspan="2" scope="col" class="p-0 p-md-2 text-center align-middle">重要度</th>
-              <th rowspan="2" scope="col" class="p-0 p-md-2 text-center align-middle">操作</th>
+              <th rowspan="2" scope="col" class="p-0 p-md-0 text-center align-middle">タスク名</th>
+              <th colspan="2" scope="col" class="p-0 p-md-0 text-center align-middle">期限</th>
+              <th rowspan="2" scope="col" class="p-0 p-md-0 text-center align-middle">重要度</th>
+              <th rowspan="2" scope="col" class="p-0 p-md-0 text-center align-middle">操作</th>
             </tr>
             <tr>
-              <th scope="col" class="p-0 p-md-2 text-center">日</th>
-              <th scope="col" class="p-0 p-md-2 text-center">時間</th>
+              <th scope="col" class="p-0 p-md-0 text-center align-middle">日</th>
+              <th scope="col" class="p-0 p-md-0 text-center align-middle">時間</th>
             </tr>
           </thead>
           <tbody>
             {% for c_task in c_tasks %}
               <tr>
-                <td class="px-0 p-md-2 text-center align-middle">
+                <td width="55%" class="px-0 p-md-0 text-center align-middle">
                   <label class="comp_task_name text-decoration-line-through" for="firstCheckbox">{{ c_task['title']}}</label>
                 </td>
-                <td class="px-0 p-md-2 text-center align-middle">
+                <td width="15%" class="px-0 p-md-0 text-center align-middle">
                   <label class="comp_task_deadline text-decoration-line-through" for="deadline">{{ c_task['deadline'] | add_weekday }}</label>
                 </td>
-                <td class="px-0 p-md-2 text-center align-middle">
+                <td width="10%"class="px-0 p-md-0 text-center align-middle">
                   <label class="comp_task_deadline text-decoration-line-through" for="deadline">{{ c_task['deadline'].strftime('%H:%M')}}</label>
                 </td>
-                <td class="px-0 p-md-2 text-center align-middle">
+                <td width="5%"class="px-0 p-md-0 text-center align-middle">
                   <label class="importance my-auto text-decoration-line-through" for="importance">{{ c_task['importance'] | convert_importance }}</label>
                 </td>
-                <td class="px-0 p-md-2 text-center align-middle">
-                <div class="d-flex flex-row px-0 py-auto p-md-2 text-center justify-content-evenly align-middle gap-3 flex-grow">
+                <td width="15%" class="px-0 p-md-0 text-center align-middle">
+                  <div class="d-flex flex-row px-0 py-auto p-md-2 text-center justify-content-evenly align-middle gap-3 flex-grow">
 
-                  <a href="{{ url_for('check_task', task_id=c_task['task_id']) }}" class="mb-1">
-                <button type="button" class="btn btn-light py-2 px-1">戻す</button>
-                  </a>
-                  <a href="{{ url_for('delete_task', task_id=c_task['task_id']) }}"><button type="button" class="btn btn-danger py-2 px-1">削除</button></a>
+                    <a href="{{ url_for('check_task', task_id=c_task['task_id']) }}" class="mb-1">
+                  <button type="button" class="btn btn-gray text-light py-2 px-1">戻す</button>
+                    </a>
+                    <a href="{{ url_for('delete_task', task_id=c_task['task_id']) }}"><button type="button" class="btn btn-danger py-2 px-1">削除</button></a>
                   </div>
 
                 </td>
