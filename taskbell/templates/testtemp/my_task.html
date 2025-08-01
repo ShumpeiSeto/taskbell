@@ -27,8 +27,10 @@
             {% for nc_task in nc_tasks %}
               <tr>
                 <th width="10%" scope="row" class="px-0 p-md-2 text-center align-middle">
-                  <a href="{{ url_for('check_task', task_id=nc_task['task_id']) }}" class="check_box_a">
-                    <button type="button" class="btn btn-success rounded-circl px-1 py-2 check_box_b">完了</button>
+                  <a href="{{ url_for('check_task', task_id=nc_task['task_id']) }}" class="check_box text-decoration-none">
+                    {# <input type="checkbox" class="check_box_fin rounded-circl px-1 py-2" onclick="{{ url_for('check_task', task_id=nc_task['task_id']) }}"> #}
+                    <input type="checkbox" class="check_box_fin rounded-circl px-1 py-2" onclick="window.location.href='{{ url_for('check_task', task_id=nc_task['task_id']) }}'">
+                    <button type="button" class="btn rounded-circl px-1 py-2 check_box_fin_b">　</button>
                   </a>
                 </th>
                 <td width="45%" class="px-0 p-md-0 text-center align-middle">

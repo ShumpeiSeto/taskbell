@@ -116,6 +116,26 @@ h4 {
 .message {
   color: var(--text-dark) !important;
 }
+.check_box {
+  position: relative;
+  cursor: pointer;
+}
+.check_box_fin {
+  position: relative;
+  z-index: 2;
+  block-size: 1.5rem;
+  inline-size: 1.5rem;
+}
+.check_box_fin_b {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  z-index: 1;
+  opacity: 0;
+}
 
 .fixed_button {
   position: fixed;
