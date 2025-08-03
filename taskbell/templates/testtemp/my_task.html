@@ -37,10 +37,10 @@
                   <label class="form-check-label my-auto" for="firstCheckbox">{{ nc_task['title']}}</label>
                 </td>
                 <td width="15%" class="px-0 p-md-0 text-center align-middle">
-                  <label class="deadline my-auto" for="deadline">{{ nc_task['deadline'] | add_weekday }}</label>
+                  <label class="deaddate my-auto" for="deadline">{{ nc_task['deadline'] | add_weekday }}</label>
                 </td>
                 <td width="10%" class="px-0 p-md-0 text-center align-middle">
-                  <label class="deadline my-auto" for="deadline">{{ nc_task['deadline'].strftime('%H:%M') }}</label>
+                  <label class="deadtime my-auto" for="deadline">{{ nc_task['deadline'].strftime('%H:%M') }}</label>
                 </td>
                 <td width="5%" class="px-0 p-md-0 text-center align-middle">
                   <label class="importance my-auto" for="importance">{{ nc_task['importance'] | convert_importance }}</label>
@@ -115,4 +115,5 @@
       </div>
     </div>
   </div>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
 {% endblock %}

@@ -27,7 +27,7 @@ from taskbell.models.login_user import User
 def str_add_weekday(date):
     weekdays = ["月", "火", "水", "木", "金", "土", "日"]
     weekday = weekdays[date.weekday()]
-    return f"{date.strftime('%m/%d')}({weekday})"
+    return f"{date.strftime('%y/%m/%d')}({weekday})"
 
 
 # 重要度から漢字重要度を出すフィルター
