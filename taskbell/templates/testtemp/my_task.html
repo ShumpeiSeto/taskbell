@@ -9,7 +9,11 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        ...
+        <tr>
+          <th>タスク名</th>
+          <th>期限</th>
+          <th>状態</th>
+        </tr>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -44,14 +48,14 @@
           </thead>
           <tbody>
             {% for nc_task in nc_tasks %}
-              <tr>
+              <tr class="nc-task-item">
                 <th width="10%" scope="row" class="px-0 p-md-2 text-center align-middle">
                   <a href="{{ url_for('check_task', task_id=nc_task['task_id']) }}" class="check_box text-decoration-none">
                     <input type="checkbox" class="check_box_fin rounded-circl px-1 py-2" onclick="window.location.href='{{ url_for('check_task', task_id=nc_task['task_id']) }}'">
                   </a>
                 </th>
                 <td width="45%" class="px-0 p-md-0 text-center align-middle">
-                  <label class="form-check-label my-auto" for="firstCheckbox">{{ nc_task['title']}}</label>
+                  <label class="taskname form-check-label my-auto" for="firstCheckbox">{{ nc_task['title']}}</label>
                 </td>
                 <td width="15%" class="px-0 p-md-0 text-center align-middle">
                   <label class="deaddate my-auto" for="deadline">{{ nc_task['deadline'] | add_weekday }}</label>
