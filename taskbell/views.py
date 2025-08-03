@@ -158,6 +158,9 @@ def initialize_session():
     if "nc_mode" not in session and "c_mode" not in session:
         session["nc_mode"] = 0
         session["c_mode"] = 0
+    # 30分を期限設定しておく
+    if "deadminutes" not in session:
+        session["dead_minutes"] = 30
     # session.pop("_flashes", None)
 
 

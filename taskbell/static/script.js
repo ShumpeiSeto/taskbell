@@ -1,5 +1,8 @@
 let intervalId;
+// modal 用意
+const modal = new bootstrap.Modal(document.getElementById("exampleModal"));
 
+// dateオブジェクトに変換用編集関数
 const slice_date_str = function (date_str) {
   const result = "20" + date_str.slice(0, 8);
   return result.replaceAll("/", "-");
@@ -11,10 +14,15 @@ function checkdatetime() {
   const dates = document.querySelectorAll(".deaddate");
   const times = document.querySelectorAll(".deadtime");
   const nct_counts = dates.length;
+  // const dead_minutes = sessionStorage.getItem("dead_minutes");
+  const dead_minutes = sessionStorage.getItem("dead_minutes");
   for (let i = 0; i < nct_counts; i++) {
     const datetime =
       slice_date_str(dates[i].innerText) + "T" + times[i].innerText;
     const diff = (new Date(datetime).getTime() - now.getTime()) / (60 * 1000);
     console.log(datetime, diff);
+    if (diff <= dead_minutes) {
+      modal.show();
+    }
   }
 }
