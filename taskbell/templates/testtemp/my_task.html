@@ -1,5 +1,24 @@
 {% extends 'testtemp/layout.html' %}
 {% block content %}
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">期限が近づいたタスクあり</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        ...
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
   <div class="container vh-100 px-2 py-0">
     <div class="row h-auto justify-content-center align-items-start mb-4">
       <h3 class="text-center font-size-l mb-3">マイタスク</h3>
@@ -28,9 +47,7 @@
               <tr>
                 <th width="10%" scope="row" class="px-0 p-md-2 text-center align-middle">
                   <a href="{{ url_for('check_task', task_id=nc_task['task_id']) }}" class="check_box text-decoration-none">
-                    {# <input type="checkbox" class="check_box_fin rounded-circl px-1 py-2" onclick="{{ url_for('check_task', task_id=nc_task['task_id']) }}"> #}
                     <input type="checkbox" class="check_box_fin rounded-circl px-1 py-2" onclick="window.location.href='{{ url_for('check_task', task_id=nc_task['task_id']) }}'">
-                    <button type="button" class="btn rounded-circl px-1 py-2 check_box_fin_b">　</button>
                   </a>
                 </th>
                 <td width="45%" class="px-0 p-md-0 text-center align-middle">
@@ -116,4 +133,8 @@
     </div>
   </div>
   <script src="{{ url_for('static', filename='script.js') }}"></script>
+  <script>
+    const dead_minutes = {{ session.get('dead_minutes', 0) }};
+    sessionStorage.setItem('dead_minutes', dead_minutes);
+  </script>
 {% endblock %}
