@@ -33,7 +33,7 @@ def str_add_weekday(date):
 # 重要度から漢字重要度を出すフィルター
 @app.template_filter("convert_importance")
 def str_convert_importance(num_importance):
-    importances = ["低", "中", "高"]
+    importances = ["★", "★★", "★★★"]
     importance = importances[num_importance]
     return importance
 
