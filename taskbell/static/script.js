@@ -2,7 +2,9 @@ let intervalId;
 // modal 用意
 const modal = new bootstrap.Modal(document.getElementById("exampleModal"));
 // modalのbody部
-const modal_body = document.querySelector(".modal-body");
+const modal_tasks = document.querySelector(".modal-tasks");
+
+const close_modal = document.querySelector(".close_modal");
 
 // dateオブジェクトに変換用編集関数
 const slice_date_str = function (date_str) {
@@ -10,7 +12,7 @@ const slice_date_str = function (date_str) {
   return result.replaceAll("/", "-");
 };
 
-intervalId ??= setInterval(checkdatetime, 30000);
+intervalId ??= setInterval(checkdatetime, 120000);
 function checkdatetime() {
   // クライアントセッションから取得
   const dead_minutes = sessionStorage.getItem("dead_minutes");
@@ -19,25 +21,37 @@ function checkdatetime() {
   // 比較のため現座日時取得
   const now = new Date();
 
+  // modal tasks内容を初期化する
+  modal_tasks.innerHTML = "";
+
   nctask_items.forEach((item) => {
     const date = item.querySelector(".deaddate").innerHTML;
     const time = item.querySelector(".deadtime").innerHTML;
     const taskname = item.querySelector(".taskname").innerHTML;
 
-    // modal表示用
-    const tr = modal_body.appendChild(document.createElement("tr"));
-    const td_taskname = tr.appendChild(document.createElement("td"));
-    const td_deaddate = tr.appendChild(document.createElement("td"));
-    const td_deadtime = tr.appendChild(document.createElement("td"));
-    td_taskname.textContent = taskname;
-    td_deaddate.textContent = date;
-    td_deadtime.textContent = time;
-
+    // 現在時との差異チェック
     const datetime = slice_date_str(date) + "T" + time;
     const diff = (new Date(datetime).getTime() - now.getTime()) / (60 * 1000);
+
     console.log(datetime, diff);
     if (diff <= dead_minutes) {
+      const tr = modal_tasks.appendChild(document.createElement("tr"));
+      tr.classList.add("limity_task");
+      const td_taskname = tr.appendChild(document.createElement("td"));
+      const td_deaddate = tr.appendChild(document.createElement("td"));
+      const td_deadtime = tr.appendChild(document.createElement("td"));
+      const td_status = tr.appendChild(document.createElement("td"));
+      td_taskname.textContent = taskname;
+      td_deaddate.textContent = date;
+      td_deadtime.textContent = time;
+      td_status.textContent = diff <= 0 ? "期限切れ" : `${diff.toFixed(0)}分前`;
       modal.show();
     }
+    // modal表示用
   });
 }
+
+// close_modal.addEventListener("click", function () {
+//   const limity_tasks = document.querySelectorAll(".limity_task");
+//   limity_tasks.remove();
+// });
