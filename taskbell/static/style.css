@@ -17,6 +17,7 @@
   --text-muted: #7f8c8d;
   --accent-warm: #d4a574;
   --card-bg: #f8f9fa;
+  --limity-bg: #d5ce64;
 }
 
 /* bootstrap付属色の上書き */
@@ -84,9 +85,6 @@ h4 {
     font-size: 1.8rem;
   }
 }
-.handle_buttons > a > button {
-  opacity: 0.9;
-}
 
 @media screen and (min-width: 768px) and (max-width: 991px) {
   .font-size-s {
@@ -110,6 +108,33 @@ h4 {
   .font-size-l {
     font-size: 2.7rem;
   }
+}
+
+/* 表内文字のレスポンシブ対応 */
+@media screen and (max-width: 768) {
+  .table th,
+  .table td {
+    font-size: 0.8rem;
+  }
+}
+@media screen and (min-width: 768px) and (max-width: 991px) {
+  .table th,
+  .table td {
+    font-size: 1rem;
+  }
+}
+
+@media screen and (min-width: 992px) {
+  .table th,
+  .table td {
+    font-size: 1.2rem;
+  }
+}
+.importance {
+  color: red !important;
+}
+.handle_buttons > a > button {
+  opacity: 0.9;
 }
 
 .todo_image img {
