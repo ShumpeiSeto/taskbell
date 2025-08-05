@@ -169,20 +169,20 @@ def initialize_session():
 def my_task():
     all_tasks = Tasks.query.order_by(Tasks.deadline)
     all_tasks_desc = Tasks.query.order_by(desc(Tasks.importance), Tasks.deadline)
-    if session["nc_mode"] == 0:
+    if session["nc_v_mode"] == 0:
         nc_tasks = all_tasks.filter(Tasks.user_id == current_user.id).filter(
             Tasks.is_completed == 0
         )
-    elif session["nc_mode"] == 1:
+    elif session["nc_v_mode"] == 1:
         nc_tasks = all_tasks_desc.filter(Tasks.user_id == current_user.id).filter(
             Tasks.is_completed == 0
         )
 
-    if session["c_mode"] == 0:
+    if session["c_v_mode"] == 0:
         c_tasks = all_tasks.filter(Tasks.user_id == current_user.id).filter(
             Tasks.is_completed == 1
         )
-    elif session["c_mode"] == 1:
+    elif session["c_v_mode"] == 1:
         c_tasks = all_tasks_desc.filter(Tasks.user_id == current_user.id).filter(
             Tasks.is_completed == 1
         )
@@ -207,13 +207,13 @@ def my_task_i_sorted():
 @login_required
 def button_click(flg):
     if flg == 1:
-        session["nc_mode"] = 1
+        session["nc_v_mode"] = 1
     if flg == 2:
-        session["nc_mode"] = 0
+        session["nc_v_mode"] = 0
     if flg == 3:
-        session["c_mode"] = 1
+        session["c_v_mode"] = 1
     if flg == 4:
-        session["c_mode"] = 0
+        session["c_v_mode"] = 0
     return redirect("/my_task")
 
 
@@ -318,6 +318,8 @@ def login():
         username = request.form.get("username", "").strip()
         user = User.query.filter(User.username == username).one_or_none()
         password = request.form.get("password", "").strip()
+        session['nc_v_mode'] = user.nc_v_mode
+        session['c_v_mode'] = user.c_v_mode
         print(user)
 
         # instanceつくる
@@ -338,9 +340,11 @@ def login():
 @app.route("/logout")
 @login_required
 def logout():
-    logout_user()
-    # session.pop("_flashes", None)
+    current_user.nc_v_mode = session['nc_v_mode']
+    current_user.c_v_mode = session['c_v_mode']
+    db.session.commit()
     session.clear()
+    logout_user()
     return redirect("/")
 
 
