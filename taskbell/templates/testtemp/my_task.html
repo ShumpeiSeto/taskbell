@@ -53,7 +53,7 @@
           </thead>
           <tbody>
             {% for nc_task in nc_tasks %}
-              <tr class="nc-task-item">
+              <tr class="nc-task-item" data-deadline="{{ nc_task['deadline'] }}" data-task-id="{{ nc_task['task_id']}}">
                 <th width="10%" scope="row" class="px-0 p-md-2 text-center align-middle">
                   <a href="{{ url_for('check_task', task_id=nc_task['task_id']) }}" class="check_box text-decoration-none">
                     <input type="checkbox" class="check_box_fin rounded-circl px-1 py-2" onclick="window.location.href='{{ url_for('check_task', task_id=nc_task['task_id']) }}'">

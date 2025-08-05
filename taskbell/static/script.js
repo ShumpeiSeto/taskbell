@@ -7,12 +7,12 @@ const modal_tasks = document.querySelector(".modal-tasks");
 const close_modal = document.querySelector(".close_modal");
 
 // dateオブジェクトに変換用編集関数
-const slice_date_str = function (date_str) {
-  const result = "20" + date_str.slice(0, 8);
-  return result.replaceAll("/", "-");
-};
+// const slice_date_str = function (date_str) {
+//   const result = "20" + date_str.slice(0, 8);
+//   return result.replaceAll("/", "-");
+// };
 
-intervalId ??= setInterval(checkdatetime, 120000);
+intervalId ??= setInterval(checkdatetime, 180000);
 function checkdatetime() {
   // クライアントセッションから取得
   const dead_minutes = sessionStorage.getItem("dead_minutes");
@@ -29,11 +29,16 @@ function checkdatetime() {
     const time = item.querySelector(".deadtime").innerHTML;
     const taskname = item.querySelector(".taskname").innerHTML;
 
-    // 現在時との差異チェック
-    const datetime = slice_date_str(date) + "T" + time;
-    const diff = (new Date(datetime).getTime() - now.getTime()) / (60 * 1000);
+    const limity_date = item.dataset.deadline;
+    const the_task_id = item.dataset.taskId;
 
-    console.log(datetime, diff);
+    // 現在時との差異チェック
+    // const datetime = slice_date_str(date) + "T" + time;
+    // const datetime = new Date(limity_date);
+    const diff =
+      (new Date(limity_date).getTime() - now.getTime()) / (60 * 1000);
+
+    // console.log(limity_date, diff);
     if (diff <= dead_minutes) {
       const tr = modal_tasks.appendChild(document.createElement("tr"));
       tr.classList.add("limity_task");
