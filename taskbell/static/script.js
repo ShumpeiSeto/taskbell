@@ -12,7 +12,7 @@ const close_modal = document.querySelector(".close_modal");
 //   return result.replaceAll("/", "-");
 // };
 
-intervalId ??= setInterval(checkdatetime, 180000);
+intervalId ??= setInterval(checkdatetime, 60000);
 function checkdatetime() {
   // クライアントセッションから取得
   const dead_minutes = sessionStorage.getItem("dead_minutes");
