@@ -12,6 +12,7 @@ class User(UserMixin, db.Model):
         self.user_id = None
         self.nc_v_mode = 0
         self.c_v_mode = 0
+        self.dl_time = 30
 
     __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -23,6 +24,7 @@ class User(UserMixin, db.Model):
     )
     nc_v_mode = db.Column(db.Integer)
     c_v_mode = db.Column(db.Integer)
+    dl_time = db.Column(db.Integer)
     task_id = db.relationship("Tasks", backref="users")
 
     # is_authenticated をoverrideし、username, passwordチェックをしていたが、
