@@ -1,8 +1,8 @@
-"""Clean migration
+"""Unified migration
 
-Revision ID: 401b65eabe67
+Revision ID: 96c3fbcc5edb
 Revises: 
-Create Date: 2025-08-05 11:42:09.435803
+Create Date: 2025-08-07 11:06:12.056154
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '401b65eabe67'
+revision = '96c3fbcc5edb'
 down_revision = None
 branch_labels = None
 depends_on = None
