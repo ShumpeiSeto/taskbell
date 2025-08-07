@@ -1,5 +1,16 @@
 {% extends "testtemp/layout.html" %}
 {% block content %}
+    <script>
+    if(!sessionStorage.getItem('dl_time')) {
+      if({{ dl_time_mode|default(0) }} === 0 ) {
+        sessionStorage.setItem('dl_time', 15);
+      } else if ({{ dl_time_mode|default(0) }} === 1) {
+        sessionStorage.setItem('dl_time', 30);
+      } else {
+        sessionStorage.setItem('dl_time', 60);
+      }
+    }
+    </script>
     <div class="container vh-100 px-2 py-4">
         <div class="row h-100 justify-content-center align-items-start">
             <div class="col-12 col-md-8 col-lg-5 col-xl-4">
@@ -15,16 +26,41 @@
                         <label for="dl_time">時間：</label>
                     </div>
                     <div class="col-8">
-                    <label class="pe-1">
-                        <input type="radio" name="dl_time" id="dl_time" value="0">15分
-                    </label>
-                    <label class="pe-1">
-                        <input type="radio" name="dl_time" id="dl_time" value="1">30分
-                    </label>
-                    <label>
-                        <input type="radio" name="dl_time" id="dl_time" value="2">60分
-                    </label>
-                    </div>
+                    {% if dl_time_mode == 0 %}
+                      <label class="pe-1">
+                          <input type="radio" name="dl_time" id="dl_time" value="0" checked>15分
+                      </label>
+                      <label class="pe-1">
+                          <input type="radio" name="dl_time" id="dl_time" value="1">30分
+                      </label>
+                      <label>
+                          <input type="radio" name="dl_time" id="dl_time" value="2">60分
+                      </label>
+                      </div>
+                    {% elif dl_time_mode == 1 %}
+                      <label class="pe-1">
+                          <input type="radio" name="dl_time" id="dl_time" value="0">15分
+                      </label>
+                      <label class="pe-1">
+                          <input type="radio" name="dl_time" id="dl_time" value="1" checked>30分
+                      </label>
+                      <label>
+                          <input type="radio" name="dl_time" id="dl_time" value="2">60分
+                      </label>
+                      </div>
+                    {% else %}
+                      <label class="pe-1">
+                          <input type="radio" name="dl_time" id="dl_time" value="0">15分
+                      </label>
+                      <label class="pe-1">
+                          <input type="radio" name="dl_time" id="dl_time" value="1">30分
+                      </label>
+                      <label>
+                          <input type="radio" name="dl_time" id="dl_time" value="2" checked>60分
+                      </label>
+                      </div>
+                    {% endif %}
+
                     </div>
                     {# ボタンエリア #}
                     <div class="d-grid buttons gap-3">

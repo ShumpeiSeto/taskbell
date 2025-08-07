@@ -33,6 +33,7 @@ def make_deadline2(dead_date, dead_time):
     print(deadline)
     return deadline
 
+
 def convert_dl_time(value):
     dl_time = None
     if value == 0:
@@ -42,7 +43,7 @@ def convert_dl_time(value):
     if value == 2:
         dl_time = 60
     return dl_time
-    
+
 
 def insert(task_obj):
     with app.app_context():
@@ -169,8 +170,8 @@ def initialize_session():
         session["nc_mode"] = 0
         session["c_mode"] = 0
     # 30分を期限設定しておく
-    if "dl_time" not in session:
-        session["dl_time"] = 30
+    # if "dl_time" not in session:
+    #     session["dl_time"] = 30
     # session.pop("_flashes", None)
 
 
@@ -226,20 +227,21 @@ def button_click(flg):
         session["c_v_mode"] = 0
     return redirect("/my_task")
 
+
 @app.route("/setting", methods=["GET", "POST"])
 @login_required
 def setting():
     if request.method == "GET":
-        dl_time = session['dl_time'] or 30
-        return render_template('testtemp/setting.html', dl_time=dl_time)
+        dl_time_mode = current_user.dl_time
+        return render_template("testtemp/setting.html", dl_time_mode=dl_time_mode)
     elif request.method == "POST":
+        # dl_time => 0, 1, 2
         dl_time = int(request.form.get("dl_time"))
         print(dl_time)
         current_user.dl_time = dl_time
-        session['dl_time'] = convert_dl_time(dl_time)
+        session["dl_time"] = convert_dl_time(dl_time)
         db.session.commit()
-    return render_template("testtemp/my_task.html")
-        
+    return redirect("/my_task")
 
 
 @app.route("/add_task", methods=["GET", "POST"])
@@ -343,8 +345,9 @@ def login():
         username = request.form.get("username", "").strip()
         user = User.query.filter(User.username == username).one_or_none()
         password = request.form.get("password", "").strip()
-        session['nc_v_mode'] = user.nc_v_mode
-        session['c_v_mode'] = user.c_v_mode
+        session["nc_v_mode"] = user.nc_v_mode
+        session["c_v_mode"] = user.c_v_mode
+        session["dl_time"] = user.dl_time
         print(user)
 
         # instanceつくる
@@ -365,8 +368,9 @@ def login():
 @app.route("/logout")
 @login_required
 def logout():
-    current_user.nc_v_mode = session['nc_v_mode']
-    current_user.c_v_mode = session['c_v_mode']
+    current_user.nc_v_mode = session["nc_v_mode"]
+    current_user.c_v_mode = session["c_v_mode"]
+    current_user.dl_time = session["dl_time"]
     db.session.commit()
     session.clear()
     logout_user()
