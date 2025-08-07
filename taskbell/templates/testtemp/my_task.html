@@ -146,7 +146,7 @@
   </div>
   <script src="{{ url_for('static', filename='script.js') }}"></script>
   <script>
-    const dead_minutes = {{ session.get('dead_minutes', 0) }};
-    sessionStorage.setItem('dead_minutes', dead_minutes);
+    const dl_time = {{ session.get('dl_time') }};
+    sessionStorage.setItem('dl_time', dl_time);
   </script>
 {% endblock %}
