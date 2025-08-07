@@ -170,8 +170,8 @@ def initialize_session():
         session["nc_mode"] = 0
         session["c_mode"] = 0
     # 30分を期限設定しておく
-    # if "dl_time" not in session:
-    #     session["dl_time"] = 30
+    if "dl_time" not in session:
+        session["dl_time"] = 15
     # session.pop("_flashes", None)
 
 
@@ -233,6 +233,7 @@ def button_click(flg):
 def setting():
     if request.method == "GET":
         dl_time_mode = current_user.dl_time
+        print(current_user.dl_time)
         return render_template("testtemp/setting.html", dl_time_mode=dl_time_mode)
     elif request.method == "POST":
         # dl_time => 0, 1, 2
@@ -370,7 +371,7 @@ def login():
 def logout():
     current_user.nc_v_mode = session["nc_v_mode"]
     current_user.c_v_mode = session["c_v_mode"]
-    current_user.dl_time = session["dl_time"]
+    # current_user.dl_time = session["dl_time"]
     db.session.commit()
     session.clear()
     logout_user()
