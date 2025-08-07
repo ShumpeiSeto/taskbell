@@ -54,16 +54,24 @@
 
 body {
   background-color: var(--primary-white);
-  color: var(--text-dark) !important;
+  color: var(--text-dark);
 }
 .table thead tr th {
   background-color: var(--primary-medium);
 }
-.table,
-.table th,
-.table td {
+.table:not(.modal-body),
+.table:not(.modal-body) th,
+.table:not(.modal-body) td {
   /* color: var(--text-dark) !important; */
   color: var(--primary-white);
+}
+table.modal-body th,
+table.modal-body td {
+  color: var(--primary-dark);
+}
+table.modal-body thead tr th {
+  background-color: var(--accent-warm);
+  font-weight: bold;
 }
 h1,
 p,
@@ -114,20 +122,20 @@ h4 {
 @media screen and (max-width: 768) {
   .table th,
   .table td {
-    font-size: 0.8rem;
+    font-size: 0.9rem;
   }
 }
 @media screen and (min-width: 768px) and (max-width: 991px) {
   .table th,
   .table td {
-    font-size: 1rem;
+    font-size: 1.1rem;
   }
 }
 
 @media screen and (min-width: 992px) {
   .table th,
   .table td {
-    font-size: 1.2rem;
+    font-size: 1.3rem;
   }
 }
 .importance {

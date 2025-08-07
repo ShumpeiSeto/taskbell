@@ -8,13 +8,13 @@
         <h1 class="modal-title fs-5" id="exampleModalLabel">期限が近づいたタスクあり</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <table width="100%" class="modal-body">
+      <table width="100%" class="table table-lignt table-bordered modal-body">
         <thead>
           <tr>
-            <th width="45%">タスク名</th>
-            <th width="20%">期限日</th>
-            <th width="15%">時間</th>
-            <th width="20%">状態</th>
+            <th width="45%" class="text-center align-middle">タスク名</th>
+            <th width="20%" class="text-center align-middle">期限日</th>
+            <th width="15%" class="text-center align-middle">時間</th>
+            <th width="20%" class="text-center align-middle">状態</th>
           </tr>
         </thead>
         <tbody class="modal-tasks">
@@ -31,6 +31,9 @@
   <div class="container vh-100 px-2 py-0">
     <div class="row h-auto justify-content-center align-items-start mb-4">
       <h3 class="text-center font-size-l mb-3">マイタスク</h3>
+      <div class="deadline-set">
+          <a href="{{ url_for('button_click', flg=1) }}"><button type="button" class="btn btn-outline-warning btn-sm border-2">重要度順</button></a>
+      </div>
       <div class="col-12 col-md-8 col-lg-6 col-xl-5">
         <div class="sort_buttons d-flex flex-row justify-content-end align-items-end px-0 py-1 gap-2"> 
           <h4 class="font-size-m m-auto">未完了タスク</h4>

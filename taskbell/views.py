@@ -216,6 +216,17 @@ def button_click(flg):
         session["c_v_mode"] = 0
     return redirect("/my_task")
 
+@app.route("/setting", methods=["GET", "POST"])
+@login_required
+def setting():
+    if request.method == "GET":
+        return render_template('testtemp/setting.html')
+    elif request.method == "POST":
+        dl_time = request.form.get("dl_time")
+        current_user.dl_time = int(dl_time)
+        db.session.commit()
+        
+
 
 @app.route("/add_task", methods=["GET", "POST"])
 @login_required

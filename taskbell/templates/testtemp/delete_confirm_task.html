@@ -6,14 +6,14 @@
             <div class="card border-0">
                 <div class="card-body p-4 p-md-5">
                     <div class="text-center">
-                        <h1>削除確認</h1>
-                        <p>「{{ task.title }}」を</p>
-                        <p>本当に削除しますか？</p>
+                        <h1 class="font-size-l">削除確認</h1>
+                        <p class="font-size-m">「{{ task.title }}」を</p>
+                        <p class="font-size-m">本当に削除しますか？</p>
                     </div>
                     <form method="post">
                         <div class="buttons text-center">
                             <a href="{{ url_for('my_task') }}"><button type="button" class="btn btn-secondary">いいえ</button></a>
-                            <button type="submit" class="btn btn-primary">はい</button>
+                            <button type="submit" class="btn btn-danger">はい</button>
                         </div>
                     </form>
                 </div>

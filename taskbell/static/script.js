@@ -12,7 +12,7 @@ const close_modal = document.querySelector(".close_modal");
 //   return result.replaceAll("/", "-");
 // };
 
-intervalId ??= setInterval(checkdatetime, 60000);
+intervalId ??= setInterval(checkdatetime, 180000);
 function checkdatetime() {
   // クライアントセッションから取得
   const dead_minutes = sessionStorage.getItem("dead_minutes");
@@ -51,6 +51,9 @@ function checkdatetime() {
       td_deadtime.textContent = time;
       td_status.textContent = diff <= 0 ? "期限切れ" : `${diff.toFixed(0)}分前`;
       modal.show();
+      if (diff <= 0) {
+        td_status.classList.add("text-danger", "fw-bold");
+      }
     }
     // modal表示用
   });
