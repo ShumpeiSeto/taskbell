@@ -33,6 +33,16 @@ def make_deadline2(dead_date, dead_time):
     print(deadline)
     return deadline
 
+def convert_dl_time(value):
+    dl_time = None
+    if value == 0:
+        dl_time = 15
+    if value == 1:
+        dl_time = 30
+    if value == 2:
+        dl_time = 60
+    return dl_time
+    
 
 def insert(task_obj):
     with app.app_context():
@@ -159,8 +169,8 @@ def initialize_session():
         session["nc_mode"] = 0
         session["c_mode"] = 0
     # 30分を期限設定しておく
-    if "deadminutes" not in session:
-        session["dead_minutes"] = 30
+    if "dl_time" not in session:
+        session["dl_time"] = 30
     # session.pop("_flashes", None)
 
 
@@ -220,11 +230,15 @@ def button_click(flg):
 @login_required
 def setting():
     if request.method == "GET":
-        return render_template('testtemp/setting.html')
+        dl_time = session['dl_time'] or 30
+        return render_template('testtemp/setting.html', dl_time=dl_time)
     elif request.method == "POST":
-        dl_time = request.form.get("dl_time")
-        current_user.dl_time = int(dl_time)
+        dl_time = int(request.form.get("dl_time"))
+        print(dl_time)
+        current_user.dl_time = dl_time
+        session['dl_time'] = convert_dl_time(dl_time)
         db.session.commit()
+    return render_template("testtemp/my_task.html")
         
 
 
