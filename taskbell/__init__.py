@@ -28,10 +28,13 @@ from taskbell.models.login_user import User
 def str_add_weekday(date):
     today = datetime.date.today()
     tommorrow = today + datetime.timedelta(days=1)
+    yesterday = today + datetime.timedelta(days=-1)
     if today == date.date():
         return "今日"
     elif tommorrow == date.date():
         return "明日"
+    elif yesterday == date.date():
+        return "昨日"
 
     weekdays = ["月", "火", "水", "木", "金", "土", "日"]
     weekday = weekdays[date.weekday()]

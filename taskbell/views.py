@@ -2,6 +2,7 @@ from flask import render_template, request, redirect, Flask, flash, session
 from taskbell import app, db
 from .models.add_task import Tasks
 from .models.login_user import User
+from .postToSlack import post_to_slack
 import datetime
 
 from sqlalchemy import desc
@@ -197,6 +198,12 @@ def my_task():
         c_tasks = all_tasks_desc.filter(Tasks.user_id == current_user.id).filter(
             Tasks.is_completed == 1
         )
+    # print(nc_tasks)
+    # now = datetime.datetime.now()
+    # limity_nctasks_list = [nc_task for nc_task in nc_tasks if nc_task['deadline'] < now]
+    # if len(limity_nctasks_list) >= 1:
+    #     post_to_slack("期限切れのタスクがあります")
+
 
     return render_template("testtemp/my_task.html", nc_tasks=nc_tasks, c_tasks=c_tasks)
 

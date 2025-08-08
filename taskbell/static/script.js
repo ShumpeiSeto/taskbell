@@ -6,7 +6,7 @@ const modal_tasks = document.querySelector(".modal-tasks");
 
 const close_modal = document.querySelector(".close_modal");
 
-intervalId ??= setInterval(checkdatetime, 180000);
+intervalId ??= setInterval(checkdatetime, 60000);
 function checkdatetime() {
   // クライアントセッションから取得
   const dl_time = sessionStorage.getItem("dl_time");
