@@ -21,6 +21,19 @@
 }
 
 /* bootstrap付属色の上書き */
+.bg-dark {
+  background-color: var(--primary-dark) !important;
+  border-color: var(--primary-dark) !important;
+}
+
+.bg-medium {
+  background-color: var(--primary-medium) !important;
+  border-color: var(--primary-medium) !important;
+}
+.bg-lignt {
+  background-color: var(--primary-light) !important;
+  border-color: var(--primary-light) !important;
+}
 .btn-danger {
   background-color: var(--btn-delete) !important;
   border-color: var(--btn-delete) !important;
