@@ -30,11 +30,13 @@
 
   <div class="container vh-100 px-2 py-0">
     <div class="row h-auto justify-content-center align-items-start mb-4">
-      <h3 class="text-center font-size-l mb-3">マイタスク</h3>
-      <div class="deadline-set">
-          <a href="{{ url_for('setting') }}"><button type="button" class="btn btn-outline-primary btn-sm border-2">期限時間設定</button></a>
+      <div class="col-12 col-md-10 col-lg-8 bg-dark page-title text-center p-3 mb-1 rounded">
+        <h3 class="font-size-l text-white m-0">マイタスク</h3>
       </div>
       <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+        <div class="deadline-set d-flex flex-row justify-content-end align-items-end mb-1">
+            <a href="{{ url_for('setting') }}"><button type="button" class="btn btn-outline-primary btn-sm border-2">期限時間設定</button></a>
+        </div>
         <div class="sort_buttons d-flex flex-row justify-content-end align-items-end px-0 py-1 gap-2"> 
           <h4 class="font-size-m m-auto">未完了タスク</h4>
           <a href="{{ url_for('button_click', flg=1) }}"><button type="button" class="btn btn-outline-warning btn-sm border-2">重要度順</button></a>
