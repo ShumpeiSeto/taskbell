@@ -58,6 +58,14 @@
   background-color: var(--btn-gray) !important;
   border-color: var(--primary-light) !important;
 }
+.table-light {
+  background-color: var(--primary-light) !important;
+  /* border-color: #dee2e6; */
+  border-color: #6b9b9c;
+}
+.table thead th {
+  border-color: #2c5f61; /* ヘッダーより濃いティール */
+}
 
 /* 全体レイアウト設定 */
 * {
