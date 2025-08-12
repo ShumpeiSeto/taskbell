@@ -11,26 +11,32 @@
 </head>
 <body>
   <header class="header">
-    <nav class="text-end mx-3 my-2">
       {% if current_user.is_authenticated %}
         {% if request.endpoint == "my_task" %}
-          <div class="col-12 col-md-10 col-lg-8 bg-dark d-flex p-3 align-items-center">
-            <h1 class="font-size-l text-white m-0 w-100 text-center">マイタスク</h1>
-            <div class="user_info d-flex flex-column flex-shrink-1">
-              <p class="text-white text-nowrap">ユーザー: {{ current_user.username }}</p>
-              <button class="btn btn-danger btn-sm">ログアウト</button>
-            </div>
+        <div class="container">
+          <div class="row h-auto justify-content-center align-items-start">
+            <nav class="col-12 col-md-8 col-lg-6 col-xl-5 bg-dark d-flex  mx-3 my-2 p-3 align-items-center justify-content-center">
+              <div class="col-12 col-md-10 col-lg-8 bg-dark d-flex p-1 align-items-center justify-content-center">
+                <h1 class="font-size-l text-white m-0 w-100 text-center">マイタスク</h1>
+                <div class="user_info d-flex flex-column flex-shrink-1">
+                  <p class="text-white text-nowrap">ユーザー: {{ current_user.username }}</p>
+                  <button class="btn btn-danger btn-sm">ログアウト</button>
+                </div>
+              </div>
+            </nav>
           </div>
+        </div>
         {% else %}
+        <nav class="text-end mx-3 my-2">
           <ul class="list-unstyled text-dark">
             <li class="font-size-s mb-2">ユーザー：{{ current_user.username }}</li>
             <li class="font-size-s">
             <a href="{{ url_for('logout') }}"><button type="button" class="btn btn-danger font-size-s">ログアウト</button></a>
             </li>
           </ul>
+          </nav>
         {% endif %}
       {% endif %}
-    </nav>
   </header>
   {% block content %}
   {% endblock %}
