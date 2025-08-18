@@ -6,6 +6,10 @@ const modal_tasks = document.querySelector(".modal-tasks");
 
 const close_modal = document.querySelector(".close_modal");
 
+//
+let limity_tasks_arr = [];
+
+// 3分ごとにチェックしている（3分180,000ms）
 intervalId ??= setInterval(checkdatetime, 180000);
 function checkdatetime() {
   // クライアントセッションから取得
@@ -17,6 +21,9 @@ function checkdatetime() {
 
   // modal tasks内容を初期化する
   modal_tasks.innerHTML = "";
+
+  // 通知用期限保持をクリアする
+  limity_tasks_arr.splice(0);
 
   nctask_items.forEach((item) => {
     const date = item.querySelector(".deaddate").innerHTML;
@@ -52,6 +59,7 @@ function checkdatetime() {
       status_result = diff <= 0 ? "期限切れ" : `${diff.toFixed(0)}分前`;
       td_status.textContent = status_result;
 
+      // slack通知用オブジェクト作る
       const post_obj = {
         the_task_id,
         taskname,
@@ -59,6 +67,7 @@ function checkdatetime() {
         importance,
         status_result,
       };
+      limity_tasks_arr.push(post_obj);
 
       modal.show();
       if (diff <= 0) {
@@ -67,6 +76,7 @@ function checkdatetime() {
     }
     // modal表示用
   });
+  console.log(limity_tasks_arr);
 }
 
 // close_modal.addEventListener("click", function () {
