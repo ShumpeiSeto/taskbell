@@ -414,3 +414,6 @@ def signup():
         # 重複するユーザーが存在する場合は赤メッセージで遷移させない
         # return redirect("/login")
     return render_template("testtemp/signup.html")
+
+# app.route('/api/posttoslack', method="POST")
+# def post_to_slack():
