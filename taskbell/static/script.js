@@ -22,9 +22,13 @@ function checkdatetime() {
     const date = item.querySelector(".deaddate").innerHTML;
     const time = item.querySelector(".deadtime").innerHTML;
     const taskname = item.querySelector(".taskname").innerHTML;
+    const importance = item.querySelector(".importance").innerHTML;
 
     const limity_date = item.dataset.deadline;
     const the_task_id = item.dataset.taskId;
+
+    // slack通知用タスク
+    // const post_tasks = [];
 
     // 現在時との差異チェック
     // const datetime = slice_date_str(date) + "T" + time;
@@ -39,11 +43,23 @@ function checkdatetime() {
       const td_taskname = tr.appendChild(document.createElement("td"));
       const td_deaddate = tr.appendChild(document.createElement("td"));
       const td_deadtime = tr.appendChild(document.createElement("td"));
+      const td_importance = tr.appendChild(document.createElement("td"));
       const td_status = tr.appendChild(document.createElement("td"));
       td_taskname.textContent = taskname;
       td_deaddate.textContent = date;
       td_deadtime.textContent = time;
-      td_status.textContent = diff <= 0 ? "期限切れ" : `${diff.toFixed(0)}分前`;
+      td_importance.textContent = importance;
+      status_result = diff <= 0 ? "期限切れ" : `${diff.toFixed(0)}分前`;
+      td_status.textContent = status_result;
+
+      const post_obj = {
+        the_task_id,
+        taskname,
+        limity_date,
+        importance,
+        status_result,
+      };
+
       modal.show();
       if (diff <= 0) {
         td_status.classList.add("text-danger", "fw-bold");
