@@ -415,5 +415,7 @@ def signup():
         # return redirect("/login")
     return render_template("testtemp/signup.html")
 
-# app.route('/api/posttoslack', method="POST")
-# def post_to_slack():
+# @app.route('/api/posttoslack', method="POST")
+# @login_required
+# def post_to_slack(tasks_json):
+
