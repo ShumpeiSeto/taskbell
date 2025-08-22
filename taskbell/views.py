@@ -1,4 +1,3 @@
-from flask import render_template, request, redirect, Flask, flash, session, jsonify
 from taskbell import app, db
 from .models.add_task import Tasks
 from .models.login_user import User
@@ -31,7 +30,7 @@ slack = slackweb.Slack(url=slack_hook_url)
 def make_deadline(dead_date, dead_time):
     s = f"{dead_date} {dead_time}"
     s_format = "%Y-%m-%d %H:%M"
-    deadline = datetime.datetime.strptime(s, s_format)
+    deadline = datetime.strptime(s, s_format)
     print(deadline)
     return deadline
 
@@ -528,7 +527,6 @@ def notify_limit_tasks():
     limity_tasks = data.get("limity_tasks", [])
     if not limity_tasks:
         return jsonify({"success": True, "message": "期限切れタスクはありません"})
-    #         # Slack通知を送信
     success = send_to_slack(limity_tasks)
     if success:
         return jsonify({"success": True, "message": "Slack通知完了"})
