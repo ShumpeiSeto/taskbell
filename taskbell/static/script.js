@@ -11,7 +11,7 @@ let limity_tasks_arr = [];
 
 // 3分ごとにチェックしている（3分180,000ms）
 intervalId ??= setInterval(checkdatetime, 180000);
-function checkdatetime() {
+async function checkdatetime() {
   // クライアントセッションから取得
   const dl_time = sessionStorage.getItem("dl_time");
   // 親要素で取得した方がアクセスしやすい
@@ -74,12 +74,29 @@ function checkdatetime() {
         td_status.classList.add("text-danger", "fw-bold");
       }
     }
-    // modal表示用
   });
   console.log(limity_tasks_arr);
 }
 
-// close_modal.addEventListener("click", function () {
-//   const limity_tasks = document.querySelectorAll(".limity_task");
-//   limity_tasks.remove();
-// });
+async function noticeLimityTasks() {
+  const response = await fetch("/api/tasks/limity");
+  const result = await response.json();
+  // slackの返り値の判定を後ほど書く
+  const slackResponse = await fetch("/api/slack/notify_limit", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      limity_tasks: result.data,
+    }),
+  });
+}
+
+// 30分ごとに自動実行
+setInterval(noticeLimityTasks, 30 * 60 * 1000);
+// 初回実行
+noticeLimityTasks();
+
+// test 用に
+window.testSlack = noticeLimityTasks;

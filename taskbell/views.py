@@ -1,14 +1,16 @@
-from flask import render_template, request, redirect, Flask, flash, session
+from flask import render_template, request, redirect, Flask, flash, session, jsonify
 from taskbell import app, db
 from .models.add_task import Tasks
 from .models.login_user import User
 from .postToSlack import post_to_slack
-import datetime
+from datetime import datetime, timedelta
+import json
 
 from sqlalchemy import desc
 
 # from flask_sqlalchemy import desc
 from flask_login import login_user, current_user, login_required, logout_user
+import slackweb
 
 
 # 手動テーブル削除と作成用（テスト時）
@@ -16,6 +18,13 @@ def init_db():
     # DB作成する(一旦削除したうえで)
     db.drop_all()
     db.create_all()
+
+
+# Slack設定
+slack_hook_url = (
+    "https://hooks.slack.com/services/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"
+)
+slack = slackweb.Slack(url=slack_hook_url)
 
 
 # 期限日時設定関数。秒以下の扱いでエラーあるので、%Sのないものも用意
@@ -203,7 +212,6 @@ def my_task():
     # limity_nctasks_list = [nc_task for nc_task in nc_tasks if nc_task['deadline'] < now]
     # if len(limity_nctasks_list) >= 1:
     #     post_to_slack("期限切れのタスクがあります")
-
 
     return render_template("testtemp/my_task.html", nc_tasks=nc_tasks, c_tasks=c_tasks)
 
@@ -415,7 +423,216 @@ def signup():
         # return redirect("/login")
     return render_template("testtemp/signup.html")
 
-# @app.route('/api/posttoslack', method="POST")
-# @login_required
-# def post_to_slack(tasks_json):
 
+@app.route("/api/tasks/limity", methods=["GET"])
+@login_required
+def get_limity_tasks():
+    now = datetime.now()
+    limity_tasks = Tasks.query.filter(
+        Tasks.deadline < now,
+        Tasks.is_completed == False,
+        Tasks.user_id == current_user.id,
+    ).all()
+
+    # JSON 形式に変換
+    tasks_data = []
+    for task in limity_tasks:
+
+        tasks_data.append(
+            {
+                "id": task.task_id,
+                "title": task.title,
+                "deadline": task.deadline.isoformat(),
+                "format_deadline": task.deadline.strftime("%Y/%m/%d %H:%M"),
+                "importance": task.importance,
+                "username": current_user.username,
+            }
+        )
+    return jsonify({"success": True, "data": tasks_data, "count": len(tasks_data)})
+
+
+def send_to_slack(limity_tasks):
+    try:
+        attachments = []
+        slack_url = "https://hooks.slack.com/services/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"
+
+        header_attachment = {
+            "color": "#ff0000",
+            "title": "⚠️期限切れタスク通知です",
+            "text": f"{len(limity_tasks)}件のタスクが期限切れです",
+            "mrkdwn_in": ["text"],
+        }
+        attachments.append(header_attachment)
+        for task in limity_tasks:
+            deadline = datetime.fromisoformat(task["deadline"].replace("Z", "+00:00"))
+            delay_hours = int((datetime.now() - deadline).total_seconds() / 3600)
+            if task.get("importance") == 2:
+                color = "#ff0000"  # 赤
+                emoji = "🔴"
+                importance = "高"
+            elif task.get("importance") == 1:
+                color = "#ffa500"  # オレンジ
+                emoji = "🟡"
+                importance = "中"
+            else:
+                color = "#008000"  # 緑
+                emoji = "🟢"
+                importance = "低"
+
+            task_attachment = {
+                "title": f"{emoji}{task['title']}",
+                # "text": f"{task['deadline']}",
+                "color": color,
+                "fields": [
+                    {"title": "担当者", "value": f"@{task['username']}", "short": True},
+                    {"title": "期限", "value": task["format_deadline"], "short": True},
+                    {
+                        "title": "重要度",
+                        "value": f"{emoji} {importance}",
+                        "short": True,
+                    },
+                    {
+                        "title": "遅延時間",
+                        "value": f"{delay_hours}時間",
+                        "short": True,
+                    },
+                ],
+                "mrkdwn_in": ["fields"],
+            }
+            attachments.append(task_attachment)
+        text = f"期限切れタスクが{len(limity_tasks)}件あります"
+        slack.notify(
+            text=text,
+            icon_emoji=":bell:",
+            username="TaskBell Bot",
+            attachments=attachments,
+        )
+        return True
+    except Exception as e:
+        print(f"Slack送信エラー発生しました")
+        return False
+
+
+# JSの方では、定期実行させるJSを動かしている
+# 1. 期限切れタスクを取りに行く（その際にチェッしている形式はJSON)
+# 2. そのJSONをオブジェクトにする
+# 3. そのオブジェクトでHTTPリクエストを作る
+# 4. それを下記の notify_limit_tasksでSlackに投げる
+
+
+# slackに送信するメソッド
+@app.route("/api/slack/notify_limit", methods=["POST"])
+@login_required
+def notify_limit_tasks():
+    data = request.get_json()
+    limity_tasks = data.get("limity_tasks", [])
+    if not limity_tasks:
+        return jsonify({"success": True, "message": "期限切れタスクはありません"})
+    #         # Slack通知を送信
+    success = send_to_slack(limity_tasks)
+    if success:
+        return jsonify({"success": True, "message": "Slack通知完了"})
+    else:
+        return jsonify({"success": False, "message": "Slack通知失敗"})
+
+
+# @app.route("/api/slack/notify_limit", methods=["POST"])
+# @login_required
+# def notify_limit_tasks():
+#     try:
+#         data = request.get_json()
+#         limity_tasks = data.get("limity_tasks", [])
+
+#         if not limity_tasks:
+#             return jsonify({"success": True, "message": "期限切れタスクはありません"})
+
+#         # Slack通知を送信
+#         success = send_to_slack(limity_tasks)
+
+#         if success:
+#             return jsonify(
+#                 {
+#                     "success": True,
+#                     "message": f"{len(limity_tasks)}件の期限切れタスクをSlackに通知しました",
+#                 }
+#             )
+#         else:
+#             return (
+#                 jsonify({"success": False, "error": "Slack通知の送信に失敗しました"}),
+#                 500,
+#             )
+
+#     except Exception as e:
+#         print(f"API エラー: {e}")
+#         return jsonify({"success": False, "error": str(e)}), 500
+
+
+# def send_to_slack(tasks):
+#     try:
+#         text = f"期限切れタスクが{len(tasks)}件あります"
+#         attachments = []
+
+#         # ヘッダー
+#         header_attachment = {
+#             "color": "#ff0000",
+#             "title": "⚠️ 期限切れタスク通知",
+#             "text": f"*{len(tasks)}件*のタスクが期限切れです。",
+#             "mrkdwn_in": ["text"],
+#         }
+#         attachments.append(header_attachment)
+
+#         # 各タスク
+#         for task in tasks:
+#             deadline = datetime.fromisoformat(task["deadline"].replace("Z", "+00:00"))
+#             delay_hours = int((datetime.now() - deadline).total_seconds() / 3600)
+
+#             # 重要度による色分け
+#             if task["importance"] == "高":
+#                 color = "#ff0000"  # 赤
+#                 emoji = "🔴"
+#             elif task["importance"] == "中":
+#                 color = "#ffa500"  # オレンジ
+#                 emoji = "🟡"
+#             else:
+#                 color = "#008000"  # 緑
+#                 emoji = "🟢"
+
+#             # タスクのattachment（正しい形式）
+#             task_attachment = {
+#                 "color": color,  # 16進数カラー
+#                 "title": f"{emoji} {task['title']}",
+#                 "fields": [
+#                     {"title": "担当者", "value": f"@{task['username']}", "short": True},
+#                     {"title": "期限", "value": task["format_deadline"], "short": True},
+#                     {"title": "遅延時間", "value": f"{delay_hours}時間", "short": True},
+#                     {
+#                         "title": "重要度",
+#                         "value": f"{emoji} {task['importance']}",
+#                         "short": True,
+#                     },
+#                 ],
+#                 "mrkdwn_in": ["text", "fields"],
+#             }
+#             attachments.append(task_attachment)
+
+#         # フッター
+#         footer_attachment = {
+#             "color": "#808080",
+#             "text": f"TaskBell | 通知時刻: {datetime.now().strftime('%Y/%m/%d %H:%M')}",
+#             "mrkdwn_in": ["text"],
+#         }
+#         attachments.append(footer_attachment)
+
+#         # Slack送信
+#         slack.notify(
+#             text=text,
+#             username="TaskBell Bot",
+#             icon_emoji=":bell:",
+#             attachments=attachments,
+#         )
+
+#         return True  # ← これが重要！
+
+#     except Exception as e:
+#         print(f"Slack送信エラー: {e}")
+#         return False  # ← これも重要！
