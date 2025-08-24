@@ -1,6 +1,7 @@
 from taskbell import db, login_manager
 from datetime import datetime
 from flask_login import UserMixin
+from werkzeug.security import generate_password_hash, check_password_hash
 
 # from flask_login import login_manager
 
@@ -31,7 +32,9 @@ class User(UserMixin, db.Model):
     # どうやら継承元UserMinxinのis_authenticatedの方で比較してくれているみたいだ
 
     def is_authenticated(self, input_username, input_password):
-        if self.username == input_username and self.password == input_password:
+        if self.username == input_username and check_password_hash(
+            self.password, input_password
+        ):
             return True
         else:
             return False

@@ -148,5 +148,8 @@
   <script>
     const dl_time = {{ session.get('dl_time') }};
     sessionStorage.setItem('dl_time', dl_time);
+    const is_first_slack = {{ session.get('is_first_slack') }};
+    console.log(is_first_slack);
+    sessionStorage.setItem('is_first_slack', is_first_slack);
   </script>
 {% endblock %}

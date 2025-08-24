@@ -1,4 +1,3 @@
-
 from flask import render_template, request, redirect, Flask, flash, session, jsonify
 from taskbell import app, db
 from .models.add_task import Tasks
@@ -8,6 +7,7 @@ from datetime import datetime, timedelta
 import json
 
 from sqlalchemy import desc
+from werkzeug.security import generate_password_hash, check_password_hash
 
 # from flask_sqlalchemy import desc
 from flask_login import login_user, current_user, login_required, logout_user
@@ -37,12 +37,12 @@ def make_deadline(dead_date, dead_time):
     return deadline
 
 
-def make_deadline2(dead_date, dead_time):
-    s = f"{dead_date} {dead_time}"
-    s_format = "%Y-%m-%d %H:%M:%S"
-    deadline = datetime.datetime.strptime(s, s_format)
-    print(deadline)
-    return deadline
+# def make_deadline2(dead_date, dead_time):
+#     s = f"{dead_date} {dead_time}"
+#     s_format = "%Y-%m-%d %H:%M:%S"
+#     deadline = datetime.datetime.strptime(s, s_format)
+#     print(deadline)
+#     return deadline
 
 
 def convert_dl_time(value):
@@ -365,6 +365,7 @@ def login():
         session["nc_v_mode"] = user.nc_v_mode
         session["c_v_mode"] = user.c_v_mode
         session["dl_time"] = user.dl_time
+        session["is_first_slack"] = 1
         print(user)
 
         # instanceつくる
@@ -402,7 +403,7 @@ def signup():
         username = request.form.get("username", "").strip()
         password = request.form.get("password", "").strip()
         c_password = request.form.get("conf_password", "").strip()
-        target_user = dict(username=username, password=password)
+        target_user = dict(username=username, password=generate_password_hash(password))
 
         # Validation
         # データチェック
@@ -512,6 +513,8 @@ def send_to_slack(limity_tasks):
     except Exception as e:
         print(f"Slack送信エラー発生しました")
         return False
+    finally:
+        session["is_first_slack"] = 0
 
 
 # JSの方では、定期実行させるJSを動かしている
@@ -531,8 +534,10 @@ def notify_limit_tasks():
         return jsonify({"success": True, "message": "期限切れタスクはありません"})
     success = send_to_slack(limity_tasks)
     if success:
+        print("送信完了")
         return jsonify({"success": True, "message": "Slack通知完了"})
     else:
+        print("送信失敗")
         return jsonify({"success": False, "message": "Slack通知失敗"})
 
 
