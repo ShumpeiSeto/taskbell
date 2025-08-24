@@ -97,7 +97,11 @@ async function noticeLimityTasks() {
 intervalId ??= setInterval(noticeLimityTasks, 30 * 60 * 1000);
 // 初回実行
 // my_task.html読み込み時に毎回実行されている
-// noticeLimityTasks();
+if (sessionStorage.getItem("is_first_slack")) {
+  console.log(sessionStorage.getItem("is_first_slack"));
+  noticeLimityTasks();
+  sessionStorage.setItem("is_first_slack") = false;
+}
 
 // test 用に
 window.testSlack = noticeLimityTasks;
