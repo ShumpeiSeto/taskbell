@@ -93,15 +93,16 @@ async function noticeLimityTasks() {
   });
 }
 
-// 30分ごとに自動実行
-intervalId ??= setInterval(noticeLimityTasks, 30 * 60 * 1000);
 // 初回実行
 // my_task.html読み込み時に毎回実行されている
-if (sessionStorage.getItem("is_first_slack")) {
+if (sessionStorage.getItem("is_first_slack") === 1) {
   console.log(sessionStorage.getItem("is_first_slack"));
   noticeLimityTasks();
-  sessionStorage.setItem("is_first_slack") = false;
+  sessionStorage.setItem("is_first_slack", 0);
+  console.log(sessionStorage.getItem("is_first_slack"));
 }
+// 30分ごとに自動実行
+intervalId ??= setInterval(noticeLimityTasks, 30 * 60 * 1000);
 
 // test 用に
 window.testSlack = noticeLimityTasks;

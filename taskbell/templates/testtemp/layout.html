@@ -20,7 +20,7 @@
                 <h1 class="font-size-l text-white m-0 w-100 text-center">マイタスク</h1>
                 <div class="user_info d-flex flex-column flex-shrink-1">
                   <p class="text-white text-nowrap">ユーザー: {{ current_user.username }}</p>
-                  <button class="btn btn-danger btn-sm">ログアウト</button>
+                  <a href="{{ url_for('logout') }}"><button type="button" class="btn btn-danger btn-sm">ログアウト</button></a>
                 </div>
               </div>
             </nav>
