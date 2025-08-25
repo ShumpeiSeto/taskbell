@@ -144,12 +144,16 @@
       </div>
     </div>
   </div>
-  <script src="{{ url_for('static', filename='script.js') }}"></script>
   <script>
+    const convert_dl_time = function (num) {
+      if (num === 0) return 15;
+      else if (num === 1) return 30;
+      else return 60;
+    };
     const dl_time = {{ session.get('dl_time') }};
-    sessionStorage.setItem('dl_time', dl_time);
+    sessionStorage.setItem('dl_time', convert_dl_time(dl_time));
     const is_first_slack = {{ session.get('is_first_slack') }};
-    console.log(is_first_slack);
     sessionStorage.setItem('is_first_slack', is_first_slack);
   </script>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
 {% endblock %}
