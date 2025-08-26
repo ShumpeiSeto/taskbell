@@ -1,0 +1,136 @@
+{% extends "testtemp/layout.html" %}
+{% block content %}
+    <div class="container py-4">
+        <div class="row justify-content-center">
+            <div class="col-12 col-lg-10 col-xl-8">
+                <div class="card border border-primary">
+                    <div class="card-header bg-primary text-white text-center">
+                        <h1 class="font-size-l mb-0">Slack Webhook URL 取得方法</h1>
+                        <p class="mb-0 mt-2">ToDoアプリからSlackに通知を送るためのURL取得手順です</p>
+                    </div>
+                    <div class="card-body p-4">
+                        
+                        <div class="alert alert-info mb-4">
+                            <strong>📌 事前準備：</strong> まず投稿用のチャンネルを作成してください<br>
+                            <small class="text-muted">例：「todoタスク通知」などの名前でチャンネルを作成</small>
+                        </div>
+
+                        <!-- ステップ1 -->
+                        <div class="step-section mb-5">
+                            <div class="d-flex align-items-center mb-3">
+                                <span class="badge bg-primary rounded-circle me-3" style="width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">1</span>
+                                <h3 class="mb-0">Slack Incoming Webhook ページにアクセス</h3>
+                            </div>
+                            <p class="mb-3">下記のURLにアクセスしてください：</p>
+                            <div class="bg-light p-3 rounded border mb-3">
+                                <code>https://slack.com/services/new/incoming-webhook</code>
+                                <button class="btn btn-sm btn-outline-primary ms-2" onclick="copyToClipboard('https://slack.com/services/new/incoming-webhook')">コピー</button>
+                            </div>
+                            <div class="text-center">
+                                <img src="{{ url_for('static', filename='images/sl_description1.png') }}" 
+                                     alt="Slack Webhook ページ" 
+                                     class="img-fluid border rounded shadow-sm" 
+                                     style="max-width: 100%; height: auto;">
+                                <p class="text-muted mt-2 small">「Slackに追加」ボタンをクリック</p>
+                            </div>
+                        </div>
+
+                        <!-- ステップ2 -->
+                        <div class="step-section mb-5">
+                            <div class="d-flex align-items-center mb-3">
+                                <span class="badge bg-primary rounded-circle me-3" style="width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">2</span>
+                                <h3 class="mb-0">チャンネルを選択</h3>
+                            </div>
+                            <p>投稿したいチャンネルを選択してください。事前に作成したチャンネルを選びます。</p>
+                            <div class="text-center mb-3">
+                                <img src="{{ url_for('static', filename='images/sl_description2.png') }}" 
+                                     alt="チャンネル選択画面" 
+                                     class="img-fluid border rounded shadow-sm mb-3" 
+                                     style="max-width: 100%; height: auto;">
+                            </div>
+                            <div class="text-center">
+                                <img src="{{ url_for('static', filename='images/sl_description3.png') }}" 
+                                     alt="チャンネル選択詳細" 
+                                     class="img-fluid border rounded shadow-sm" 
+                                     style="max-width: 100%; height: auto;">
+                                <p class="text-muted mt-2 small">プルダウンから投稿先チャンネルを選択</p>
+                            </div>
+                        </div>
+
+                        <!-- ステップ3 -->
+                        <div class="step-section mb-5">
+                            <div class="d-flex align-items-center mb-3">
+                                <span class="badge bg-primary rounded-circle me-3" style="width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">3</span>
+                                <h3 class="mb-0">インテグレーションを追加</h3>
+                            </div>
+                            <p>チャンネルを選択したら「インテグレーションを追加する」ボタンをクリックします。</p>
+                            <div class="text-center">
+                                <img src="{{ url_for('static', filename='images/sl_description4.png') }}" 
+                                     alt="インテグレーション追加ボタン" 
+                                     class="img-fluid border rounded shadow-sm" 
+                                     style="max-width: 100%; height: auto;">
+                                <p class="text-muted mt-2 small">「インテグレーションを追加する」をクリック</p>
+                            </div>
+                        </div>
+
+                        <!-- ステップ4 -->
+                        <div class="step-section mb-5">
+                            <div class="d-flex align-items-center mb-3">
+                                <span class="badge bg-success rounded-circle me-3" style="width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">4</span>
+                                <h3 class="mb-0">Webhook URL を取得</h3>
+                            </div>
+                            <p>設定完了画面で「Webhook URL」が表示されます。このURLをコピーしてください。</p>
+                            <div class="text-center">
+                                <img src="{{ url_for('static', filename='images/sl_description5.png') }}" 
+                                     alt="Webhook URL取得画面" 
+                                     class="img-fluid border rounded shadow-sm" 
+                                     style="max-width: 100%; height: auto;">
+                                <p class="text-muted mt-2 small">赤枠で囲まれたURLをコピーしてください</p>
+                            </div>
+                            <div class="alert alert-success mt-3">
+                                <strong>✅ 完了！</strong> 取得したURLを設定ページのSlack URLフィールドに貼り付けてください。
+                            </div>
+                        </div>
+
+                        <!-- 注意事項 -->
+                        <div class="alert alert-warning">
+                            <h5><strong>⚠️ 重要な注意事項</strong></h5>
+                            <ul class="mb-0">
+                                <li>Webhook URLは機密情報です。他人と共有しないでください</li>
+                                <li>URLを紛失した場合は、同じ手順で再度取得できます</li>
+                                <li>チャンネルを削除すると、そのWebhook URLは無効になります</li>
+                            </ul>
+                        </div>
+
+                        <!-- ボタンエリア -->
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                            <a href="{{ url_for('setting') }}" class="btn btn-primary">設定ページに戻る</a>
+                            <button type="button" class="btn btn-secondary" onclick="window.close()">閉じる</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(function() {
+                // 成功時の処理
+                const button = event.target;
+                const originalText = button.textContent;
+                button.textContent = 'コピー完了！';
+                button.classList.remove('btn-outline-primary');
+                button.classList.add('btn-success');
+                
+                setTimeout(function() {
+                    button.textContent = originalText;
+                    button.classList.remove('btn-success');
+                    button.classList.add('btn-outline-primary');
+                }, 2000);
+            }, function(err) {
+                alert('コピーに失敗しました: ' + err);
+            });
+        }
+    </script>
+{% endblock %}

@@ -21,11 +21,6 @@ def init_db():
     db.create_all()
 
 
-# Slack設定
-slack_hook_url = (
-    "https://hooks.slack.com/services/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"
-)
-slack = slackweb.Slack(url=slack_hook_url)
 
 
 # 期限日時設定関数。秒以下の扱いでエラーあるので、%Sのないものも用意
@@ -184,7 +179,15 @@ def initialize_session():
     if "dl_time" not in session:
         session["dl_time"] = convert_dl_time(1)
     # session.pop("_flashes", None)
+    if "slack_url" not in session:
+        session["slack_url"] = None
+    if "email" not in session:
+        session["email"] = None
 
+@app.route("/slack_help")
+@login_required
+def slack_help():
+    return render_template('testtemp/slack_help.html')
 
 @app.route("/my_task")
 @login_required
@@ -250,13 +253,22 @@ def setting():
     if request.method == "GET":
         dl_time_mode = current_user.dl_time
         print(current_user.dl_time)
-        return render_template("testtemp/setting.html", dl_time_mode=dl_time_mode)
+        return render_template("testtemp/settings.html", dl_time_mode=dl_time_mode)
     elif request.method == "POST":
         # dl_time => 0, 1, 2
         dl_time = int(request.form.get("dl_time"))
-        print(dl_time)
+        slack_url = request.form.get("slack_url").strip()
+        email = request.form.get("email").strip() 
+
+        print(f"dl_time: {dl_time}")
+        print(f"slack_url: {slack_url}")
+        print(f"email: {email}")
         current_user.dl_time = dl_time
+        current_user.mail = email
+        current_user.slack_url = slack_url
         session["dl_time"] = convert_dl_time(dl_time)
+        session["slack_url"] = slack_url
+        session["email"] = email
         db.session.commit()
     return redirect("/my_task")
 
@@ -455,8 +467,14 @@ def get_limity_tasks():
 
 def send_to_slack(limity_tasks):
     try:
+        # Slack設定
+        # slack_hook_url = (
+        #     "https://hooks.slack.com/services/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"
+        # )
+        # slack_hook_url = (session['slack_url'])
+        slack_hook_url = ( current_user.slack_url )
+        slack = slackweb.Slack(url=slack_hook_url)
         attachments = []
-        slack_url = "https://hooks.slack.com/services/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"
 
         header_attachment = {
             "color": "#ff0000",
@@ -534,11 +552,16 @@ def notify_limit_tasks():
     limity_tasks = data.get("limity_tasks", [])
     if not limity_tasks:
         return jsonify({"success": True, "message": "期限切れタスクはありません"})
-    success = send_to_slack(limity_tasks)
-    if success:
-        print("Slack通知送信完了")
-        return jsonify({"success": True, "message": "Slack通知完了"})
+    if not session['slack_url'] and session['slack_url'] != '':
+        success = send_to_slack(limity_tasks)
+        if success:
+            print("Slack通知送信完了")
+            return jsonify({"success": True, "message": "Slack通知完了"})
+        else:
+            print("Slack通知送信失敗")
+            return jsonify({"success": False, "message": "Slack通知失敗"})
     else:
-        print("Slack通知送信失敗")
-        return jsonify({"success": False, "message": "Slack通知失敗"})
+        print("SlackURLが設定されていません")
+        return jsonify({"success": False, "message": "SlackURL未設定による通知失敗"})
+
 
