@@ -1,0 +1,119 @@
+{% extends "testtemp/layout.html" %}
+{% block content %}
+    <script>
+    if(!sessionStorage.getItem('dl_time')) {
+      if({{ dl_time_mode|default(0) }} === 0 ) {
+        sessionStorage.setItem('dl_time', 15);
+      } else if ({{ dl_time_mode|default(0) }} === 1) {
+        sessionStorage.setItem('dl_time', 30);
+      } else {
+        sessionStorage.setItem('dl_time', 60);
+      }
+    }
+    </script>
+    <div class="container vh-100 px-2 py-4">
+        <div class="row h-100 justify-content-center align-items-start">
+            <div class="col-12 col-md-8 col-lg-5 col-xl-4">
+              <div class="card border border-secondary">
+                <div class="card-body p-4 p-md-5">
+                  <div class="text-center">
+                      <h1 class="font-size-l">期限時間設定</h1>
+                      <p class="font-size-s">期限時間を選んで保存してください</p>
+                  </div>
+                  <form action="setting" method="post" class="setting_form">
+                    <div class="row mb-3">
+                    <div class="col-4">
+                        <label for="dl_time">時間：</label>
+                    </div>
+                    <div class="col-8">
+                    {% if dl_time_mode == 0 %}
+                      <label class="pe-1">
+                          <input type="radio" name="dl_time" id="dl_time" value="0" checked>15分
+                      </label>
+                      <label class="pe-1">
+                          <input type="radio" name="dl_time" id="dl_time" value="1">30分
+                      </label>
+                      <label>
+                          <input type="radio" name="dl_time" id="dl_time" value="2">60分
+                      </label>
+                      </div>
+                    {% elif dl_time_mode == 1 %}
+                      <label class="pe-1">
+                          <input type="radio" name="dl_time" id="dl_time" value="0">15分
+                      </label>
+                      <label class="pe-1">
+                          <input type="radio" name="dl_time" id="dl_time" value="1" checked>30分
+                      </label>
+                      <label>
+                          <input type="radio" name="dl_time" id="dl_time" value="2">60分
+                      </label>
+                      </div>
+                    {% else %}
+                      <label class="pe-1">
+                          <input type="radio" name="dl_time" id="dl_time" value="0">15分
+                      </label>
+                      <label class="pe-1">
+                          <input type="radio" name="dl_time" id="dl_time" value="1">30分
+                      </label>
+                      <label>
+                          <input type="radio" name="dl_time" id="dl_time" value="2" checked>60分
+                      </label>
+                      </div>
+                    {% endif %}
+                    </div>
+                    
+                    {# 新しく追加するオプション設定セクション #}
+                    <hr class="my-4">
+                    <div class="text-center mb-3">
+                        <h5 class="font-size-m text-muted">通知設定 <span class="badge bg-secondary">オプション</span></h5>
+                        <small class="text-muted">設定したい方のみご入力ください</small>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-4">
+                            <label for="slack_url" class="form-label">Slack URL：</label>
+                        </div>
+                        <div class="col-8">
+                            <input type="url" 
+                                   class="form-control" 
+                                   id="slack_url" 
+                                   name="slack_url" 
+                                   value="{{ slack_url|default('') }}"
+                                   placeholder="https://hooks.slack.com/...">
+                            <small class="form-text text-muted">
+                                Webhook URLを入力してください
+                                <br>
+                                <a href="{{ url_for('slack_help') }}" target="_blank" class="text-primary">
+                                    <i class="bi bi-question-circle"></i> Slack URLの取得方法はこちら
+                                </a>
+                            </small>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-4">
+                            <label for="email" class="form-label">メール：</label>
+                        </div>
+                        <div class="col-8">
+                            <input type="email" 
+                                   class="form-control" 
+                                   id="email" 
+                                   name="email" 
+                                   value="{{ email|default('') }}"
+                                   placeholder="example@example.com">
+                            <small class="form-text text-muted">通知を受け取りたいメールアドレス</small>
+                        </div>
+                    </div>
+                    
+                    {# ボタンエリア #}
+                    <div class="d-grid buttons gap-3">
+                    <button type="submit" class="btn btn-primary btn-lg rounded-pill">保存</button>
+                    <a href="{{ url_for('my_task') }}" class="text-decoration-none"><button type="button" class="btn btn-secondary btn-lg w-100 rounded-pill">キャンセル</button></a>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
