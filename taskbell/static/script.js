@@ -95,10 +95,10 @@ async function noticeLimityTasks() {
 
 // 初回実行
 // my_task.html読み込み時に毎回実行されている
-if (sessionStorage.getItem("is_first_slack") === 1) {
+if (sessionStorage.getItem("is_first_slack") === "1") {
   console.log(sessionStorage.getItem("is_first_slack"));
   noticeLimityTasks();
-  sessionStorage.setItem("is_first_slack", 0);
+  sessionStorage.setItem("is_first_slack", "0");
   console.log(sessionStorage.getItem("is_first_slack"));
 }
 // 30分ごとに自動実行
