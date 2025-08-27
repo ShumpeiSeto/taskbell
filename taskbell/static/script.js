@@ -102,7 +102,7 @@ if (sessionStorage.getItem("is_first_slack") === "1") {
   console.log(sessionStorage.getItem("is_first_slack"));
 }
 // 30分ごとに自動実行
-intervalId ??= setInterval(noticeLimityTasks, 30 * 60 * 1000);
+intervalId ??= setInterval(noticeLimityTasks, 10 * 60 * 1000);
 
 // test 用に
 window.testSlack = noticeLimityTasks;

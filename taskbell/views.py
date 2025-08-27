@@ -13,15 +13,16 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, current_user, login_required, logout_user
 import slackweb
 
+# slack定期実行のた目のテスト用
+from apscheduler.schedulers.background import BackgroundScheduler
+
+
 
 # 手動テーブル削除と作成用（テスト時）
 def init_db():
     # DB作成する(一旦削除したうえで)
     db.drop_all()
     db.create_all()
-
-
-
 
 # 期限日時設定関数。秒以下の扱いでエラーあるので、%Sのないものも用意
 def make_deadline(dead_date, dead_time):
@@ -30,15 +31,6 @@ def make_deadline(dead_date, dead_time):
     deadline = datetime.strptime(s, s_format)
     print(deadline)
     return deadline
-
-
-# def make_deadline2(dead_date, dead_time):
-#     s = f"{dead_date} {dead_time}"
-#     s_format = "%Y-%m-%d %H:%M:%S"
-#     deadline = datetime.datetime.strptime(s, s_format)
-#     print(deadline)
-#     return deadline
-
 
 def convert_dl_time(value):
     dl_time = None
@@ -183,6 +175,7 @@ def initialize_session():
         session["slack_url"] = None
     if "email" not in session:
         session["email"] = None
+
 
 @app.route("/slack_help")
 @login_required
