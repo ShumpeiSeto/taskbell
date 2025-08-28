@@ -16,7 +16,13 @@ import slackweb
 # slack定期実行のた目のテスト用
 from apscheduler.schedulers.background import BackgroundScheduler
 
+# slack通知定期実行のためのテスト用２
+import schedule
+from time import sleep
 
+
+def post_to_slack():
+    print('定期実行なう！')
 
 # 手動テーブル削除と作成用（テスト時）
 def init_db():
@@ -528,6 +534,75 @@ def send_to_slack(limity_tasks):
     finally:
         session["is_first_slack"] = 0
         
+def send_to_slack2(limity_tasks):
+    try:
+        # Slack設定
+        # slack_hook_url = (
+        #     "https://hooks.slack.com/services/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"
+        # )
+        # slack_hook_url = (session['slack_url'])
+        slack_hook_url = ( current_user.slack_url )
+        slack = slackweb.Slack(url=slack_hook_url)
+        attachments = []
+
+        header_attachment = {
+            "color": "#ff0000",
+            "title": "⚠️期限切れタスク通知です",
+            "text": f"{len(limity_tasks)}件のタスクが期限切れです",
+            "mrkdwn_in": ["text"],
+        }
+        attachments.append(header_attachment)
+        for task in limity_tasks:
+            deadline = datetime.fromisoformat(task["deadline"])
+            delay_hours = int((datetime.now() - deadline).total_seconds() / 3600)
+            if task.importance == 2:
+                color = "#ff0000"  # 赤
+                emoji = "🔴"
+                importance = "高"
+            elif task.importance == 1:
+                color = "#ffa500"  # オレンジ
+                emoji = "🟡"
+                importance = "中"
+            else:
+                color = "#008000"  # 緑
+                emoji = "🟢"
+                importance = "低"
+
+            task_attachment = {
+                "title": f"{emoji}{task['title']}",
+                # "text": f"{task['deadline']}",
+                "color": color,
+                "fields": [
+                    {"title": "担当者", "value": f"@{current_user.username}", "short": True},
+                    {"title": "期限", "value": task["deadline"], "short": True},
+                    {
+                        "title": "重要度",
+                        "value": f"{emoji} {importance}",
+                        "short": True,
+                    },
+                    {
+                        "title": "遅延時間",
+                        "value": f"{delay_hours}時間",
+                        "short": True,
+                    },
+                ],
+                "mrkdwn_in": ["fields"],
+            }
+            attachments.append(task_attachment)
+        text = f"期限切れタスクが{len(limity_tasks)}件あります"
+        slack.notify(
+            text=text,
+            icon_emoji=":bell:",
+            username="TaskBell Bot",
+            attachments=attachments,
+        )
+        session["is_first_slack"] = 0
+        return True
+    except Exception as e:
+        print(f"Slack送信エラー発生しました")
+        return False
+    finally:
+        session["is_first_slack"] = 0
 
 
 # JSの方では、定期実行させるJSを動かしている
@@ -557,4 +632,15 @@ def notify_limit_tasks():
         print("SlackURLが設定されていません")
         return jsonify({"success": False, "message": "SlackURL未設定による通知失敗"})
 
-
+# scheduleで回すためのSlack通知関数
+# @app.route("/api/slack/notify", methods="POST")
+# @login_required
+# def slack_notify():
+#     # 現在日時の取得
+#     now = datetime.now()
+#     limity_tasks = Tasks.query.filter(
+#         Tasks.deadline < now,
+#         Tasks.is_completed == False,
+#         Tasks.user_id == current_user.id,
+#     ).all()
+#     pass

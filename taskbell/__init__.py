@@ -6,10 +6,10 @@ from flask_migrate import Migrate
 import datetime
 
 # slack定期実行のた目のテスト用
-from apscheduler.schedulers.background import BackgroundScheduler
+# from apscheduler.schedulers.background import BackgroundScheduler
 
-def post_to_slack():
-    print('定期実行なう！')
+# def post_to_slack():
+#     print('定期実行なう！')
 
 print("__init__.pyがじっこうされました")
 app = Flask(__name__)
@@ -54,10 +54,11 @@ def str_convert_importance(num_importance):
     return importance
 
 # 定期実行のためのテスト
-scheduler = BackgroundScheduler()
-scheduler.add_job(post_to_slack, 'interval', seconds=60)
-scheduler.start()
-print('定期実行が開始しました')
+# scheduler = BackgroundScheduler()
+# scheduler.add_job(post_to_slack, 'interval', seconds=60)
+# scheduler.start()
+# print('定期実行が開始しました')
+
 # Migration 設定
 migrate = Migrate(app, db)
 
