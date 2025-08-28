@@ -19,11 +19,30 @@ from apscheduler.schedulers.background import BackgroundScheduler
 # slack通知定期実行のためのテスト用２
 import schedule
 from time import sleep
+import time
+import threading
 
 
 def post_to_slack():
     print('定期実行なう！')
 
+# scheduleで回すためのSlack通知関数
+# @app.route("/api/slack/notify", methods="POST")
+# @login_required
+def slack_notify():
+    with app.app_context():
+        try:
+            now = datetime.now()
+            limity_tasks = Tasks.query.filter(
+                Tasks.deadline < now,
+                Tasks.is_completed == False,
+                Tasks.user_id == current_user.id,
+            ).all()
+            send_to_slack2(limity_tasks)
+            print("送信成功しました")
+            return True
+        except Exception as e:
+            print("Error:", e)
 # 手動テーブル削除と作成用（テスト時）
 def init_db():
     # DB作成する(一旦削除したうえで)
@@ -246,6 +265,15 @@ def button_click(flg):
     return redirect("/my_task")
 
 
+def schedule_runner():
+    with app.app_context():
+        print("=== スケジューラー開始 ===")
+        while True:
+            current_time = datetime.now()
+            print(f"[{current_time}] スケジュールをチェック中...")
+            schedule.run_pending()
+            time.sleep(60)
+
 @app.route("/setting", methods=["GET", "POST"])
 @login_required
 def setting():
@@ -259,16 +287,30 @@ def setting():
         slack_url = request.form.get("slack_url").strip()
         email = request.form.get("email").strip() 
 
+        morning_time_str = request.form.get("morning_time")
+        morning_time = datetime.strptime(morning_time_str, "%H:%M").time()
+
         print(f"dl_time: {dl_time}")
         print(f"slack_url: {slack_url}")
         print(f"email: {email}")
+        print(f"morning_time: {morning_time}")
         current_user.dl_time = dl_time
         current_user.mail = email
         current_user.slack_url = slack_url
+        current_user.morning_time = morning_time
         session["dl_time"] = convert_dl_time(dl_time)
         session["slack_url"] = slack_url
         session["email"] = email
+        # session["morning_time"] = morning_time
         db.session.commit()
+        # スケジュール登録してみる
+        schedule.every().days.at(morning_time_str).do(slack_notify)
+        # デバッグ用のコードを追加
+        scheduler_thread = threading.Thread(target=schedule_runner, daemon=True)
+        scheduler_thread.start()
+        print("現在のスケジュール一覧:")
+        for job in schedule.jobs:
+            print(f"Job: {job}, Next run: {job.next_run}")
     return redirect("/my_task")
 
 
@@ -632,15 +674,3 @@ def notify_limit_tasks():
         print("SlackURLが設定されていません")
         return jsonify({"success": False, "message": "SlackURL未設定による通知失敗"})
 
-# scheduleで回すためのSlack通知関数
-# @app.route("/api/slack/notify", methods="POST")
-# @login_required
-# def slack_notify():
-#     # 現在日時の取得
-#     now = datetime.now()
-#     limity_tasks = Tasks.query.filter(
-#         Tasks.deadline < now,
-#         Tasks.is_completed == False,
-#         Tasks.user_id == current_user.id,
-#     ).all()
-#     pass

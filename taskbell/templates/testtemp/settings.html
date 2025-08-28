@@ -78,7 +78,7 @@
                                    class="form-control" 
                                    id="slack_url" 
                                    name="slack_url" 
-                                   value="{{ slack_url|default('') }}"
+                                   value="{{ current_user.slack_url|default('') }}"
                                    placeholder="https://hooks.slack.com/...">
                             <small class="form-text text-muted">
                                 Webhook URLを入力してください
@@ -102,6 +102,20 @@
                                    value="{{ email|default('') }}"
                                    placeholder="example@example.com">
                             <small class="form-text text-muted">通知を受け取りたいメールアドレス</small>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-4">
+                            <label for="morning_time" class="form-label">朝の通知時間：</label>
+                        </div>
+                        <div class="col-8">
+                            <input type="time" 
+                                   class="form-control"
+                                   id="morning_time" 
+                                   name="morning_time" 
+                                   value="{{ current_user.morning_time|default('08:00') }}">
+                            <small class="form-text text-muted">毎日この時間にタスク一覧を通知します</small>
                         </div>
                     </div>
                     
