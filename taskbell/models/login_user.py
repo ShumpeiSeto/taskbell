@@ -2,6 +2,7 @@ from taskbell import db, login_manager
 from datetime import datetime
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
+from sqlalchemy import Time
 
 # from flask_login import login_manager
 
@@ -16,6 +17,7 @@ class User(UserMixin, db.Model):
         self.dl_time = 0
         self.slack_url = None
         self.email = None
+        self.morning_time = None
 
     __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -29,8 +31,9 @@ class User(UserMixin, db.Model):
     c_v_mode = db.Column(db.Integer)
     dl_time = db.Column(db.Integer, default=0)
     slack_url = db.Column(db.String(100), nullable=True)
-    email = db.Column(db.String(100), nullable=True)
+    email = db.Column(db.String(100), nullable=True, default=None)
     task_id = db.relationship("Tasks", backref="users")
+    morning_time = db.Column(Time, nullable=True, default=None)
 
     # is_authenticated をoverrideし、username, passwordチェックをしていたが、
     # どうやら継承元UserMinxinのis_authenticatedの方で比較してくれているみたいだ
