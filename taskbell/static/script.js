@@ -78,31 +78,31 @@ async function checkdatetime() {
   console.log(limity_tasks_arr);
 }
 
-async function noticeLimityTasks() {
-  const response = await fetch("/api/tasks/limity");
-  const result = await response.json();
-  // slackの返り値の判定を後ほど書く
-  const slackResponse = await fetch("/api/slack/notify_limit", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      limity_tasks: result.data,
-    }),
-  });
-}
+// async function noticeLimityTasks() {
+//   const response = await fetch("/api/tasks/limity");
+//   const result = await response.json();
+//   // slackの返り値の判定を後ほど書く
+//   const slackResponse = await fetch("/api/slack/notify_limit", {
+//     method: "POST",
+//     headers: {
+//       "Content-Type": "application/json",
+//     },
+//     body: JSON.stringify({
+//       limity_tasks: result.data,
+//     }),
+//   });
+// }
 
-// 初回実行
-// my_task.html読み込み時に毎回実行されている
-if (sessionStorage.getItem("is_first_slack") === "1") {
-  console.log(sessionStorage.getItem("is_first_slack"));
-  noticeLimityTasks();
-  sessionStorage.setItem("is_first_slack", "0");
-  console.log(sessionStorage.getItem("is_first_slack"));
-}
-// 30分ごとに自動実行
-intervalId ??= setInterval(noticeLimityTasks, 10 * 60 * 1000);
+// // 初回実行
+// // my_task.html読み込み時に毎回実行されている
+// if (sessionStorage.getItem("is_first_slack") === "1") {
+//   console.log(sessionStorage.getItem("is_first_slack"));
+//   noticeLimityTasks();
+//   sessionStorage.setItem("is_first_slack", "0");
+//   console.log(sessionStorage.getItem("is_first_slack"));
+// }
+// // 30分ごとに自動実行
+// intervalId ??= setInterval(noticeLimityTasks, 10 * 60 * 1000);
 
-// test 用に
-window.testSlack = noticeLimityTasks;
+// // test 用に
+// window.testSlack = noticeLimityTasks;
