@@ -22,32 +22,44 @@ from time import sleep
 import time
 import threading
 
+# スケジュール変数
+schedule_user = {}
+scheduler_thread = None
+
 
 def post_to_slack():
-    print('定期実行なう！')
+    print("定期実行なう！")
+
 
 # scheduleで回すためのSlack通知関数
 # @app.route("/api/slack/notify", methods="POST")
 # @login_required
-def slack_notify():
+def slack_notify(user_id):
     with app.app_context():
         try:
+            user = User.query.get(user_id)
             now = datetime.now()
             limity_tasks = Tasks.query.filter(
                 Tasks.deadline < now,
                 Tasks.is_completed == False,
-                Tasks.user_id == current_user.id,
+                Tasks.user_id == user_id,
             ).all()
-            send_to_slack2(limity_tasks)
-            print("送信成功しました")
+            if len(limity_tasks) > 0:
+                send_to_slack2(limity_tasks, user)
+                return True
+            send_to_slack2(limity_tasks, user)
+            # print("送信成功しました")
             return True
         except Exception as e:
             print("Error:", e)
+
+
 # 手動テーブル削除と作成用（テスト時）
 def init_db():
     # DB作成する(一旦削除したうえで)
     db.drop_all()
     db.create_all()
+
 
 # 期限日時設定関数。秒以下の扱いでエラーあるので、%Sのないものも用意
 def make_deadline(dead_date, dead_time):
@@ -56,6 +68,7 @@ def make_deadline(dead_date, dead_time):
     deadline = datetime.strptime(s, s_format)
     print(deadline)
     return deadline
+
 
 def convert_dl_time(value):
     dl_time = None
@@ -153,6 +166,21 @@ def signup_user(target_user):
     return redirect("/")
 
 
+def remove_user_schedule(user_id):
+    jobs_to_remove = []
+    for job in schedule.jobs:
+        # job.job_funcがslack_notifyで、引数がuser_idのもののみ削除
+        if (
+            hasattr(job.job_func, "args")
+            and len(job.job_func.args) > 0
+            and job.job_func.args[0] == user_id
+        ):
+            jobs_to_remove.append(job)
+
+    for job in jobs_to_remove:
+        schedule.cancel_job(job)
+
+
 # Error Handling
 @app.errorhandler(400)
 def handle_bad_request(e):
@@ -205,7 +233,8 @@ def initialize_session():
 @app.route("/slack_help")
 @login_required
 def slack_help():
-    return render_template('testtemp/slack_help.html')
+    return render_template("testtemp/slack_help.html")
+
 
 @app.route("/my_task")
 @login_required
@@ -274,18 +303,33 @@ def schedule_runner():
             schedule.run_pending()
             time.sleep(60)
 
+
 @app.route("/setting", methods=["GET", "POST"])
 @login_required
 def setting():
     if request.method == "GET":
         dl_time_mode = current_user.dl_time
-        print(current_user.dl_time)
-        return render_template("testtemp/settings.html", dl_time_mode=dl_time_mode)
+        slack_url = current_user.slack_url or ""
+        email = current_user.email or ""
+
+        if current_user.morning_time:
+            morning_time = current_user.morning_time.strftime("%H:%M")
+        else:
+            morning_time = "08:00"
+        # print(current_user.dl_time)
+        return render_template(
+            "testtemp/settings.html",
+            dl_time_mode=dl_time_mode,
+            slack_url=slack_url,
+            email=email,
+            morning_time=morning_time,
+        )
     elif request.method == "POST":
+        global scheduler_thread
         # dl_time => 0, 1, 2
         dl_time = int(request.form.get("dl_time"))
         slack_url = request.form.get("slack_url").strip()
-        email = request.form.get("email").strip() 
+        email = request.form.get("email").strip()
 
         morning_time_str = request.form.get("morning_time")
         morning_time = datetime.strptime(morning_time_str, "%H:%M").time()
@@ -303,12 +347,24 @@ def setting():
         session["email"] = email
         # session["morning_time"] = morning_time
         db.session.commit()
+
+        user_id = current_user.id
+        schedule_user[user_id] = {
+            "morning_time": morning_time_str,
+            "slack_url": slack_url,
+            "email": email,
+        }
+
         # スケジュール登録してみる
-        schedule.every().days.at(morning_time_str).do(slack_notify)
+        remove_user_schedule(current_user.id)
+        schedule.every().days.at(morning_time_str).do(slack_notify, user_id)
         # デバッグ用のコードを追加
-        scheduler_thread = threading.Thread(target=schedule_runner, daemon=True)
-        scheduler_thread.start()
-        print("現在のスケジュール一覧:")
+        if scheduler_thread is None or not scheduler_thread.is_alive():
+            scheduler_thread = threading.Thread(target=schedule_runner, daemon=True)
+            scheduler_thread.start()
+            print("スケジューラ開始")
+        else:
+            print("スケジューラは動作中")
         for job in schedule.jobs:
             print(f"Job: {job}, Next run: {job.next_run}")
     return redirect("/my_task")
@@ -513,7 +569,7 @@ def send_to_slack(limity_tasks):
         #     "https://hooks.slack.com/services/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"
         # )
         # slack_hook_url = (session['slack_url'])
-        slack_hook_url = ( current_user.slack_url )
+        slack_hook_url = current_user.slack_url
         slack = slackweb.Slack(url=slack_hook_url)
         attachments = []
 
@@ -575,15 +631,11 @@ def send_to_slack(limity_tasks):
         return False
     finally:
         session["is_first_slack"] = 0
-        
-def send_to_slack2(limity_tasks):
+
+
+def send_to_slack2(limity_tasks, user):
     try:
-        # Slack設定
-        # slack_hook_url = (
-        #     "https://hooks.slack.com/services/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"
-        # )
-        # slack_hook_url = (session['slack_url'])
-        slack_hook_url = ( current_user.slack_url )
+        slack_hook_url = user.slack_url
         slack = slackweb.Slack(url=slack_hook_url)
         attachments = []
 
@@ -595,8 +647,8 @@ def send_to_slack2(limity_tasks):
         }
         attachments.append(header_attachment)
         for task in limity_tasks:
-            deadline = datetime.fromisoformat(task["deadline"])
-            delay_hours = int((datetime.now() - deadline).total_seconds() / 3600)
+            # deadline = datetime.fromisoformat(task["deadline"])
+            delay_hours = int((datetime.now() - task.deadline).total_seconds() / 3600)
             if task.importance == 2:
                 color = "#ff0000"  # 赤
                 emoji = "🔴"
@@ -611,12 +663,20 @@ def send_to_slack2(limity_tasks):
                 importance = "低"
 
             task_attachment = {
-                "title": f"{emoji}{task['title']}",
+                "title": f"{emoji}{task.title}",
                 # "text": f"{task['deadline']}",
                 "color": color,
                 "fields": [
-                    {"title": "担当者", "value": f"@{current_user.username}", "short": True},
-                    {"title": "期限", "value": task["deadline"], "short": True},
+                    {
+                        "title": "担当者",
+                        "value": f"@{user.username}",
+                        "short": True,
+                    },
+                    {
+                        "title": "期限",
+                        "value": task.deadline.strftime("%Y/%m/%d %H:%M"),
+                        "short": True,
+                    },
                     {
                         "title": "重要度",
                         "value": f"{emoji} {importance}",
@@ -638,13 +698,14 @@ def send_to_slack2(limity_tasks):
             username="TaskBell Bot",
             attachments=attachments,
         )
-        session["is_first_slack"] = 0
+        print("Slack通知に成功しました！")
         return True
     except Exception as e:
-        print(f"Slack送信エラー発生しました")
+        print(f"Slack送信エラー詳細: {type(e).__name__}: {str(e)}")
+        import traceback
+
+        traceback.print_exc()
         return False
-    finally:
-        session["is_first_slack"] = 0
 
 
 # JSの方では、定期実行させるJSを動かしている
@@ -662,7 +723,7 @@ def notify_limit_tasks():
     limity_tasks = data.get("limity_tasks", [])
     if not limity_tasks:
         return jsonify({"success": True, "message": "期限切れタスクはありません"})
-    if not session['slack_url'] and session['slack_url'] != '':
+    if current_user.slack_url:
         success = send_to_slack(limity_tasks)
         if success:
             print("Slack通知送信完了")
@@ -673,4 +734,3 @@ def notify_limit_tasks():
     else:
         print("SlackURLが設定されていません")
         return jsonify({"success": False, "message": "SlackURL未設定による通知失敗"})
-
