@@ -22,6 +22,19 @@ from time import sleep
 import time
 import threading
 
+# メール送信のため
+from flask_mail import Mail, Message
+from flask import current_app
+
+# メールのための設定
+app.config["MAIL_SERVER"] = "smtp.gmail.com"
+app.config["MAIL_PORT"] = 587
+app.config["MAIL_USE_TLS"] = True
+app.config["MAIL_USERNAME"] = "tskb.peipei@gmail.com"
+app.config["MAIL_PASSWORD"] = "jmtnwzsayqxjxkhe"
+app.config["MAIL_DEFAULT_SENDER"] = "tskb.peipei@gmail.com"
+mail = Mail(app)
+
 # スケジュール変数
 schedule_user = {}
 scheduler_thread = None
@@ -29,6 +42,45 @@ scheduler_thread = None
 
 def post_to_slack():
     print("定期実行なう！")
+
+
+def send_email_notification(limity_tasks, user):
+    try:
+        # タスク一覧のテキストを作成
+        task_list = "\n".join(
+            [
+                f"・{task.title} (期限: {task.deadline.strftime('%Y/%m/%d %H:%M')})"
+                for task in limity_tasks
+            ]
+        )
+
+        body = f"""
+こんにちは {user.username} さん、
+
+期限切れのタスクが {len(limity_tasks)} 件あります：
+
+{task_list}
+
+早めの対応をお願いします。
+
+TaskBell より
+        """
+
+        # Messageオブジェクト作成
+        msg = Message(
+            subject=f"【TaskBell】期限切れタスク {len(limity_tasks)} 件",
+            recipients=[user.email],
+            body=body,
+        )
+
+        # メール送信
+        mail.send(msg)
+        print(f"メール送信成功: {user.email}")
+        return True
+
+    except Exception as e:
+        print(f"メール送信エラー: {e}")
+        return False
 
 
 # scheduleで回すためのSlack通知関数
@@ -45,10 +97,10 @@ def slack_notify(user_id):
                 Tasks.user_id == user_id,
             ).all()
             if len(limity_tasks) > 0:
-                send_to_slack2(limity_tasks, user)
-                return True
-            send_to_slack2(limity_tasks, user)
-            # print("送信成功しました")
+                if user.slack_url:
+                    send_to_slack2(limity_tasks, user)
+                if user.email:
+                    email_success = send_email_notification(limity_tasks, user)
             return True
         except Exception as e:
             print("Error:", e)
@@ -301,7 +353,7 @@ def schedule_runner():
             current_time = datetime.now()
             print(f"[{current_time}] スケジュールをチェック中...")
             schedule.run_pending()
-            time.sleep(60)
+            time.sleep(30)
 
 
 @app.route("/setting", methods=["GET", "POST"])
@@ -339,7 +391,7 @@ def setting():
         print(f"email: {email}")
         print(f"morning_time: {morning_time}")
         current_user.dl_time = dl_time
-        current_user.mail = email
+        current_user.email = email
         current_user.slack_url = slack_url
         current_user.morning_time = morning_time
         session["dl_time"] = convert_dl_time(dl_time)
