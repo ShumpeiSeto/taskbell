@@ -17,46 +17,47 @@
               <div class="card border border-secondary">
                 <div class="card-body p-4 p-md-5">
                   <div class="text-center">
-                      <h1 class="font-size-l">期限時間設定</h1>
-                      <p class="font-size-s">期限時間を選んで保存してください</p>
+                      <h1 class="font-size-l">タスク通知設定</h1>
+                      <p class="font-size-s">タスクの期限が近づくとアプリ上でお知らせします</p>
+                      <p class="font-size-s">何分前がよいですか？</p>
                   </div>
                   <form action="setting" method="post" class="setting_form">
                     <div class="row mb-3">
-                    <div class="col-4">
+                    <div class="col-3">
                         <label for="dl_time">時間：</label>
                     </div>
-                    <div class="col-8">
+                    <div class="col-9">
                     {% if dl_time_mode == 0 %}
                       <label class="pe-1">
-                          <input type="radio" name="dl_time" id="dl_time" value="0" checked>15分
+                          <input type="radio" name="dl_time" id="dl_time" value="0" checked>15分前
                       </label>
                       <label class="pe-1">
-                          <input type="radio" name="dl_time" id="dl_time" value="1">30分
+                          <input type="radio" name="dl_time" id="dl_time" value="1">30分前
                       </label>
                       <label>
-                          <input type="radio" name="dl_time" id="dl_time" value="2">60分
+                          <input type="radio" name="dl_time" id="dl_time" value="2">60分前
                       </label>
                       </div>
                     {% elif dl_time_mode == 1 %}
                       <label class="pe-1">
-                          <input type="radio" name="dl_time" id="dl_time" value="0">15分
+                          <input type="radio" name="dl_time" id="dl_time" value="0">15分前
                       </label>
                       <label class="pe-1">
-                          <input type="radio" name="dl_time" id="dl_time" value="1" checked>30分
+                          <input type="radio" name="dl_time" id="dl_time" value="1" checked>30分前
                       </label>
                       <label>
-                          <input type="radio" name="dl_time" id="dl_time" value="2">60分
+                          <input type="radio" name="dl_time" id="dl_time" value="2">60分前
                       </label>
                       </div>
                     {% else %}
                       <label class="pe-1">
-                          <input type="radio" name="dl_time" id="dl_time" value="0">15分
+                          <input type="radio" name="dl_time" id="dl_time" value="0">15分前
                       </label>
                       <label class="pe-1">
-                          <input type="radio" name="dl_time" id="dl_time" value="1">30分
+                          <input type="radio" name="dl_time" id="dl_time" value="1">30分前
                       </label>
                       <label>
-                          <input type="radio" name="dl_time" id="dl_time" value="2" checked>60分
+                          <input type="radio" name="dl_time" id="dl_time" value="2" checked>60分前
                       </label>
                       </div>
                     {% endif %}
@@ -65,10 +66,37 @@
                     {# 新しく追加するオプション設定セクション #}
                     <hr class="my-4">
                     <div class="text-center mb-3">
-                        <h5 class="font-size-m text-muted">通知設定 <span class="badge bg-secondary">オプション</span></h5>
-                        <small class="text-muted">設定したい方のみご入力ください</small>
+                        <h5 class="font-size-m text-muted">毎日の通知設定 <span class="badge bg-secondary">オプション</span></h5>
+                        <small class="text-muted">1日に1度、期限切れタスクがある際にメールやSlackで通知</small>
                     </div>
                     
+                    <div class="row mb-3">
+                        <div class="col-4">
+                            <label for="morning_time" class="form-label">受け取りたい時刻：</label>
+                        </div>
+                        <div class="col-8">
+                            <input type="time" 
+                                   class="form-control"
+                                   id="morning_time" 
+                                   name="morning_time" 
+                                   value="{{ morning_time|default('08:00') }}">
+                            <small class="form-text set-error" id="timeError">毎日この時間に通知します</small>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-4">
+                            <label for="email" class="form-label">メール：</label>
+                        </div>
+                        <div class="col-8">
+                            <input type="email" 
+                                   class="form-control" 
+                                   id="email" 
+                                   name="email" 
+                                   value="{{ email|default('') }}"
+                                   placeholder="example@example.com">
+                            <small class="form-text set-error" id="emailError">受け取りたいメールアドレス</small>
+                        </div>
+                    </div>
                     <div class="row mb-3">
                         <div class="col-4">
                             <label for="slack_url" class="form-label">Slack URL：</label>
@@ -81,7 +109,7 @@
                                    value="{{ slack_url|default('') }}"
                                    placeholder="https://hooks.slack.com/...">
                             <small class="form-text text-muted">
-                                Webhook URLを入力してください
+                                受け取りたいSlackチャンネルのURL
                                 <br>
                                 <a href="{{ url_for('slack_help') }}" target="_blank" class="text-primary">
                                     <i class="bi bi-question-circle"></i> Slack URLの取得方法はこちら
@@ -90,34 +118,7 @@
                         </div>
                     </div>
                     
-                    <div class="row mb-3">
-                        <div class="col-4">
-                            <label for="email" class="form-label">メール：</label>
-                        </div>
-                        <div class="col-8">
-                            <input type="email" 
-                                   class="form-control" 
-                                   id="email" 
-                                   name="email" 
-                                   value="{{ email|default('') }}"
-                                   placeholder="example@example.com">
-                            <small class="form-text text-muted">通知を受け取りたいメールアドレス</small>
-                        </div>
-                    </div>
                     
-                    <div class="row mb-3">
-                        <div class="col-4">
-                            <label for="morning_time" class="form-label">朝の通知時間：</label>
-                        </div>
-                        <div class="col-8">
-                            <input type="time" 
-                                   class="form-control"
-                                   id="morning_time" 
-                                   name="morning_time" 
-                                   value="{{ morning_time|default('08:00') }}">
-                            <small class="form-text text-muted">毎日この時間にタスク一覧を通知します</small>
-                        </div>
-                    </div>
                     
                     {# ボタンエリア #}
                     <div class="d-grid buttons gap-3">
@@ -130,4 +131,5 @@
             </div>
         </div>
     </div>
+    <script src="{{ url_for('static', filename='validate.js') }}"></script>
 {% endblock %}
