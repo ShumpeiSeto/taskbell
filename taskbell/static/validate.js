@@ -1,3 +1,4 @@
+const loginForm = document.querySelector(".login_form");
 const signupForm = document.querySelector(".signup_form");
 const username = document.getElementById("username");
 const usernameError = document.getElementById("usernameError");
@@ -49,7 +50,9 @@ const validatePasswordMatch = function (password, confPassword) {
 };
 if (username) {
   username.addEventListener("blur", function (e) {
-    if (!validationMinRequired(username.value, 3)) {
+    if (validateEmpty(username.value)) {
+      showElement(username, usernameError, "ユーザー名が入力されていません");
+    } else if (!validationMinRequired(username.value, 3)) {
       showElement(
         username,
         usernameError,
@@ -62,7 +65,9 @@ if (username) {
 }
 if (password) {
   password.addEventListener("blur", function (e) {
-    if (!validationMinRequired(password.value, 8)) {
+    if (validateEmpty(password.value)) {
+      showElement(password, passwordError, "パスワードが入力されていません");
+    } else if (!validationMinRequired(password.value, 8)) {
       showElement(
         password,
         passwordError,
@@ -134,6 +139,43 @@ if (signupForm) {
   });
 }
 
+if (loginForm) {
+  loginForm.addEventListener("submit", function (e) {
+    let hasErrors = false;
+    e.preventDefault();
+    // ユーザー名チェック
+    if (validateEmpty(username.value)) {
+      showElement(username, usernameError, "ユーザー名が入力されていません");
+      hasErrors = true;
+    } else if (!validationMinRequired(username.value, 3)) {
+      showElement(
+        username,
+        usernameError,
+        "ユーザー名は3文字以上で入力して下さい"
+      );
+      hasErrors = true;
+    } else {
+      hideElement(username, usernameError);
+    }
+    // パスワードチェック
+    if (validateEmpty(password.value)) {
+      showElement(password, passwordError, "パスワードが入力されていません");
+      hasErrors = true;
+    } else if (!validationMinRequired(password.value, 8)) {
+      showElement(
+        password,
+        passwordError,
+        "パスワードは８文字以上で入力して下さい"
+      );
+      hasErrors = true;
+    } else {
+      hideElement(password, passwordError);
+    }
+    if (!hasErrors) {
+      loginForm.submit();
+    }
+  });
+}
 // Setting Page
 
 // 要素の非表示関数(共通)

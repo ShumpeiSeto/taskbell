@@ -14,12 +14,14 @@
                       <div class="mb-3">
                             <label for="username" class="form-label fw-bold">ユーザ名：</label>
                             <input type="text" name="username" id="username" class="form-control form-control-lg" placeholder="ユーザー名を入力" required>
+                            <div class="error" id="usernameError"></div>
                       </div>
                       {# パスワード #}
                       <div class="mb-4">
                             <label for="password" class="form-label fw-bold">パスワード：</label>
                             <input type="password" name="password" id="password" class="form-control form-control-lg"
                             placeholder="パスワードを入力" required>
+                            <div class="error" id="passwordError"></div>
                       </div>
                       {% with messages = get_flashed_messages() %}
                       {% if messages %}
@@ -41,4 +43,5 @@
             </div>
         </div>
     </div>
+    <script src="{{ url_for('static', filename='validate.js') }}"></script>
 {% endblock %}
