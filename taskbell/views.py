@@ -1,5 +1,5 @@
 from flask import render_template, request, redirect, Flask, flash, session, jsonify
-from taskbell import app, db
+from taskbell import app, db, scheduler_thread
 from .models.add_task import Tasks
 from .models.login_user import User
 from .postToSlack import post_to_slack
@@ -36,12 +36,8 @@ app.config["MAIL_DEFAULT_SENDER"] = "tskb.peipei@gmail.com"
 mail = Mail(app)
 
 # スケジュール変数
-schedule_user = {}
-scheduler_thread = None
-
-
-def post_to_slack():
-    print("定期実行なう！")
+# schedule_user = {}
+# scheduler_thread = None
 
 
 def send_email_notification(limity_tasks, user):
@@ -196,9 +192,8 @@ def check(task_id, task):
             # db.session.add(task)
             db.session.merge(task)
             db.session.commit()
-            print("タスクチェックに成功しました")
             print(
-                f"タスクチェック:task_id:{task.task_id}, title:{task.title}, is_completed:{task.is_completed}"
+                f"タスク済みとしました:task_id:{task.task_id}, title:{task.title}, is_completed:{task.is_completed}"
             )
         except Exception as e:
             db.session.rollback()
@@ -353,7 +348,7 @@ def schedule_runner():
             current_time = datetime.now()
             print(f"[{current_time}] スケジュールをチェック中...")
             schedule.run_pending()
-            time.sleep(30)
+            time.sleep(180)
 
 
 @app.route("/setting", methods=["GET", "POST"])
@@ -400,25 +395,25 @@ def setting():
         # session["morning_time"] = morning_time
         db.session.commit()
 
-        user_id = current_user.id
-        schedule_user[user_id] = {
-            "morning_time": morning_time_str,
-            "slack_url": slack_url,
-            "email": email,
-        }
+        # user_id = current_user.id
+        # schedule_user[user_id] = {
+        #     "morning_time": morning_time_str,
+        #     "slack_url": slack_url,
+        #     "email": email,
+        # }
 
         # スケジュール登録してみる
         remove_user_schedule(current_user.id)
-        schedule.every().days.at(morning_time_str).do(slack_notify, user_id)
+        schedule.every().days.at(morning_time_str).do(slack_notify, current_user.id)
         # デバッグ用のコードを追加
-        if scheduler_thread is None or not scheduler_thread.is_alive():
-            scheduler_thread = threading.Thread(target=schedule_runner, daemon=True)
-            scheduler_thread.start()
-            print("スケジューラ開始")
-        else:
-            print("スケジューラは動作中")
-        for job in schedule.jobs:
-            print(f"Job: {job}, Next run: {job.next_run}")
+        # if scheduler_thread is None or not scheduler_thread.is_alive():
+        #     scheduler_thread = threading.Thread(target=schedule_runner, daemon=True)
+        #     scheduler_thread.start()
+        #     print("スケジューラ開始")
+        # else:
+        #     print("スケジューラは動作中")
+        # for job in schedule.jobs:
+        #     print(f"Job: {job}, Next run: {job.next_run}")
     return redirect("/my_task")
 
 
@@ -591,8 +586,11 @@ def signup():
 @login_required
 def get_limity_tasks():
     now = datetime.now()
+    dl_time = session["dl_time"]
+    print(dl_time)
+    # target_time = datetime.now() + datetime.timedelta(minutes=int(dl_time))
     limity_tasks = Tasks.query.filter(
-        Tasks.deadline < now,
+        Tasks.deadline < now + timedelta(minutes=dl_time),
         Tasks.is_completed == False,
         Tasks.user_id == current_user.id,
     ).all()

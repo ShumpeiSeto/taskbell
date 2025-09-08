@@ -5,11 +5,15 @@ from flask_login import LoginManager
 from flask_migrate import Migrate
 import datetime
 
-# slack定期実行のた目のテスト用
-# from apscheduler.schedulers.background import BackgroundScheduler
+# slack通知定期実行のためのテスト用２
+import schedule
+import time
+import threading
 
-# def post_to_slack():
-#     print('定期実行なう！')
+
+# スケジュール変数
+schedule_user = {}
+scheduler_thread = None
 
 print("__init__.pyがじっこうされました")
 app = Flask(__name__)
@@ -46,21 +50,70 @@ def str_add_weekday(date):
     return f"{date.strftime('%m/%d')}({weekday})"
 
 
-# 重要度から漢字重要度を出すフィルター
+# 重要度を星で表現するフィルター
 @app.template_filter("convert_importance")
 def str_convert_importance(num_importance):
     importances = ["★", "★★", "★★★"]
     importance = importances[num_importance]
     return importance
 
-# 定期実行のためのテスト
-# scheduler = BackgroundScheduler()
-# scheduler.add_job(post_to_slack, 'interval', seconds=60)
-# scheduler.start()
-# print('定期実行が開始しました')
+
+scheduler_thread = None
+
+
+def schedule_runner():
+    """スケジューラを実行し続ける関数"""
+    with app.app_context():
+        print("=== スケジューラー開始 ===")
+        while True:
+            current_time = datetime.datetime.now()
+            print(f"[{current_time}] スケジュールをチェック中...")
+            schedule.run_pending()
+            time.sleep(60)
+
+
+def init_scheduler():
+    """アプリ起動時にスケジューラを初期化"""
+    global scheduler_thread
+
+    if scheduler_thread is None or not scheduler_thread.is_alive():
+        # 既存ユーザーのスケジュールを復元
+        restore_user_schedules()
+
+        # スケジューラスレッドを開始
+        scheduler_thread = threading.Thread(target=schedule_runner, daemon=True)
+        scheduler_thread.start()
+        print("✅ スケジューラが起動しました")
+
+
+def restore_user_schedules():
+    from .models.login_user import User
+    from .views import slack_notify
+
+    """データベースからユーザーのスケジュール設定を復元"""
+    try:
+        users = User.query.filter(
+            User.morning_time != None,
+            (User.slack_url != None) | (User.email != None),
+        ).all()
+
+        for user in users:
+            if user.morning_time:
+                morning_time_str = user.morning_time.strftime("%H:%M")
+                schedule.every().days.at(morning_time_str).do(slack_notify, user.id)
+                print(
+                    f"📅 ユーザー {user.username} のスケジュール復元: {morning_time_str}"
+                )
+
+    except Exception as e:
+        print(f"⚠️ スケジュール復元エラー: {e}")
+
 
 # Migration 設定
 migrate = Migrate(app, db)
 
 # views.pyを実行する
 from taskbell import views
+
+# アプリ起動時にスケジューラ起動
+init_scheduler()
