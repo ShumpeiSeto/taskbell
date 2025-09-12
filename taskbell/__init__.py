@@ -87,26 +87,28 @@ def init_scheduler():
 
 
 def restore_user_schedules():
-    from .models.login_user import User
-    from .views import slack_notify
-
     """データベースからユーザーのスケジュール設定を復元"""
-    try:
-        users = User.query.filter(
-            User.morning_time != None,
-            (User.slack_url != None) | (User.email != None),
-        ).all()
+    with app.app_context():
+        print("アプリケーションコンテキスト内")
+        try:
+            from .models.login_user import User
+            from .views import slack_notify
 
-        for user in users:
-            if user.morning_time:
-                morning_time_str = user.morning_time.strftime("%H:%M")
-                schedule.every().days.at(morning_time_str).do(slack_notify, user.id)
-                print(
-                    f"📅 ユーザー {user.username} のスケジュール復元: {morning_time_str}"
-                )
+            users = User.query.filter(
+                User.morning_time != None,
+                (User.slack_url != None) | (User.email != None),
+            ).all()
 
-    except Exception as e:
-        print(f"⚠️ スケジュール復元エラー: {e}")
+            for user in users:
+                if user.morning_time:
+                    morning_time_str = user.morning_time.strftime("%H:%M")
+                    schedule.every().days.at(morning_time_str).do(slack_notify, user.id)
+                    print(
+                        f"📅 ユーザー {user.username} のスケジュール復元: {morning_time_str}"
+                    )
+
+        except Exception as e:
+            print(f"⚠️ スケジュール復元エラー: {e}")
 
 
 # Migration 設定

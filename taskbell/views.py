@@ -118,6 +118,13 @@ def make_deadline(dead_date, dead_time):
     return deadline
 
 
+def make_deadline2(deadline):
+    s_format = "%Y-%m-%d %H:%M:%S"
+    result = datetime.strptime(deadline, s_format)
+    print(result)
+    return result
+
+
 def convert_dl_time(value):
     dl_time = None
     if value == 0:
@@ -143,6 +150,31 @@ def insert(task_obj):
         db.session.commit()
         db.session.close()
     return redirect("/my_task")
+
+
+def add_new_task(task_obj):
+    with app.app_context():
+        print("==========1件登録==========")
+        task = Tasks(
+            title=task_obj["title"],
+            deadline=task_obj["deadline"],
+            is_completed=False,
+            user_id=task_obj["user_id"],
+            importance=task_obj["importance"],
+        )
+        db.session.add(task)
+        db.session.commit()
+        new_task_id = task.task_id
+        task_dict = {
+            "task_id": task.task_id,
+            "title": task.title,
+            "deadline": task.deadline,
+            "is_completed": task.is_completed,
+            "user_id": task.user_id,
+            "importance": task.importance,
+        }
+        db.session.close()
+        return task_dict
 
 
 def update(task, update_info):
@@ -498,6 +530,22 @@ def check_task(task_id):
     return redirect("/my_task")
 
 
+# API Versionを追加してみる
+@app.route("/api/checked/<int:task_id>", methods=["POST"])
+@login_required
+def api_check_task(task_id):
+    task = Tasks.query.filter(Tasks.task_id == task_id).first()
+    check(task_id, task)
+    return jsonify(
+        {
+            "status": "success",
+            "message": "タスクを更新しました",
+            "task_id": task_id,
+            "is_completed": task.is_completed,
+        }
+    )
+
+
 # アクセスするとテーブル削除と作成
 @app.route("/make_table")
 def make_table():
@@ -580,6 +628,46 @@ def signup():
         # 重複するユーザーが存在する場合は赤メッセージで遷移させない
         # return redirect("/login")
     return render_template("testtemp/signup.html")
+
+
+@app.route("/api/get_mytasks", methods=["GET"])
+@login_required
+def get_mytasks():
+    with app.app_context():
+        try:
+            my_tasks = Tasks.query.filter(Tasks.user_id == current_user.id).all()
+            print(my_tasks)
+            # JSON 形式に変換
+            tasks_data = []
+            for task in my_tasks:
+                tasks_data.append(
+                    {
+                        "id": task.task_id,
+                        "title": task.title,
+                        "deadline": task.deadline.isoformat(),
+                        "format_deadline": task.deadline.strftime("%Y/%m/%d %H:%M"),
+                        "importance": task.importance,
+                        "username": current_user.username,
+                    }
+                )
+            return jsonify(
+                {"success": True, "data": tasks_data, "count": len(tasks_data)}
+            )
+        except Exception as e:
+            print("Error", e)
+    print("API返却処理が終わりました")
+
+
+@app.route("/api/task/create", methods=["POST"])
+@login_required
+def create_task():
+    data = request.get_json()
+    data["user_id"] = current_user.id
+    data["deadline"] = make_deadline2(data["deadline"])
+    print(data)
+    # 更新処理をする
+    task = add_new_task(data)
+    return jsonify({"success": True, "data": task, "message": "タスクが作成されました"})
 
 
 @app.route("/api/tasks/limity", methods=["GET"])
