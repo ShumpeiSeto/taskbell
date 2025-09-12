@@ -6,6 +6,9 @@ const modal_tasks = document.querySelector(".modal-tasks");
 
 const close_modal = document.querySelector(".close_modal");
 
+const addTaskModal = new bootstrap.Modal(
+  document.getElementById("addTaskModal")
+);
 let limity_tasks_arr = [];
 
 // 重要度から星表現に変換
@@ -122,6 +125,20 @@ if (saveNewTask) {
     } catch (error) {
       console.log("通信エラー発生", error);
     }
+    console.log("値を初期化します");
+
+    // 値を初期化する
+    document.querySelector("#title").value = "";
+    document.querySelector("#dead_date").value = "";
+    document.querySelector("#dead_time").value = "";
+    // 重要度初期値は低にしておく
+    Array.from(importances).forEach((el, i) => {
+      if (i === 0) el.checked = true;
+      else el.checked = false;
+    });
+
+    // Modalハイドする
+    addTaskModal.hide();
   });
 }
 
