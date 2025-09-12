@@ -256,7 +256,7 @@ if (time) {
 if (title) {
   title.addEventListener("blur", function () {
     if (validateEmpty(title.value)) {
-      showElement(deadDate, deaddateError, "日付が入力されていません");
+      showElement(title, titleError, "タスク名が入力されていません");
     } else if (!validationMaxRequired(title.value, 30)) {
       showElement(title, titleError, "タスク名は30文字以内で入力してください");
     } else {

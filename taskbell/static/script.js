@@ -86,9 +86,9 @@ const saveNewTask = document.getElementById("saveNewTask");
 if (saveNewTask) {
   saveNewTask.addEventListener("click", async function (e) {
     e.preventDefault();
-    const newTitle = document.getElementById("newTitle").value;
-    const newDeadDate = document.getElementById("newDeadDate").value;
-    const newDeadTime = document.getElementById("newDeadTime").value;
+    const newTitle = document.getElementById("title").value;
+    const newDeadDate = document.getElementById("dead_date").value;
+    const newDeadTime = document.getElementById("dead_time").value;
     const deadLine = new Date(
       makeDeadLine(newDeadDate, newDeadTime)
     ).toLocaleString();
