@@ -1,33 +1,177 @@
 {% extends 'testtemp/layout.html' %}
 {% block content %}
-<!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="exampleModalLabel">期限が近づいたタスクあり</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <table width="100%" class="table table-lignt table-bordered modal-body">
-        <thead>
-          <tr>
-            <th width="45%" class="text-center align-middle">タスク名</th>
-            <th width="20%" class="text-center align-middle">期限日</th>
-            <th width="10%" class="text-center align-middle">時間</th>
-            <th width="10%" class="text-center align-middle">重要度</th>
-            <th width="15%" class="text-center align-middle">状態</th>
-          </tr>
-        </thead>
-        <tbody class="modal-tasks">
-        </tbody>
-      </table>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary close-modal" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
+  <!-- 新規タスク追加Modal -->
+  <div class="modal fade" id="addTaskModal" tabindex="-1" aria-labelledby="addTaskModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-success text-white">
+          <h1 class="modal-title fs-5" id="addTaskModalLabel">新規タスク追加</h1>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body p-4">
+          <form id="addTaskForm">
+            <div class="row mb-3">
+              <div class="col-12 col-md-3">
+                <label for="newTitle" class="form-label">タスク名：</label>
+              </div>
+              <div class="col-12 col-md-9">
+                <input type="text" name="title" id="newTitle" class="form-control" required placeholder="タスク名を入力してください">
+                <div class="invalid-feedback" id="newTitleError"></div>
+              </div>
+            </div>
+            
+            <div class="row mb-3">
+              <div class="col-12 col-md-3">
+                <label for="newDeadDate" class="form-label">期限日：</label>
+              </div>
+              <div class="col-12 col-md-9">
+                <input type="date" name="dead_date" id="newDeadDate" class="form-control" required>
+                <div class="invalid-feedback" id="newDeadDateError"></div>
+              </div>
+            </div>
+            
+            <div class="row mb-3">
+              <div class="col-12 col-md-3">
+                <label for="newDeadTime" class="form-label">期限時間：</label>
+              </div>
+              <div class="col-12 col-md-9">
+                <input type="time" name="dead_time" id="newDeadTime" class="form-control" required>
+                <div class="invalid-feedback" id="newDeadTimeError"></div>
+              </div>
+            </div>
+            
+            <div class="row mb-3">
+              <div class="col-12 col-md-3">
+                <label class="form-label">重要度：</label>
+              </div>
+              <div class="col-12 col-md-9">
+                <div class="d-flex gap-4">
+                  <div class="form-check">
+                    <input type="radio" name="importance" id="newImportanceLow" value="0" class="form-check-input">
+                    <label class="form-check-label" for="newImportanceLow">低 ★</label>
+                  </div>
+                  <div class="form-check">
+                    <input type="radio" name="importance" id="newImportanceMedium" value="1" class="form-check-input" checked>
+                    <label class="form-check-label" for="newImportanceMedium">中 ★★</label>
+                  </div>
+                  <div class="form-check">
+                    <input type="radio" name="importance" id="newImportanceHigh" value="2" class="form-check-input">
+                    <label class="form-check-label" for="newImportanceHigh">高 ★★★</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">キャンセル</button>
+          <button type="submit" class="btn btn-success" id="saveNewTask">追加</button>
+        </div>
       </div>
     </div>
   </div>
-</div>
+  <!-- 編集タスク用Modal -->
+  <div class="modal fade" id="editTaskModal" tabindex="-1" aria-labelledby="editTaskModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-medium text-white">
+          <h1 class="modal-title fs-5" id="editTaskModalLabel">タスクを編集</h1>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body p-4">
+          <form id="editTaskForm" class="edit_task_form">
+            <!-- タスクIDを保存（非表示） -->
+            <input type="hidden" id="editTaskId" name="task_id">
+            
+            <div class="row mb-3">
+              <div class="col-12 col-md-4">
+                <label for="editTitle" class="form-label">タスク名：</label>
+              </div>
+              <div class="col-12 col-md-8">
+                <input type="text" name="title" id="editTitle" class="form-control" required>
+                <div class="invalid-feedback" id="editTitleError"></div>
+              </div>
+            </div>
+            
+            <div class="row mb-3">
+              <div class="col-12 col-md-4">
+                <label for="editDeadDate" class="form-label">期限日：</label>
+              </div>
+              <div class="col-12 col-md-8">
+                <input type="date" name="dead_date" id="editDeadDate" class="form-control" required>
+                <div class="invalid-feedback" id="editDeadDateError"></div>
+              </div>
+            </div>
+            
+            <div class="row mb-3">
+              <div class="col-12 col-md-4">
+                <label for="editDeadTime" class="form-label">期限時間：</label>
+              </div>
+              <div class="col-12 col-md-8">
+                <input type="time" name="dead_time" id="editDeadTime" class="form-control" required>
+                <div class="invalid-feedback" id="editDeadTimeError"></div>
+              </div>
+            </div>
+            
+            <div class="row mb-3">
+              <div class="col-12 col-md-4">
+                <label class="form-label">重要度：</label>
+              </div>
+              <div class="col-12 col-md-8">
+                <div class="d-flex gap-3">
+                  <div class="form-check">
+                    <input type="radio" name="importance" id="editImportanceLow" value="0" class="form-check-input">
+                    <label class="form-check-label" for="editImportanceLow">低</label>
+                  </div>
+                  <div class="form-check">
+                    <input type="radio" name="importance" id="editImportanceMedium" value="1" class="form-check-input">
+                    <label class="form-check-label" for="editImportanceMedium">中</label>
+                  </div>
+                  <div class="form-check">
+                    <input type="radio" name="importance" id="editImportanceHigh" value="2" class="form-check-input">
+                    <label class="form-check-label" for="editImportanceHigh">高</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">キャンセル</button>
+          <button type="button" class="btn btn-primary" id="saveEditedTask">更新</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 期限タスク通知odal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">期限が近づいたタスクあり</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <table width="100%" class="table table-lignt table-bordered modal-body">
+          <thead>
+            <tr>
+              <th width="45%" class="text-center align-middle">タスク名</th>
+              <th width="20%" class="text-center align-middle">期限日</th>
+              <th width="10%" class="text-center align-middle">時間</th>
+              <th width="10%" class="text-center align-middle">重要度</th>
+              <th width="15%" class="text-center align-middle">状態</th>
+            </tr>
+          </thead>
+          <tbody class="modal-tasks">
+          </tbody>
+        </table>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary close-modal" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <div class="container vh-100 px-2 py-0">
     <div class="row h-auto justify-content-center align-items-start mb-4">
@@ -54,13 +198,12 @@
               <th scope="col" class="p-0 p-md-0 text-center align-middle">時間</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody id="nc-tbody">
             {% for nc_task in nc_tasks %}
               <tr class="nc-task-item" data-deadline="{{ nc_task['deadline'] }}" data-task-id="{{ nc_task['task_id']}}">
                 <th width="10%" scope="row" class="px-0 p-md-2 text-center align-middle">
-                  <a href="{{ url_for('check_task', task_id=nc_task['task_id']) }}" class="check_box text-decoration-none">
-                    <input type="checkbox" class="check_box_fin rounded-circl px-1 py-2" onclick="window.location.href='{{ url_for('check_task', task_id=nc_task['task_id']) }}'">
-                  </a>
+                  <!-- aタグを削除、直接チェックボックスのみ -->
+                  <input type="checkbox" class="check_box_fin rounded-circle px-1 py-2" data-task-id="{{ nc_task['task_id'] }}">
                 </th>
                 <td width="40%" class="px-0 p-md-0 text-center align-middle">
                   <label class="taskname form-check-label my-auto" for="firstCheckbox">{{ nc_task['title']}}</label>
@@ -86,9 +229,12 @@
         </table>
       </div>
     </div>
-    <div class="fixed_button text-center align-middle">
+    <div class="fixed-button text-center align-middle">
       <a href="{{ url_for('add_task')}}">
       <button type="button" class="btn btn-primary font-size-l rounded-circle">+</button></a>
+    </div>
+    <div class="left-fixed-button text-center align-middle">
+      <button type="button" class="btn btn-secondary font-size-l rounded-circle" data-bs-toggle="modal", data-bs-target="#addTaskModal">+</button>
     </div>
 
     <div class="row h-auto justify-content-center align-items-start">
@@ -127,9 +273,8 @@
                 <td width="10%"class="px-0 p-md-0 text-center align-middle">
                   <label class="importance my-auto" for="importance">{{ c_task['importance'] | convert_importance }}</label>
                 </td>
-                <td width="15%" class="handle_buttons px-0 p-md-0 text-center align-middle">
+                <td width="15%" class="px-0 p-md-0 text-center align-middle">
                   <div class="d-flex flex-row px-0 py-auto p-md-2 text-center justify-content-evenly align-middle gap-3 flex-grow">
-
                     <a href="{{ url_for('check_task', task_id=c_task['task_id']) }}" class="mb-1">
                   <button type="button" class="btn btn-gray text-light py-2 px-1">戻す</button>
                     </a>
