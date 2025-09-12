@@ -15,8 +15,8 @@
                 <label for="newTitle" class="form-label">タスク名：</label>
               </div>
               <div class="col-12 col-md-9">
-                <input type="text" name="title" id="newTitle" class="form-control" required placeholder="タスク名を入力してください">
-                <div class="invalid-feedback" id="newTitleError"></div>
+                <input type="text" name="title" id="title" class="form-control" required placeholder="タスク名を入力してください">
+                <div class="error" id="titleError"></div>
               </div>
             </div>
             
@@ -25,8 +25,8 @@
                 <label for="newDeadDate" class="form-label">期限日：</label>
               </div>
               <div class="col-12 col-md-9">
-                <input type="date" name="dead_date" id="newDeadDate" class="form-control" required>
-                <div class="invalid-feedback" id="newDeadDateError"></div>
+                <input type="date" name="dead_date" id="dead_date" class="form-control" required>
+                <div class="error" id="deaddateError"></div>
               </div>
             </div>
             
@@ -35,8 +35,8 @@
                 <label for="newDeadTime" class="form-label">期限時間：</label>
               </div>
               <div class="col-12 col-md-9">
-                <input type="time" name="dead_time" id="newDeadTime" class="form-control" required>
-                <div class="invalid-feedback" id="newDeadTimeError"></div>
+                <input type="time" name="dead_time" id="dead_time" class="form-control" required>
+                <div class="error" id="deadtimeError"></div>
               </div>
             </div>
             
@@ -47,15 +47,15 @@
               <div class="col-12 col-md-9">
                 <div class="d-flex gap-4">
                   <div class="form-check">
-                    <input type="radio" name="importance" id="newImportanceLow" value="0" class="form-check-input">
+                    <input type="radio" name="importance" id="importanceLow" value="0" class="form-check-input">
                     <label class="form-check-label" for="newImportanceLow">低 ★</label>
                   </div>
                   <div class="form-check">
-                    <input type="radio" name="importance" id="newImportanceMedium" value="1" class="form-check-input" checked>
+                    <input type="radio" name="importance" id="importanceMedium" value="1" class="form-check-input" checked>
                     <label class="form-check-label" for="newImportanceMedium">中 ★★</label>
                   </div>
                   <div class="form-check">
-                    <input type="radio" name="importance" id="newImportanceHigh" value="2" class="form-check-input">
+                    <input type="radio" name="importance" id="importanceHigh" value="2" class="form-check-input">
                     <label class="form-check-label" for="newImportanceHigh">高 ★★★</label>
                   </div>
                 </div>
@@ -301,4 +301,5 @@
     sessionStorage.setItem('is_first_slack', is_first_slack);
   </script>
   <script src="{{ url_for('static', filename='script.js') }}"></script>
+  <script src="{{ url_for('static', filename='validate.js')}}"></script>
 {% endblock %}
