@@ -9,6 +9,9 @@ const close_modal = document.querySelector(".close_modal");
 const addTaskModal = new bootstrap.Modal(
   document.getElementById("addTaskModal")
 );
+const deleteTaskModal = new bootstrap.Modal(
+  document.getElementById("deleteTaskModal")
+);
 let limity_tasks_arr = [];
 
 // 重要度から星表現に変換
@@ -154,6 +157,20 @@ const checkPositionIndex = function (deadline) {
   console.log(result);
   return result;
 };
+
+function deleteViewTask(task_id) {
+  try {
+    const response = await fetch("/api/delete_task/", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+  
+  }
+  // modal表示
+}
 
 function addNewTaskRow(task) {
   const deleteTaskUrl = `/delete_task/${task.task_id}`;

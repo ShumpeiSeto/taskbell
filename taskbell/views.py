@@ -501,6 +501,52 @@ def edit_task(task_id):
         update(task, update_info)
     return redirect("/my_task")
 
+# edit_task の API version
+@app.route("/api/edit_task/<int:task_id>", methods=["GET","POST"])
+@login_required
+def api_edit_task(task_id):
+    task = Tasks.query.filter(Tasks.task_id == task_id).first()
+    if request.method == "GET":
+        pass
+    elif request.method == "POST":
+        # check(task_id, task)
+
+        return jsonify(
+            {
+                "status": "success",
+                "message": "タスクを更新しました",
+                "task_id": task_id,
+                "is_completed": task.is_completed,
+            }
+        )
+
+@app.route("/api/delete_task/<int:task_id>", methods=["GET", "POST"])
+@login_required
+def api_delete_task(task_id):
+    if request.method == "GET":
+        with app.app_context():
+            task = Tasks.query.filter(Tasks.task_id == task_id).first()
+            return jsonify(
+                {
+                "status": "success",
+                "message": "削除タスクを表示します",
+                "task_name": task.title
+                }
+            )
+    elif request.method == "POST":
+        # データの該当タスクの削除する
+        delete(task_id)
+
+        return jsonify(
+            {
+                "status": "success",
+                "message": "タスクを削除しました",
+                "task_id": task_id,
+            }
+        )
+
+
+
 
 @app.route("/delete_task/<int:task_id>", methods=["GET", "POST"])
 @login_required
