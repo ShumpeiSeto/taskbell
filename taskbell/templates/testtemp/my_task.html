@@ -144,6 +144,35 @@
     </div>
   </div>
 
+
+  <!-- タスク削除Modal -->
+  <div class="modal fade" id="deleteTaskModal" tabindex="-1" aria-labelledby="editTaskModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-medium text-white">
+          <h1 class="modal-title fs-5" id="editTaskModalLabel">タスク削除確認</h1>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body p-4">
+          <div class="card-header text-center bg-danger align-middle py-3">
+              <h1 class="font-size-l text-white m-1">削除確認</h1>
+          </div>
+          <div class="card border-0">
+              <div class="card-body p-4 p-md-5">
+                  <div class="text-center mb-5">
+                      <p class="font-size-m" id="delete_task_title"></p>
+                      <p class="font-size-m">本当に削除しますか？</p>
+                  </div>
+              </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">キャンセル</button>
+          <button type="button" class="btn btn-danger" id="saveEditedTask">削除</button>
+        </div>
+      </div>
+    </div>
+  </div>
   <!-- 期限タスク通知odal -->
   <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -221,6 +250,7 @@
                   <div class="handle_buttons d-flex flex-row px-0 py-auto p-md-2 text-center justify-content-evenly align-middle gap-3 flex-grow">
                     <a href="{{ url_for('edit_task', task_id=nc_task['task_id']) }}" class="mb-1"><button type="button" class="btn btn-primary py-2 px-1">編集</button></a>
                     <a href="{{ url_for('delete_task', task_id=nc_task['task_id']) }}"><button type="button" class="btn btn-danger py-2 px-1">削除</button></a>
+                    <a href="{{ url_for('api_delete_task', task_id=nc_task['task_id']) }}"><button type="button" class="btn btn-danger py-2 px-1">削除</button></a>
                   </div>
                 </td>
               </tr>
