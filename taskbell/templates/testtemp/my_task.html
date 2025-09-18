@@ -12,7 +12,7 @@
           <form id="addTaskForm">
             <div class="row mb-3">
               <div class="col-12 col-md-3">
-                <label for="newTitle" class="form-label">タスク名：</label>
+                <label for="title" class="form-label">タスク名：</label>
               </div>
               <div class="col-12 col-md-9">
                 <input type="text" name="title" id="title" class="form-control" required placeholder="タスク名を入力してください">
@@ -22,7 +22,7 @@
             
             <div class="row mb-3">
               <div class="col-12 col-md-3">
-                <label for="newDeadDate" class="form-label">期限日：</label>
+                <label for="dead_date" class="form-label">期限日：</label>
               </div>
               <div class="col-12 col-md-9">
                 <input type="date" name="dead_date" id="dead_date" class="form-control" required>
@@ -32,7 +32,7 @@
             
             <div class="row mb-3">
               <div class="col-12 col-md-3">
-                <label for="newDeadTime" class="form-label">期限時間：</label>
+                <label for="dead_time" class="form-label">期限時間：</label>
               </div>
               <div class="col-12 col-md-9">
                 <input type="time" name="dead_time" id="dead_time" class="form-control" required>
@@ -48,15 +48,15 @@
                 <div class="d-flex gap-4">
                   <div class="form-check">
                     <input type="radio" name="importance" id="importanceLow" value="0" class="form-check-input">
-                    <label class="form-check-label" for="newImportanceLow">低 ★</label>
+                    <label class="form-check-label" for="importanceLow">低 ★</label>
                   </div>
                   <div class="form-check">
                     <input type="radio" name="importance" id="importanceMedium" value="1" class="form-check-input" checked>
-                    <label class="form-check-label" for="newImportanceMedium">中 ★★</label>
+                    <label class="form-check-label" for="importanceMedium">中 ★★</label>
                   </div>
                   <div class="form-check">
                     <input type="radio" name="importance" id="importanceHigh" value="2" class="form-check-input">
-                    <label class="form-check-label" for="newImportanceHigh">高 ★★★</label>
+                    <label class="form-check-label" for="importanceHigh">高 ★★★</label>
                   </div>
                 </div>
               </div>
@@ -120,15 +120,15 @@
               <div class="col-12 col-md-8">
                 <div class="d-flex gap-3">
                   <div class="form-check">
-                    <input type="radio" name="importance" id="editImportanceLow" value="0" class="form-check-input">
+                    <input type="radio" name="editImportance" id="editImportanceLow" value="0" class="form-check-input">
                     <label class="form-check-label" for="editImportanceLow">低</label>
                   </div>
                   <div class="form-check">
-                    <input type="radio" name="importance" id="editImportanceMedium" value="1" class="form-check-input">
+                    <input type="radio" name="editImportance" id="editImportanceMedium" value="1" class="form-check-input">
                     <label class="form-check-label" for="editImportanceMedium">中</label>
                   </div>
                   <div class="form-check">
-                    <input type="radio" name="importance" id="editImportanceHigh" value="2" class="form-check-input">
+                    <input type="radio" name="editImportance" id="editImportanceHigh" value="2" class="form-check-input">
                     <label class="form-check-label" for="editImportanceHigh">高</label>
                   </div>
                 </div>
@@ -138,7 +138,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">キャンセル</button>
-          <button type="button" class="btn btn-primary" id="saveEditedTask">更新</button>
+          <button type="button" class="btn btn-primary" id="saveEditTask">更新</button>
         </div>
       </div>
     </div>
@@ -146,7 +146,7 @@
 
 
   <!-- タスク削除Modal -->
-  <div class="modal fade" id="deleteTaskModal" tabindex="-1" aria-labelledby="editTaskModalLabel" aria-hidden="true">
+  {# <div class="modal fade" id="deleteTaskModal" tabindex="-1" aria-labelledby="deleteTaskModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header bg-medium text-white">
@@ -168,11 +168,77 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">キャンセル</button>
-          <button type="button" class="btn btn-danger" id="saveEditedTask">削除</button>
+          <button type="button" class="btn btn-danger" id="deleteConfirmTask">削除</button>
         </div>
       </div>
     </div>
+  </div> #}
+
+  <div class="modal fade" id="deleteTaskModal" tabindex="-1" aria-labelledby="deleteTaskModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header bg-danger text-white">
+        <div class="d-flex align-items-center">
+          <i class="fas fa-exclamation-triangle me-2"></i>
+          <h1 class="modal-title fs-5 fw-bold" id="deleteTaskModalLabel">タスク削除確認</h1>
+        </div>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      
+      <div class="modal-body p-4">
+        <!-- 削除対象タスク表示 -->
+        <div class="card border-danger mb-3">
+          <div class="card-header text-center bg-danger text-white py-3">
+            <h5 class="mb-0">削除対象</h5>
+          </div>
+          <div class="card-body p-4 text-center">
+            <h4 class="text-dark mb-0" id="delete_task_title">タスク名</h4>
+            <div class="row justify-content-center mb-0">
+              <div class="col-auto">
+                <div class="d-flex flex-column align-items-center text-muted">
+                  <small class="text-uppercase fw-bold mb-1" style="font-size: 0.7rem; color: #6c757d;">期限日</small>
+                  <div class="d-flex align-items-center">
+                    <i class="fas fa-calendar-alt me-2" style="color: #dc3545;"></i>
+                    <span class="fw-semibold" id="delete_task_date" style="font-size: 0.95rem;">2025-01-15</span>
+                  </div>
+                </div>
+              </div>
+              <div class="col-auto mx-3">
+                <div class="d-flex flex-column align-items-center text-muted">
+                  <small class="text-uppercase fw-bold mb-1" style="font-size: 0.7rem; color: #6c757d;">時間</small>
+                  <div class="d-flex align-items-center">
+                    <i class="fas fa-clock me-2" style="color: #dc3545;"></i>
+                    <span class="fw-semibold" id="delete_task_time" style="font-size: 0.95rem;">14:30</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        
+        <!-- 確認メッセージ -->
+        <div class="text-center mb-4">
+          <p class="fs-5 text-dark mb-2">本当に削除しますか？</p>
+          <p class="text-muted small mb-0">
+            <i class="fas fa-info-circle me-1"></i>
+            この操作は元に戻すことができません
+          </p>
+        </div>
+      </div>
+      
+      <div class="modal-footer justify-content-center gap-3 p-4">
+        <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">
+          キャンセル
+        </button>
+        <button type="button" class="btn btn-danger px-4" id="deleteConfirmTask">
+          削除
+        </button>
+      </div>
+    </div>
   </div>
+</div>
+
   <!-- 期限タスク通知odal -->
   <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -235,22 +301,23 @@
                   <input type="checkbox" class="check_box_fin rounded-circle px-1 py-2" data-task-id="{{ nc_task['task_id'] }}">
                 </th>
                 <td width="40%" class="px-0 p-md-0 text-center align-middle">
-                  <label class="taskname form-check-label my-auto" for="firstCheckbox">{{ nc_task['title']}}</label>
+                  <label class="taskname form-check-label my-auto" >{{ nc_task['title']}}</label>
                 </td>
                 <td width="15%" class="px-0 p-md-0 text-center align-middle">
-                  <label class="deaddate my-auto" for="deadline">{{ nc_task['deadline'] | add_weekday }}</label>
+                  <label class="deaddate my-auto" >{{ nc_task['deadline'] | add_weekday }}</label>
                 </td>
                 <td width="10%" class="px-0 p-md-0 text-center align-middle">
-                  <label class="deadtime my-auto" for="deadline">{{ nc_task['deadline'].strftime('%H:%M') }}</label>
+                  <label class="deadtime my-auto">{{ nc_task['deadline'].strftime('%H:%M') }}</label>
                 </td>
                 <td width="10%" class="px-0 p-md-0 text-center align-middle">
-                  <label class="importance my-auto" for="importance">{{ nc_task['importance'] | convert_importance }}</label>
+                  <label class="importance my-auto">{{ nc_task['importance'] | convert_importance }}</label>
                 </td>
                 <td width="15%" class="px-0 p-md-0 text-center align-middle">
                   <div class="handle_buttons d-flex flex-row px-0 py-auto p-md-2 text-center justify-content-evenly align-middle gap-3 flex-grow">
-                    <a href="{{ url_for('edit_task', task_id=nc_task['task_id']) }}" class="mb-1"><button type="button" class="btn btn-primary py-2 px-1">編集</button></a>
-                    <a href="{{ url_for('delete_task', task_id=nc_task['task_id']) }}"><button type="button" class="btn btn-danger py-2 px-1">削除</button></a>
-                    <a href="{{ url_for('api_delete_task', task_id=nc_task['task_id']) }}"><button type="button" class="btn btn-danger py-2 px-1">削除</button></a>
+                    <button type="button" class="btn btn-primary py-2 px-1 edit-task-btn" data-task-id="{{ nc_task['task_id'] }}">編集</button>
+                    {# <a href="{{ url_for('edit_task', task_id=nc_task['task_id']) }}" class="mb-1"><button type="button" class="btn btn-primary py-2 px-1">編集</button></a> #}
+                    {# <a href="{{ url_for('delete_task', task_id=nc_task['task_id']) }}"><button type="button" class="btn btn-danger py-2 px-1">削除</button></a> #}
+                      <button type="button" class="btn btn-danger py-2 px-1 delete-task-btn" data-task-id="{{ nc_task['task_id'] }}">削除</button>
                   </div>
                 </td>
               </tr>
@@ -292,16 +359,16 @@
             {% for c_task in c_tasks %}
               <tr>
                 <td width="50%" class="px-0 p-md-0 text-center align-middle">
-                  <label class="comp_task_name" for="firstCheckbox">{{ c_task['title']}}</label>
+                  <label class="comp_task_name" >{{ c_task['title']}}</label>
                 </td>
                 <td width="15%" class="px-0 p-md-0 text-center align-middle">
-                  <label class="comp_task_deadline" for="deadline">{{ c_task['deadline'] | add_weekday }}</label>
+                  <label class="comp_task_deadline" >{{ c_task['deadline'] | add_weekday }}</label>
                 </td>
                 <td width="10%"class="px-0 p-md-0 text-center align-middle">
-                  <label class="comp_task_deadline" for="deadline">{{ c_task['deadline'].strftime('%H:%M')}}</label>
+                  <label class="comp_task_deadline" >{{ c_task['deadline'].strftime('%H:%M')}}</label>
                 </td>
                 <td width="10%"class="px-0 p-md-0 text-center align-middle">
-                  <label class="importance my-auto" for="importance">{{ c_task['importance'] | convert_importance }}</label>
+                  <label class="importance my-auto" >{{ c_task['importance'] | convert_importance }}</label>
                 </td>
                 <td width="15%" class="px-0 p-md-0 text-center align-middle">
                   <div class="d-flex flex-row px-0 py-auto p-md-2 text-center justify-content-evenly align-middle gap-3 flex-grow">

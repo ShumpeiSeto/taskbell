@@ -9,6 +9,9 @@ const close_modal = document.querySelector(".close_modal");
 const addTaskModal = new bootstrap.Modal(
   document.getElementById("addTaskModal")
 );
+const editTaskModal = new bootstrap.Modal(
+  document.getElementById("editTaskModal")
+);
 const deleteTaskModal = new bootstrap.Modal(
   document.getElementById("deleteTaskModal")
 );
@@ -54,7 +57,7 @@ const convertDate = function (date_str, dayNum) {
   } else if (dayNum === 6) {
     result = "(土)";
   }
-  return date_str + result;
+  return date_str.slice(3, 10) + result;
 };
 
 const convertDate2 = function (date_obj) {
@@ -65,6 +68,10 @@ const convertDate2 = function (date_obj) {
 
 const convertDate3 = function (date_str) {
   const converted_date_str = date_str.slice(2, 10).replaceAll("-", "/");
+  return converted_date_str;
+};
+const convertDate4 = function (date_str) {
+  const converted_date_str = date_str.slice(5, 10).replaceAll("-", "/");
   return converted_date_str;
 };
 
@@ -144,6 +151,140 @@ if (saveNewTask) {
     addTaskModal.hide();
   });
 }
+function deleteTaskRow(taskId) {
+  const taskRow = document.querySelector(`tr[data-task-id="${taskId}"]`);
+  taskRow.remove();
+}
+const deleteConfirmTask = document.getElementById("deleteConfirmTask");
+if (deleteConfirmTask) {
+  deleteConfirmTask.addEventListener("click", async function (e) {
+    e.preventDefault();
+    const taskId = document.getElementById("deleteTaskModal").dataset.taskId;
+    try {
+      const deleteTaskDom = document.querySelector("#deleteTaskModal");
+      const task_id = deleteTaskDom.dataset.taskId;
+      const response = await fetch(`/api/delete_task/${task_id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(task_id),
+      });
+      if (response.ok) {
+        const result = await response.json();
+        console.log("API応答", result);
+        deleteTaskRow(task_id);
+      } else {
+        console.error("APIエラー");
+      }
+    } catch (error) {
+      console.log("通信エラー発生", error);
+    }
+    deleteTaskModal.hide();
+  });
+}
+
+const saveEditTask = document.getElementById("saveEditTask");
+if (saveEditTask) {
+  saveEditTask.addEventListener("click", async function (e) {
+    e.preventDefault();
+    const editTitle = document.getElementById("editTitle").value;
+    const editDeadDate = document.getElementById("editDeadDate").value;
+    const editDeadTime = document.getElementById("editDeadTime").value;
+    const editDeadLine = new Date(
+      makeDeadLine(editDeadDate, editDeadTime)
+    ).toLocaleString();
+    const importances = document.getElementsByName("editImportance");
+    let len = importances.length;
+    let importance = "";
+    for (let i = 0; i < len; i++) {
+      if (importances.item(i).checked) importance = importances.item(i).value;
+    }
+    const data = {
+      title: editTitle,
+      deadline: format_deadLine(editDeadLine),
+      dead_date: editDeadDate,
+      dead_time: editDeadTime,
+      importance: parseInt(importance),
+    };
+    try {
+      // ここのtask_idをどこから持ってくるか？
+      const editTaskDom = document.querySelector("#editTaskModal");
+      const task_id = editTaskDom.dataset.taskId;
+      const response = await fetch(`/api/task/update/${task_id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+      if (response.ok) {
+        const result = await response.json();
+        console.log("API応答", result);
+        editTaskRow(result.updateTask);
+      } else {
+        console.error("APIエラー");
+      }
+    } catch (error) {
+      console.log("通信エラー発生", error);
+    }
+    editTaskModal.hide();
+  });
+}
+function editTaskRow(updateTask) {
+  const taskId = updateTask.task_id;
+  const taskRow = document.querySelector(`tr[data-task-id="${taskId}"]`);
+  // const taskRow = document.querySelector(`tr[data-task-id="${taskId}"]`);
+  if (!taskRow) {
+    console.log(`タスクID ${taskId}の行が見つかりません`);
+    return;
+  }
+  taskRow.querySelector(".taskname").textContent = updateTask.title;
+  taskRow.querySelector(".deaddate").textContent = convertDate(
+    convertDate3(new Date(updateTask.dead_line).toISOString()),
+    new Date(updateTask.dead_line).getDay()
+  );
+  taskRow.querySelector(".deadtime").textContent = updateTask.dead_time;
+  taskRow.querySelector(".importance").textContent = convertImportance(
+    updateTask.importance
+  );
+}
+async function showEditModal(taskId) {
+  try {
+    const response = await fetch(`/api/get_task/${taskId}`);
+    const data = await response.json();
+    if (data.status === "success") {
+      document.getElementById("editTitle").value = data.task.title;
+      document.getElementById("editDeadDate").value = data.task.dead_date;
+      document.getElementById("editDeadTime").value = data.task.dead_time;
+      const editImportance = document.getElementsByName("editImportance");
+      Array.from(editImportance).forEach((el, i) => {
+        if (i === data.task.importance) el.checked = true;
+      });
+      const editTaskModalDom = document.querySelector("#editTaskModal");
+      editTaskModalDom.dataset.taskId = taskId;
+      editTaskModal.show();
+    } else {
+      console.log("APIエラー:", response.status);
+    }
+  } catch (error) {
+    console.log("通信エラー:", error);
+  }
+}
+
+document.addEventListener("click", function (e) {
+  if (e.target.classList.contains("edit-task-btn")) {
+    const task_id = e.target.dataset.taskId;
+    showEditModal(task_id);
+  }
+});
+document.addEventListener("click", function (e) {
+  if (e.target.classList.contains("delete-task-btn")) {
+    const task_id = e.target.dataset.taskId;
+    console.log(task_id);
+    deleteViewTask(task_id);
+  }
+});
 
 const ncTbody = document.getElementById("nc-tbody");
 const checkPositionIndex = function (deadline) {
@@ -158,16 +299,21 @@ const checkPositionIndex = function (deadline) {
   return result;
 };
 
-function deleteViewTask(task_id) {
+async function deleteViewTask(taskId) {
   try {
-    const response = await fetch("/api/delete_task/", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
-  
+    const response = await fetch(`/api/get_task/${taskId}`);
+    const data = await response.json();
+    if (data.status === "success") {
+      const deleteTaskName = document.querySelector("#delete_task_title");
+      deleteTaskName.textContent = data.task.title;
+      const deleteTaskModalDom = document.querySelector("#deleteTaskModal");
+      deleteTaskModalDom.dataset.taskId = taskId;
+      deleteTaskModal.show();
+    } else {
+      console.log("APIエラー:", response.status);
+    }
+  } catch (error) {
+    console.error("API通信エラー", error);
   }
   // modal表示
 }
@@ -189,30 +335,34 @@ function addNewTaskRow(task) {
                   }">
                 </th>
                 <td width="40%" class="px-0 p-md-0 text-center align-middle">
-                  <label class="taskname form-check-label my-auto" for="firstCheckbox">${
+                  <label class="taskname form-check-label my-auto">${
                     task.title
                   }</label>
                 </td>
                 <td width="15%" class="px-0 p-md-0 text-center align-middle">
-                  <label class="deaddate my-auto" for="deadline">${convertDate(
+                  <label class="deaddate my-auto">${convertDate(
                     convertDate3(new Date(task.deadline).toISOString()),
                     new Date(task.deadline).getDay()
                   )}</label>
                 </td>
                 <td width="10%" class="px-0 p-md-0 text-center align-middle">
-                  <label class="deadtime my-auto" for="deadline">${new Date(
+                  <label class="deadtime my-auto">${new Date(
                     task.deadline
                   ).getHours()}:${new Date(task.deadline).getMinutes()}</label>
                 </td>
                 <td width="10%" class="px-0 p-md-0 text-center align-middle">
-                  <label class="importance my-auto" for="importance">${
+                  <label class="importance my-auto">${convertImportance(
                     task.importance
-                  }</label>
+                  )}</label>
                 </td>
                 <td width="15%" class="px-0 p-md-0 text-center align-middle">
                   <div class="handle_buttons d-flex flex-row px-0 py-auto p-md-2 text-center justify-content-evenly align-middle gap-3 flex-grow">
-                    <a href="${editTaskUrl}" class="mb-1"><button type="button" class="btn btn-primary py-2 px-1">編集</button></a>
-                    <a href="${deleteTaskUrl}"><button type="button" class="btn btn-danger py-2 px-1">削除</button></a>
+                    <button type="button" class="btn btn-primary py-2 px-1 edit-task-btn" data-task-id=${
+                      task.task_id
+                    }>編集</button>
+                    <button type="button" class="btn btn-danger py-2 px-1 delete-task-btn" data-task-id=${
+                      task.task_id
+                    }>削除</button>
                   </div>
                 </td>
               </tr>
@@ -362,7 +512,10 @@ async function checkdatetime() {
   sorted_nctasks.forEach((task) => {
     const deadline_obj = new Date(task.deadline);
     const deaddate = formatDateStr(deadline_obj);
-    const deadtime = `${deadline_obj.getHours()}:${deadline_obj.getMinutes()}`;
+    const deadtime = `${String(deadline_obj.getHours()).padStart(
+      2,
+      "0"
+    )}:${String(deadline_obj.getMinutes()).padStart(2, "0")}`;
     const deadline = task.format_deadline;
     const title = task.title;
     const importance = task.importance;
@@ -464,5 +617,5 @@ async function checkdatetime() {
 // // 30分ごとに自動実行
 // intervalId ??= setInterval(noticeLimityTasks, 10 * 60 * 1000);
 
-// // test 用に
-// window.testSlack = noticeLimityTasks;
+// test 用に
+window.testSlack = checkdatetime;

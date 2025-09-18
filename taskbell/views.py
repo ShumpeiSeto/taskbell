@@ -182,7 +182,7 @@ def update(task, update_info):
         print("==========1件更新==========")
         task.title = update_info["title"]
         task.deadline = update_info["dead_line"]
-        task.is_completed = update_info["is_completed"]
+        # task.is_completed = update_info["is_completed"]
         task.importance = update_info["importance"]
         try:
             # db.session.add(task)
@@ -501,51 +501,71 @@ def edit_task(task_id):
         update(task, update_info)
     return redirect("/my_task")
 
+
 # edit_task の API version
-@app.route("/api/edit_task/<int:task_id>", methods=["GET","POST"])
-@login_required
-def api_edit_task(task_id):
-    task = Tasks.query.filter(Tasks.task_id == task_id).first()
-    if request.method == "GET":
-        pass
-    elif request.method == "POST":
-        # check(task_id, task)
+# @app.route("/api/edit_task/<int:task_id>", methods=["GET", "POST"])
+# @login_required
+# def api_edit_task(task_id):
+#     task = Tasks.query.filter(Tasks.task_id == task_id).first()
+#     if request.method == "GET":
+#         pass
+#     elif request.method == "POST":
+#         # check(task_id, task)
 
-        return jsonify(
-            {
-                "status": "success",
-                "message": "タスクを更新しました",
-                "task_id": task_id,
-                "is_completed": task.is_completed,
-            }
-        )
+#         return jsonify(
+#             {
+#                 "status": "success",
+#                 "message": "タスクを更新しました",
+#                 "task_id": task_id,
+#                 "is_completed": task.is_completed,
+#             }
+#         )
 
-@app.route("/api/delete_task/<int:task_id>", methods=["GET", "POST"])
+
+@app.route("/api/delete_task/<int:task_id>", methods=["POST"])
 @login_required
 def api_delete_task(task_id):
-    if request.method == "GET":
-        with app.app_context():
-            task = Tasks.query.filter(Tasks.task_id == task_id).first()
-            return jsonify(
-                {
-                "status": "success",
-                "message": "削除タスクを表示します",
-                "task_name": task.title
-                }
-            )
-    elif request.method == "POST":
-        # データの該当タスクの削除する
-        delete(task_id)
-
-        return jsonify(
-            {
-                "status": "success",
-                "message": "タスクを削除しました",
+    # データの該当タスクの削除する
+    delete(task_id)
+    return jsonify(
+        {
+            "status": "success",
+            "message": "タスクを削除しました",
+            "task": {
                 "task_id": task_id,
-            }
-        )
+            },
+        }
+    )
 
 
+@app.route("/api/get_task/<int:task_id>", methods=["GET"])
+@login_required
+def api_get_task(task_id):
+    with app.app_context():
+        try:
+            task = Tasks.query.filter(Tasks.task_id == task_id).first()
+            if task:
+                dead_date = task.deadline.strftime("%Y-%m-%d")
+                dead_time = task.deadline.strftime("%H:%M")
+                return jsonify(
+                    {
+                        "status": "success",
+                        "task": {
+                            "task_id": task.task_id,
+                            "title": task.title,
+                            "dead_date": dead_date,
+                            "dead_time": dead_time,
+                            "importance": task.importance,
+                        },
+                    }
+                )
+            else:
+                return (
+                    jsonify({"status": "error", "message": "タスクが見つかりません"}),
+                    404,
+                )
+        except Exception as e:
+            print("Error:", e)
 
 
 @app.route("/delete_task/<int:task_id>", methods=["GET", "POST"])
@@ -711,9 +731,47 @@ def create_task():
     data["user_id"] = current_user.id
     data["deadline"] = make_deadline2(data["deadline"])
     print(data)
-    # 更新処理をする
     task = add_new_task(data)
     return jsonify({"success": True, "data": task, "message": "タスクが作成されました"})
+
+
+@app.route("/api/task/update/<int:task_id>", methods=["POST"])
+@login_required
+def update_task(task_id):
+    task = Tasks.query.filter(Tasks.task_id == task_id).first()
+    data = request.get_json()
+    title = data["title"]
+    dead_date = data["dead_date"]
+    dead_time = data["dead_time"]
+    importance = data["importance"]
+    dead_line = make_deadline(data["dead_date"], data["dead_time"])
+    importance = data["importance"]
+    # 更新処理をする
+    update_info = {
+        "task_id": task_id,
+        "title": title,
+        "dead_date": dead_date,
+        "dead_time": dead_time,
+        "dead_line": dead_line,
+        "importance": importance,
+    }
+    update(task, update_info)
+    # dead_date = task.deadline.strftime("%Y-%m-%d")
+    # dead_time = task.deadline.strftime("%H:%M")
+    # update_info2 = {
+    #     task_id,
+    #     title,
+    #     dead_date,
+    #     dead_time,
+    #     importance,
+    # # }
+    return jsonify(
+        {
+            "status": "success",
+            "updateTask": update_info,
+            "message": "タスクが更新されました",
+        }
+    )
 
 
 @app.route("/api/tasks/limity", methods=["GET"])
