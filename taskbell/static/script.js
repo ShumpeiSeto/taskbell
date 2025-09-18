@@ -1,11 +1,6 @@
 let intervalId;
 // modal 用意
 const modal = new bootstrap.Modal(document.getElementById("exampleModal"));
-// modalのbody部
-const modal_tasks = document.querySelector(".modal-tasks");
-
-const close_modal = document.querySelector(".close_modal");
-
 const addTaskModal = new bootstrap.Modal(
   document.getElementById("addTaskModal")
 );
@@ -15,6 +10,11 @@ const editTaskModal = new bootstrap.Modal(
 const deleteTaskModal = new bootstrap.Modal(
   document.getElementById("deleteTaskModal")
 );
+// modalのbody部
+const modal_tasks = document.querySelector(".modal-tasks");
+
+const close_modal = document.querySelector(".close_modal");
+
 let limity_tasks_arr = [];
 
 // 重要度から星表現に変換
@@ -62,7 +62,7 @@ const convertDate = function (date_str, dayNum) {
 
 const convertDate2 = function (date_obj) {
   const converted_date_str = date_obj.toISOString().slice(0, 10);
-  console.log(converted_date_str);
+  // console.log(converted_date_str);
   return converted_date_str;
 };
 
@@ -99,6 +99,11 @@ const saveNewTask = document.getElementById("saveNewTask");
 if (saveNewTask) {
   saveNewTask.addEventListener("click", async function (e) {
     e.preventDefault();
+    const isValid = isValidNewTask();
+    if (!isValid) {
+      console.log("入力エラーがあります");
+      return;
+    }
     const newTitle = document.getElementById("title").value;
     const newDeadDate = document.getElementById("dead_date").value;
     const newDeadTime = document.getElementById("dead_time").value;
@@ -159,7 +164,7 @@ const deleteConfirmTask = document.getElementById("deleteConfirmTask");
 if (deleteConfirmTask) {
   deleteConfirmTask.addEventListener("click", async function (e) {
     e.preventDefault();
-    const taskId = document.getElementById("deleteTaskModal").dataset.taskId;
+    // const taskId = document.getElementById("deleteTaskModal").dataset.taskId;
     try {
       const deleteTaskDom = document.querySelector("#deleteTaskModal");
       const task_id = deleteTaskDom.dataset.taskId;
@@ -188,6 +193,11 @@ const saveEditTask = document.getElementById("saveEditTask");
 if (saveEditTask) {
   saveEditTask.addEventListener("click", async function (e) {
     e.preventDefault();
+    const isValid = isValidEditForm();
+    if (!isValid) {
+      console.log("入力エラーがあります");
+      return;
+    }
     const editTitle = document.getElementById("editTitle").value;
     const editDeadDate = document.getElementById("editDeadDate").value;
     const editDeadTime = document.getElementById("editDeadTime").value;
@@ -250,6 +260,12 @@ function editTaskRow(updateTask) {
   );
 }
 async function showEditModal(taskId) {
+  document.getElementById("editTitle").value = "";
+  document.getElementById("editDeadDate").value = "";
+  document.getElementById("editDeadTime").value = "";
+  hideElement(editDeadDate, editDeadDateError);
+  hideElement(editDeadTime, editDeadTimeError);
+
   try {
     const response = await fetch(`/api/get_task/${taskId}`);
     const data = await response.json();
@@ -281,7 +297,7 @@ document.addEventListener("click", function (e) {
 document.addEventListener("click", function (e) {
   if (e.target.classList.contains("delete-task-btn")) {
     const task_id = e.target.dataset.taskId;
-    console.log(task_id);
+    // console.log(task_id);
     deleteViewTask(task_id);
   }
 });
@@ -306,6 +322,10 @@ async function deleteViewTask(taskId) {
     if (data.status === "success") {
       const deleteTaskName = document.querySelector("#delete_task_title");
       deleteTaskName.textContent = data.task.title;
+      const deleteTaskDate = document.querySelector("#delete_task_date");
+      deleteTaskDate.textContent = data.task.dead_date;
+      const deleteTaskTime = document.querySelector("#delete_task_time");
+      deleteTaskTime.textContent = data.task.dead_time;
       const deleteTaskModalDom = document.querySelector("#deleteTaskModal");
       deleteTaskModalDom.dataset.taskId = taskId;
       deleteTaskModal.show();
@@ -319,8 +339,8 @@ async function deleteViewTask(taskId) {
 }
 
 function addNewTaskRow(task) {
-  const deleteTaskUrl = `/delete_task/${task.task_id}`;
-  const editTaskUrl = `/edit_task/${task.task_id}`;
+  // const deleteTaskUrl = `/delete_task/${task.task_id}`;
+  // const editTaskUrl = `/edit_task/${task.task_id}`;
   const positionIndex = checkPositionIndex(task.deadline);
   const ncTaskTrs = document.querySelectorAll("tr.nc-task-item");
   const targetTr = ncTaskTrs.item(positionIndex);
@@ -405,6 +425,7 @@ function moveTaskRow(taskId) {
   const completedTableBody =
     allTables[allTables.length - 1]?.querySelector("tbody");
 
+  // この際にソート情報をセッションから取り出して、適切な位置に入れ込む必要あり
   console.log("完了済みテーブルのtbody:", completedTableBody);
   if (completedTableBody) {
     completedTableBody.appendChild(copyRow);
@@ -508,7 +529,7 @@ async function checkdatetime() {
   const sorted_nctasks = nctasks.toSorted(
     (a, b) => new Date(a.deadline) - new Date(b.deadline)
   );
-  console.log(sorted_nctasks);
+  // console.log(sorted_nctasks);
   sorted_nctasks.forEach((task) => {
     const deadline_obj = new Date(task.deadline);
     const deaddate = formatDateStr(deadline_obj);
@@ -588,34 +609,8 @@ async function checkdatetime() {
       }
     }
   });
-  console.log(limity_tasks_arr);
+  // console.log(limity_tasks_arr);
 }
-
-// async function noticeLimityTasks() {
-//   const response = await fetch("/api/tasks/limity");
-//   const result = await response.json();
-//   // slackの返り値の判定を後ほど書く
-//   const slackResponse = await fetch("/api/slack/notify_limit", {
-//     method: "POST",
-//     headers: {
-//       "Content-Type": "application/json",
-//     },
-//     body: JSON.stringify({
-//       limity_tasks: result.data,
-//     }),
-//   });
-// }
-
-// // 初回実行
-// // my_task.html読み込み時に毎回実行されている
-// if (sessionStorage.getItem("is_first_slack") === "1") {
-//   console.log(sessionStorage.getItem("is_first_slack"));
-//   noticeLimityTasks();
-//   sessionStorage.setItem("is_first_slack", "0");
-//   console.log(sessionStorage.getItem("is_first_slack"));
-// }
-// // 30分ごとに自動実行
-// intervalId ??= setInterval(noticeLimityTasks, 10 * 60 * 1000);
 
 // test 用に
 window.testSlack = checkdatetime;

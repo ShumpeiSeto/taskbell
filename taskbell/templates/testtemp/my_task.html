@@ -89,7 +89,7 @@
               </div>
               <div class="col-12 col-md-8">
                 <input type="text" name="title" id="editTitle" class="form-control" required>
-                <div class="invalid-feedback" id="editTitleError"></div>
+                <div class="error" id="editTitleError"></div>
               </div>
             </div>
             
@@ -99,7 +99,7 @@
               </div>
               <div class="col-12 col-md-8">
                 <input type="date" name="dead_date" id="editDeadDate" class="form-control" required>
-                <div class="invalid-feedback" id="editDeadDateError"></div>
+                <div class="error" id="editDeadDateError"></div>
               </div>
             </div>
             
@@ -109,7 +109,7 @@
               </div>
               <div class="col-12 col-md-8">
                 <input type="time" name="dead_time" id="editDeadTime" class="form-control" required>
-                <div class="invalid-feedback" id="editDeadTimeError"></div>
+                <div class="error" id="editDeadTimeError"></div>
               </div>
             </div>
             
@@ -144,36 +144,7 @@
     </div>
   </div>
 
-
   <!-- タスク削除Modal -->
-  {# <div class="modal fade" id="deleteTaskModal" tabindex="-1" aria-labelledby="deleteTaskModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <div class="modal-header bg-medium text-white">
-          <h1 class="modal-title fs-5" id="editTaskModalLabel">タスク削除確認</h1>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body p-4">
-          <div class="card-header text-center bg-danger align-middle py-3">
-              <h1 class="font-size-l text-white m-1">削除確認</h1>
-          </div>
-          <div class="card border-0">
-              <div class="card-body p-4 p-md-5">
-                  <div class="text-center mb-5">
-                      <p class="font-size-m" id="delete_task_title"></p>
-                      <p class="font-size-m">本当に削除しますか？</p>
-                  </div>
-              </div>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">キャンセル</button>
-          <button type="button" class="btn btn-danger" id="deleteConfirmTask">削除</button>
-        </div>
-      </div>
-    </div>
-  </div> #}
-
   <div class="modal fade" id="deleteTaskModal" tabindex="-1" aria-labelledby="deleteTaskModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content border-0 shadow">
@@ -196,7 +167,7 @@
             <div class="row justify-content-center mb-0">
               <div class="col-auto">
                 <div class="d-flex flex-column align-items-center text-muted">
-                  <small class="text-uppercase fw-bold mb-1" style="font-size: 0.7rem; color: #6c757d;">期限日</small>
+                  <small class="text-uppercase fw-bold mb-1" style="font-size: 0.8rem; color: #6c757d;">期限日</small>
                   <div class="d-flex align-items-center">
                     <i class="fas fa-calendar-alt me-2" style="color: #dc3545;"></i>
                     <span class="fw-semibold" id="delete_task_date" style="font-size: 0.95rem;">2025-01-15</span>
@@ -397,6 +368,6 @@
     const is_first_slack = {{ session.get('is_first_slack') }};
     sessionStorage.setItem('is_first_slack', is_first_slack);
   </script>
-  <script src="{{ url_for('static', filename='script.js') }}"></script>
   <script src="{{ url_for('static', filename='validate.js')}}"></script>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
 {% endblock %}
