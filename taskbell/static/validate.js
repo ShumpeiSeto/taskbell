@@ -17,8 +17,8 @@ const time = document.getElementById("morning_time");
 const timeError = document.getElementById("timeError");
 
 // 新規タスク追加ページ, タスク編集ページ
-const addTaskForm = document.querySelector(".add_task_form");
-const editTaskForm = document.querySelector(".edit_task_form");
+const addTaskForm = document.querySelector("#addTaskForm");
+
 const title = document.getElementById("title");
 const titleError = document.getElementById("titleError");
 const deadDate = document.getElementById("dead_date");
@@ -26,6 +26,14 @@ const deaddateError = document.getElementById("deaddateError");
 const deadTime = document.getElementById("dead_time");
 const deadtimeError = document.getElementById("deadtimeError");
 
+// タスク編集モーダル
+const editTaskForm = document.querySelector("#editTaskForm");
+const editTitle = document.getElementById("editTitle");
+const editTitleError = document.getElementById("editTitleError");
+const editDeadDate = document.getElementById("editDeadDate");
+const editDeadDateError = document.getElementById("editDeadDateError");
+const editDeadTime = document.getElementById("editDeadTime");
+const editDeadTimeError = document.getElementById("editDeadTimeError");
 // 要素の非表示関数(共通)
 const showElement = function (inputElement, errorElement, message) {
   errorElement.textContent = message;
@@ -74,7 +82,6 @@ if (password) {
         "パスワードは８文字以上で入力して下さい"
       );
     } else {
-      hideElement(password, passwordError);
     }
   });
 }
@@ -252,7 +259,7 @@ if (time) {
   });
 }
 
-// 新規タスク追加ページ, タスク編集ページ
+// 新規タスク追加ページ
 if (title) {
   title.addEventListener("blur", function () {
     if (validateEmpty(title.value)) {
@@ -268,17 +275,24 @@ if (deadDate) {
   deadDate.addEventListener("blur", function () {
     const now = new Date();
     const nowDate = new Date(
-      `${now.getFullYear()}/${now.getMonth() + 1}/${now.getDay()}`
+      `${now.getFullYear()}/${now.getMonth() + 1}/${now.getDate()}`
     );
     const target_date = new Date(
       `${deadDate.value.trim().replaceAll("-", "/")}`
+    );
+    const target_datetime = new Date(
+      `${deadDate.value.trim().replaceAll("-", "/")} ${deadTime.value.trim()}`
     );
     if (validateEmpty(deadDate.value)) {
       showElement(deadDate, deaddateError, "日付が入力されていません");
     } else if (target_date < nowDate) {
       showElement(deadDate, deaddateError, "過去の日付は入力できません");
+    } else if (target_datetime < now) {
+      showElement(deadTime, deadtimeError, "過去の日時は登録できません");
+      deadDate.style.borderColor = "red";
     } else {
       hideElement(deadDate, deaddateError);
+      deadDate.style.borderColor = "null";
     }
   });
 }
@@ -294,109 +308,181 @@ if (deadTime) {
       showElement(deadTime, deadtimeError, "時刻が入力されていません");
     } else if (target_datetime < now) {
       showElement(deadTime, deadtimeError, "過去の日時は登録できません");
+      deadDate.style.borderColor = "red";
     } else {
       hideElement(deadTime, deadtimeError);
+      deadDate.style.borderColor = "null";
     }
   });
 }
-if (addTaskForm) {
-  addTaskForm.addEventListener("submit", function (e) {
-    let hasErrors = false;
-    e.preventDefault();
-    // title のチェック
-    console.log(title.value, deadDate.value, deadTime.value);
-    if (validateEmpty(title.value)) {
-      showElement(title, titleError, "タスク名が入力されていません");
-    } else if (!validationMaxRequired(title.value, 30)) {
-      showElement(title, titleError, "タスク名は30文字以内で入力してください");
-      hasErrors = true;
-    } else {
-      hideElement(title, titleError);
-    }
 
-    // 日にちチェック
+const isValidNewTask = function () {
+  let hasErrors = false;
+  e.preventDefault();
+  // title のチェック
+  console.log(title.value, deadDate.value, deadTime.value);
+  if (validateEmpty(title.value)) {
+    showElement(title, titleError, "タスク名が入力されていません");
+  } else if (!validationMaxRequired(title.value, 30)) {
+    showElement(title, titleError, "タスク名は30文字以内で入力してください");
+    hasErrors = true;
+  } else {
+    hideElement(title, titleError);
+  }
+
+  // 日にちチェック
+  const now = new Date();
+  const nowDate = new Date(
+    `${now.getFullYear()}/${now.getMonth() + 1}/${now.getDay()}`
+  );
+  const target_date = new Date(`${deadDate.value.trim().replaceAll("-", "/")}`);
+  if (validateEmpty(deadDate.value)) {
+    showElement(deadDate, deaddateError, "日付が入力されていません");
+    hasErrors = true;
+  } else if (target_date < nowDate) {
+    showElement(deadDate, deaddateError, "過去の日付は入力できません");
+    hasErrors = true;
+  } else {
+    hideElement(deadDate, deaddateError);
+  }
+  const target_datetime = new Date(
+    `${deadDate.value.trim()?.replaceAll("-", "/")} ${deadTime.value.trim()}`
+  );
+  // console.log(target_datetime);
+  if (validateEmpty(deadTime.value)) {
+    showElement(deadTime, deadtimeError, "時刻が入力されていません");
+    hasErrors = true;
+  } else if (target_datetime < now) {
+    showElement(deadTime, deadtimeError, "過去の日時は登録できません");
+    hasErrors = true;
+  } else {
+    hideElement(deadTime, deadtimeError);
+  }
+  return !hasErrors;
+};
+// 新規タスク追加ページ
+if (editTitle) {
+  editTitle.addEventListener("blur", function () {
+    if (validateEmpty(editTitle.value)) {
+      showElement(editTitle, editTitleError, "タスク名が入力されていません");
+    } else if (!validationMaxRequired(editTitle.value, 30)) {
+      showElement(
+        editTitle,
+        editTitleError,
+        "タスク名は30文字以内で入力してください"
+      );
+    } else {
+      hideElement(editTitle, editTitleError);
+    }
+  });
+}
+if (editDeadDate) {
+  editDeadDate.addEventListener("blur", function () {
     const now = new Date();
     const nowDate = new Date(
-      `${now.getFullYear()}/${now.getMonth() + 1}/${now.getDay()}`
+      `${now.getFullYear()}/${now.getMonth() + 1}/${now.getDate()}`
     );
     const target_date = new Date(
-      `${deadDate.value.trim().replaceAll("-", "/")}`
+      `${editDeadDate.value.trim().replaceAll("-", "/")}`
     );
-    if (validateEmpty(deadDate.value)) {
-      showElement(deadDate, deaddateError, "日付が入力されていません");
-      hasErrors = true;
-    } else if (target_date < nowDate) {
-      showElement(deadDate, deaddateError, "過去の日付は入力できません");
-      hasErrors = true;
-    } else {
-      hideElement(deadDate, deaddateError);
-    }
     const target_datetime = new Date(
-      `${deadDate.value.trim()?.replaceAll("-", "/")} ${deadTime.value.trim()}`
+      `${editDeadDate.value
+        .trim()
+        .replaceAll("-", "/")} ${editDeadTime.value.trim()}`
     );
-    // console.log(target_datetime);
-    if (validateEmpty(deadTime.value)) {
-      showElement(deadTime, deadtimeError, "時刻が入力されていません");
-      hasErrors = true;
+
+    if (validateEmpty(editDeadDate.value)) {
+      showElement(editDeadDate, editDeadDateError, "日付が入力されていません");
+    } else if (target_date < nowDate) {
+      showElement(
+        editDeadDate,
+        editDeadDateError,
+        "過去の日付は入力できません"
+      );
     } else if (target_datetime < now) {
-      showElement(deadTime, deadtimeError, "過去の日時は登録できません");
-      hasErrors = true;
+      showElement(
+        editDeadTime,
+        editDeadTimeError,
+        "過去の日時は登録できません"
+      );
+      editDeadDate.style.borderColor = "red";
     } else {
-      hideElement(deadTime, deadtimeError);
-    }
-    if (!hasErrors) {
-      addTaskForm.submit();
+      hideElement(editDeadDate, editDeadDateError);
+      editDeadDate.style.borderColor = "null";
     }
   });
 }
 
-if (editTaskForm) {
-  editTaskForm.addEventListener("submit", function (e) {
-    let hasErrors = false;
-    e.preventDefault();
-    // title のチェック
-    if (validateEmpty(title.value)) {
-      showElement(title, titleError, "タスク名が入力されていません");
-      hasErrors = true;
-    } else if (!validationMaxRequired(title.value, 30)) {
-      showElement(title, titleError, "タスク名は30文字以内で入力してください");
-      hasErrors = true;
-    } else {
-      hideElement(title, titleError);
-    }
-
-    // 日にちチェック
+if (editDeadTime) {
+  editDeadTime.addEventListener("blur", function () {
     const now = new Date();
-    const nowDate = new Date(
-      `${now.getFullYear()}/${now.getMonth() + 1}/${now.getDay()}`
-    );
-    const target_date = new Date(
-      `${deadDate.value.trim().replaceAll("-", "/")}`
-    );
-    if (validateEmpty(deadDate.value)) {
-      showElement(deadDate, deaddateError, "日付が入力されていません");
-      hasErrors = true;
-    } else if (target_date < nowDate) {
-      showElement(deadDate, deaddateError, "過去の日付は入力できません");
-      hasErrors = true;
-    } else {
-      hideElement(deadDate, deaddateError);
-    }
     const target_datetime = new Date(
-      `${deadDate.value.trim().replaceAll("-", "/")} ${deadTime.value.trim()}`
+      `${editDeadDate.value
+        .trim()
+        .replaceAll("-", "/")} ${editDeadTime.value.trim()}`
     );
-    console.log(target_datetime);
-    if (validateEmpty(deadTime.value)) {
-      showElement(deadTime, deadtimeError, "時刻が入力されていません");
-      hasErrors = true;
+    if (validateEmpty(editDeadTime.value)) {
+      showElement(editDeadTime, editDeadTimeError, "時刻が入力されていません");
     } else if (target_datetime < now) {
-      showElement(deadTime, deadtimeError, "過去の日時は登録できません");
-      hasErrors = true;
+      showElement(
+        editDeadTime,
+        editDeadTimeError,
+        "過去の日時は登録できません"
+      );
+      editDeadDate.style.borderColor = "red";
     } else {
-      hideElement(deadTime, deadtimeError);
-    }
-    if (!hasErrors) {
-      editTaskForm.submit();
+      hideElement(editDeadTime, editDeadTimeError);
+      editDeadDate.style.borderColor = "null";
     }
   });
 }
+const isValidEditForm = function () {
+  let hasErrors = false;
+  if (validateEmpty(editTitle.value)) {
+    showElement(editTitle, editTitleError, "タスク名が入力されていません");
+    hasErrors = true;
+  } else if (!validationMaxRequired(editTitle.value, 30)) {
+    showElement(
+      editTitle,
+      editTitleError,
+      "タスク名は30文字以内で入力してください"
+    );
+    hasErrors = true;
+  } else {
+    hideElement(editTitle, editTitleError);
+  }
+
+  // 日にちチェック
+  const now = new Date();
+  const nowDate = new Date(
+    `${now.getFullYear()}/${now.getMonth() + 1}/${now.getDay()}`
+  );
+  const target_date = new Date(
+    `${editDeadDate.value.trim().replaceAll("-", "/")}`
+  );
+  if (validateEmpty(editDeadDate.value)) {
+    showElement(editDeadDate, editDeadDateError, "日付が入力されていません");
+    hasErrors = true;
+  } else if (target_date < nowDate) {
+    showElement(editDeadDate, editDeadDateError, "過去の日付は入力できません");
+    hasErrors = true;
+  } else {
+    hideElement(editDeadDate, editDeadDateError);
+  }
+  const target_datetime = new Date(
+    `${editDeadDate.value
+      .trim()
+      .replaceAll("-", "/")} ${editDeadTime.value.trim()}`
+  );
+  console.log(target_datetime);
+  if (validateEmpty(editDeadTime.value)) {
+    showElement(editDeadTime, editDeadTimeError, "時刻が入力されていません");
+    hasErrors = true;
+  } else if (target_datetime < now) {
+    showElement(editDeadTime, editDeadTimeError, "過去の日時は登録できません");
+    hasErrors = true;
+  } else {
+    hideElement(editDeadTime, editDeadTimeError);
+  }
+  return !hasErrors;
+};
