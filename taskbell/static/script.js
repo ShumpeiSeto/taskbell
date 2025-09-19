@@ -303,12 +303,25 @@ document.addEventListener("click", function (e) {
 });
 
 const ncTbody = document.getElementById("nc-tbody");
-const checkPositionIndex = function (deadline) {
+const ncCheckPositionIndex = function (deadline) {
   let result = 0;
   const ncTaskTrs = document.querySelectorAll("tr.nc-task-item");
   const count = ncTaskTrs.length;
   for (let i = 0; i < count; i++) {
     const target_deadline = ncTaskTrs.item(i).dataset.deadline;
+    if (new Date(deadline) > new Date(target_deadline)) result = i + 1;
+  }
+  console.log(result);
+  return result;
+};
+
+const cTbody = document.getElementById("c-tbody");
+const cCheckPositionIndex = function (deadline) {
+  let result = 0;
+  const cTaskTrs = document.querySelectorAll("tr.c-task-item");
+  const count = cTaskTrs.length;
+  for (let i = 0; i < count; i++) {
+    const target_deadline = cTaskTrs.item(i).dataset.deadline;
     if (new Date(deadline) > new Date(target_deadline)) result = i + 1;
   }
   console.log(result);
@@ -339,9 +352,7 @@ async function deleteViewTask(taskId) {
 }
 
 function addNewTaskRow(task) {
-  // const deleteTaskUrl = `/delete_task/${task.task_id}`;
-  // const editTaskUrl = `/edit_task/${task.task_id}`;
-  const positionIndex = checkPositionIndex(task.deadline);
+  const positionIndex = ncCheckPositionIndex(task.deadline);
   const ncTaskTrs = document.querySelectorAll("tr.nc-task-item");
   const targetTr = ncTaskTrs.item(positionIndex);
   const element = `
@@ -396,16 +407,18 @@ function addNewTaskRow(task) {
   // ncTbody.insertBefore(element, targetTr);
 }
 
-function moveTaskRow(taskId) {
+async function moveTaskRow(taskId) {
   const taskRow = document.querySelector(`tr[data-task-id="${taskId}"]`);
   if (!taskRow) {
     console.log(`タスクID ${taskId}の行が見つかりません`);
     return;
   }
 
+  // nodeごとコピーしておき原本ノードは削除
   const copyRow = taskRow.cloneNode(true);
   taskRow.remove();
 
+  // 表形式に合うようにノードを編集
   adjustRowForCompletedTable(copyRow, taskId);
 
   // より安全な方法でテーブルを特定
@@ -426,8 +439,12 @@ function moveTaskRow(taskId) {
     allTables[allTables.length - 1]?.querySelector("tbody");
 
   // この際にソート情報をセッションから取り出して、適切な位置に入れ込む必要あり
+  // const response = await fetch("/api/get_session");
+  // const result = await response.json();
   console.log("完了済みテーブルのtbody:", completedTableBody);
   if (completedTableBody) {
+    console.log(result.session);
+
     completedTableBody.appendChild(copyRow);
     console.log(`タスク ${taskId}を完了済みテーブルに移動しました`);
   } else {
@@ -462,7 +479,7 @@ function adjustRowForCompletedTable(row, taskId) {
     firstTd.setAttribute("width", "50%");
   }
 
-  // 操作ボタンを「戻す」「削除」に変更
+  // 操作ボタンを「編集」を「戻す」に変更
   const handleButtonsDiv = row.querySelector(".handle_buttons");
   if (handleButtonsDiv) {
     handleButtonsDiv.innerHTML = `
@@ -478,6 +495,89 @@ document.addEventListener("DOMContentLoaded", function () {
   document.addEventListener("click", handleCheckboxClick);
 });
 
+async function returnTaskRow(taskId) {
+  const taskRow = document.querySelector(`tr[data-task-id="${taskId}"]`);
+  if (!taskRow) {
+    console.log(`タスクID ${taskId}の行が見つかりません`);
+    return;
+  }
+  // nodeごとコピーしておき原本ノードは削除
+  const copyRow = taskRow.cloneNode(true);
+  taskRow.remove();
+  // 未完了表形式に合うようにノードを編集
+  reverseAdjustRowForCompletedTable(copyRow, taskId);
+
+  // より安全な方法でテーブルを特定
+  const allTables = document.querySelectorAll(".table");
+  console.log("見つかったテーブル数:", allTables.length);
+
+  // 各テーブルをログ出力して確認
+  allTables.forEach((table, index) => {
+    console.log(
+      `テーブル${index}:`,
+      table.closest(".row, .modal")?.querySelector("h4, h1")?.textContent ||
+        "モーダル内"
+    );
+  });
+
+  // 最後のテーブル（完了済み）を使用
+  const nonCompletedTableBody = allTables[0]?.querySelector("tbody");
+  console.log("未完了テーブルのtbody:", nonCompletedTableBody);
+  if (nonCompletedTableBody) {
+    console.log(result.session);
+
+    nonCompletedTableBody.appendChild(copyRow);
+    console.log(`タスク ${taskId}を未完了テーブルに移動しました`);
+  } else {
+    console.error("未完了テーブルが見つかりません");
+  }
+}
+
+// 戻るボタンを押した時の整形関数
+function reverseAdjustRowForCompletedTable(row, taskId) {
+  // 最初のth要素（チェックボックス列）を追加
+  const element = `
+                <th width="10%" scope="row" class="px-0 p-md-2 text-center align-middle">
+                  <input type="checkbox" class="check_box_fin rounded-circle px-1 py-2" data-task-id="${taskId}">
+                </th>
+  `;
+
+  row.append(element);
+
+  // タスク名のクラスを変更
+  const taskNameLabel = row.querySelector(".comp_task_name");
+  if (taskNameLabel) {
+    taskNameLabel.className = "taskname";
+  }
+
+  // 期限のクラス調整
+  const deadlineCells = row.querySelectorAll(".deaddate, .deadtime");
+  deadlineCells.forEach((cell) => {
+    const label = cell.querySelector("comp_task_deadline");
+    if (label) {
+      label.className = "label";
+    }
+  });
+
+  // 最初のtdをwidth="50%"に変更（タスク名の幅調整）
+  const firstTd = row.querySelector("td");
+  if (firstTd) {
+    firstTd.setAttribute("width", "40%");
+  }
+
+  // 操作ボタンを「戻す」を「編集」に変更
+  const handleButtonsDiv = row.querySelector(".handle_buttons");
+  if (handleButtonsDiv) {
+    handleButtonsDiv.innerHTML = `
+            <button type="button" class="btn btn-primary py-2 px-1 edit-task-btn" data-task-id="${taskId}">編集</button>
+            <button type="button" class="btn btn-danger py-2 px-1 delete-task-btn" data-task-id="${taskId}">削除</button>
+        `;
+  }
+}
+document.addEventListener("DOMContentLoaded", function () {
+  // document.removeEventListener("click", handleCheckboxClick);
+  // document.addEventListener("click", handleCheckboxClick);
+});
 async function handleCheckboxClick(e) {
   if (e.target.classList.contains("check_box_fin")) {
     e.preventDefault();

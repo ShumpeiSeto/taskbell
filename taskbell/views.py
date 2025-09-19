@@ -296,9 +296,9 @@ def index():
 
 @app.before_request
 def initialize_session():
-    if "nc_mode" not in session and "c_mode" not in session:
-        session["nc_mode"] = 0
-        session["c_mode"] = 0
+    # if "nc_mode" not in session and "c_mode" not in session:
+    #     session["nc_mode"] = 0
+    #     session["c_mode"] = 0
     # 30分を期限設定しておく
     if "dl_time" not in session:
         session["dl_time"] = convert_dl_time(1)
@@ -976,3 +976,27 @@ def notify_limit_tasks():
     else:
         print("SlackURLが設定されていません")
         return jsonify({"success": False, "message": "SlackURL未設定による通知失敗"})
+
+
+# flask の session確認用テスト
+@app.route("/api/get_session", methods=["GET"])
+@login_required
+def get_session():
+    sessionData = {
+        "c_v_mode": session['c_v_mode'],
+        "nc_v_mode": session['nc_v_mode'],
+        "dl_time": session['dl_time'],
+
+    }
+    if len(sessionData) >= 1:
+        return jsonify({
+            "success": True,
+            "message": "session受取成功しました",
+            "session": sessionData,
+        })
+    else:
+        print("session受取に失敗しました")
+        return jsonify({
+            "success": False,
+            "message": "session受取失敗しました",
+        })

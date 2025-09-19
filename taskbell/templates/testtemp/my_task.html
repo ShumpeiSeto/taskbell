@@ -340,10 +340,11 @@
                   <label class="importance my-auto" >{{ c_task['importance'] | convert_importance }}</label>
                 </td>
                 <td width="15%" class="px-0 p-md-0 text-center align-middle">
-                  <div class="d-flex flex-row px-0 py-auto p-md-2 text-center justify-content-evenly align-middle gap-3 flex-grow">
+                  <div class="d-flex flex-row handle_buttons px-0 py-auto p-md-2 text-center justify-content-evenly align-middle gap-3 flex-grow">
                     <a href="{{ url_for('check_task', task_id=c_task['task_id']) }}" class="mb-1">
-                  <button type="button" class="btn btn-gray text-light py-2 px-1">戻す</button>
+                      <button type="button" class="btn btn-gray text-light py-2 px-1">戻す</button>
                     </a>
+                    <button type="button" class="btn btn-gray return_btn text-light py-2 px-1">戻す</button>
                     <button type="button" class="btn btn-danger py-2 px-1 delete-task-btn" data-task-id="{{ c_task['task_id'] }}">削除</button>
                   </div>
 
