@@ -218,7 +218,7 @@
           <h1 class="modal-title fs-5" id="exampleModalLabel">期限が近づいたタスクあり</h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <table width="100%" class="table table-lignt table-bordered modal-body">
+        <table width="100%" class="table table-lignt table-bordered modal-body" id="nc-table">
           <thead>
             <tr>
               <th width="45%" class="text-center align-middle">タスク名</th>
@@ -310,7 +310,7 @@
         <a href="{{ url_for('button_click', flg=3) }}"><button type="button" class="btn btn-outline-warning border-2 btn-sm">重要度順</button></a>
         <a href="{{ url_for('button_click', flg=4) }}"><button type="button" class="btn btn-outline-secondary border-2 btn-sm">日付順</button></a>
         </div>
-        <table width="100%" class="table table-light table-hover table-bordered">
+        <table width="100%" class="table table-light table-hover table-bordered" id="c-table">
           <thead>
             <tr>
               {# <th rowspan="2" scope="col" class="p-0 p-md-2 text-center align-middle">#</th> #}
