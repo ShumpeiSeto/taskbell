@@ -318,7 +318,7 @@ if (deadTime) {
 
 const isValidNewTask = function () {
   let hasErrors = false;
-  e.preventDefault();
+  // e.preventDefault();
   // title のチェック
   console.log(title.value, deadDate.value, deadTime.value);
   if (validateEmpty(title.value)) {
