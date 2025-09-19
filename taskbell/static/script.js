@@ -469,9 +469,7 @@ function adjustRowForCompletedTable(row, taskId) {
             <a href="/checked/${taskId}" class="mb-1">
                 <button type="button" class="btn btn-gray text-light py-2 px-1">戻す</button>
             </a>
-            <a href="/delete_task/${taskId}">
-                <button type="button" class="btn btn-danger py-2 px-1">削除</button>
-            </a>
+            <button type="button" class="btn btn-danger py-2 px-1 delete-task-btn" data-task-id="${taskId}">削除</button>
         `;
   }
 }
@@ -484,6 +482,7 @@ async function handleCheckboxClick(e) {
   if (e.target.classList.contains("check_box_fin")) {
     e.preventDefault();
     e.stopPropagation();
+    // 最も近くにある.nc-task-itemのRow
     const taskRow = e.target.closest("tr");
     const taskId = taskRow.dataset.taskId;
     e.target.disabled = true;
