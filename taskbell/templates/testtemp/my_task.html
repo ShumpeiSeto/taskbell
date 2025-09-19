@@ -326,7 +326,7 @@
           </thead>
           <tbody>
             {% for c_task in c_tasks %}
-              <tr>
+              <tr class="c-task-item" data-deadline="{{ c_task['deadline'] }}" data-task-id="{{ c_task['task_id']}}">
                 <td width="50%" class="px-0 p-md-0 text-center align-middle">
                   <label class="comp_task_name" >{{ c_task['title']}}</label>
                 </td>
