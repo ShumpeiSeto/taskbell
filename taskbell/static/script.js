@@ -443,7 +443,7 @@ async function moveTaskRow(taskId) {
   // const result = await response.json();
   console.log("完了済みテーブルのtbody:", completedTableBody);
   if (completedTableBody) {
-    console.log(result.session);
+    // console.log(result.session);
 
     completedTableBody.appendChild(copyRow);
     console.log(`タスク ${taskId}を完了済みテーブルに移動しました`);
@@ -486,6 +486,7 @@ function adjustRowForCompletedTable(row, taskId) {
             <a href="/checked/${taskId}" class="mb-1">
                 <button type="button" class="btn btn-gray text-light py-2 px-1">戻す</button>
             </a>
+            <button type="button" class="btn btn-gray return_btn text-light py-2 px-1" data-task-id="${taskId}">戻す</button>
             <button type="button" class="btn btn-danger py-2 px-1 delete-task-btn" data-task-id="${taskId}">削除</button>
         `;
   }
@@ -493,6 +494,10 @@ function adjustRowForCompletedTable(row, taskId) {
 document.addEventListener("DOMContentLoaded", function () {
   document.removeEventListener("click", handleCheckboxClick);
   document.addEventListener("click", handleCheckboxClick);
+});
+document.addEventListener("DOMContentLoaded", function () {
+  document.removeEventListener("click", handleReturnTask);
+  document.addEventListener("click", handleReturnTask);
 });
 
 async function returnTaskRow(taskId) {
@@ -521,10 +526,10 @@ async function returnTaskRow(taskId) {
   });
 
   // 最後のテーブル（完了済み）を使用
-  const nonCompletedTableBody = allTables[0]?.querySelector("tbody");
+  const nonCompletedTableBody = allTables[1]?.querySelector("tbody");
   console.log("未完了テーブルのtbody:", nonCompletedTableBody);
   if (nonCompletedTableBody) {
-    console.log(result.session);
+    // console.log(result.session);
 
     nonCompletedTableBody.appendChild(copyRow);
     console.log(`タスク ${taskId}を未完了テーブルに移動しました`);
@@ -542,7 +547,7 @@ function reverseAdjustRowForCompletedTable(row, taskId) {
                 </th>
   `;
 
-  row.append(element);
+  row.insertAdjacentHTML("afterbegin", element);
 
   // タスク名のクラスを変更
   const taskNameLabel = row.querySelector(".comp_task_name");
@@ -578,6 +583,35 @@ document.addEventListener("DOMContentLoaded", function () {
   // document.removeEventListener("click", handleCheckboxClick);
   // document.addEventListener("click", handleCheckboxClick);
 });
+const returnBtn = document.querySelector(".return_btn");
+async function handleReturnTask() {
+  if (returnBtn) {
+    returnBtn.addEventListener("click", async function (e) {
+      const taskId = returnBtn.dataset.taskId;
+      // e.preventDefault();
+      // e.stopPropagation();
+      try {
+        const response = await fetch(`/api/uncheck/${taskId}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        if (response.ok) {
+          const result = await response.json();
+          console.log("API応答:", result);
+          returnTaskRow(taskId);
+          // moveTaskRow(taskId);
+        } else {
+          console.error("APIエラー:", response.status);
+        }
+      } catch (error) {
+        console.log("通信エラー:", error);
+        // e.target.disabled = false;
+      }
+    });
+  }
+}
 async function handleCheckboxClick(e) {
   if (e.target.classList.contains("check_box_fin")) {
     e.preventDefault();
@@ -713,3 +747,4 @@ async function checkdatetime() {
 
 // test 用に
 window.testSlack = checkdatetime;
+window.returnTask = returnTaskRow;
