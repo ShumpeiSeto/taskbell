@@ -344,7 +344,7 @@
                     <a href="{{ url_for('check_task', task_id=c_task['task_id']) }}" class="mb-1">
                       <button type="button" class="btn btn-gray text-light py-2 px-1">戻す</button>
                     </a>
-                    <button type="button" class="btn btn-gray return_btn text-light py-2 px-1">戻す</button>
+                    <button type="button" class="btn btn-gray return_btn text-light py-2 px-1" data-task-id="{{ c_task['task_id'] }}">戻す</button>
                     <button type="button" class="btn btn-danger py-2 px-1 delete-task-btn" data-task-id="{{ c_task['task_id'] }}">削除</button>
                   </div>
 

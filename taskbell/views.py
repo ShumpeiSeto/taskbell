@@ -225,7 +225,7 @@ def check(task_id, task):
             db.session.merge(task)
             db.session.commit()
             print(
-                f"タスク済みとしました:task_id:{task.task_id}, title:{task.title}, is_completed:{task.is_completed}"
+                f"タスクステータスを変更しました:task_id:{task.task_id}, title:{task.title}, is_completed:{task.is_completed}"
             )
         except Exception as e:
             db.session.rollback()
@@ -611,6 +611,20 @@ def api_check_task(task_id):
         }
     )
 
+# API Versionを追加してみる
+@app.route("/api/uncheck/<int:task_id>", methods=["POST"])
+@login_required
+def api_uncheck_task(task_id):
+    task = Tasks.query.filter(Tasks.task_id == task_id).first()
+    check(task_id, task)
+    return jsonify(
+        {
+            "status": "success",
+            "message": "タスクを未完了にしました",
+            "task_id": task_id,
+            "is_completed": task.is_completed,
+        }
+    )
 
 # アクセスするとテーブル削除と作成
 @app.route("/make_table")
