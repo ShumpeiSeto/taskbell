@@ -483,9 +483,6 @@ function adjustRowForCompletedTable(row, taskId) {
   const handleButtonsDiv = row.querySelector(".handle_buttons");
   if (handleButtonsDiv) {
     handleButtonsDiv.innerHTML = `
-            <a href="/checked/${taskId}" class="mb-1">
-                <button type="button" class="btn btn-gray text-light py-2 px-1">戻す</button>
-            </a>
             <button type="button" class="btn btn-gray return_btn text-light py-2 px-1" data-task-id="${taskId}">戻す</button>
             <button type="button" class="btn btn-danger py-2 px-1 delete-task-btn" data-task-id="${taskId}">削除</button>
         `;
@@ -494,10 +491,6 @@ function adjustRowForCompletedTable(row, taskId) {
 document.addEventListener("DOMContentLoaded", function () {
   document.removeEventListener("click", handleCheckboxClick);
   document.addEventListener("click", handleCheckboxClick);
-});
-document.addEventListener("DOMContentLoaded", function () {
-  document.removeEventListener("click", handleReturnTask);
-  document.addEventListener("click", handleReturnTask);
 });
 
 async function returnTaskRow(taskId) {
@@ -579,37 +572,39 @@ function reverseAdjustRowForCompletedTable(row, taskId) {
         `;
   }
 }
+
 document.addEventListener("DOMContentLoaded", function () {
-  // document.removeEventListener("click", handleCheckboxClick);
-  // document.addEventListener("click", handleCheckboxClick);
+  document.removeEventListener("click", handleReturnTask);
+  document.addEventListener("click", handleReturnTask);
 });
-const returnBtn = document.querySelector(".return_btn");
-async function handleReturnTask() {
-  if (returnBtn) {
-    returnBtn.addEventListener("click", async function (e) {
-      const taskId = returnBtn.dataset.taskId;
-      // e.preventDefault();
-      // e.stopPropagation();
-      try {
-        const response = await fetch(`/api/uncheck/${taskId}`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-        if (response.ok) {
-          const result = await response.json();
-          console.log("API応答:", result);
-          returnTaskRow(taskId);
-          // moveTaskRow(taskId);
-        } else {
-          console.error("APIエラー:", response.status);
-        }
-      } catch (error) {
-        console.log("通信エラー:", error);
-        // e.target.disabled = false;
+
+async function handleReturnTask(e) {
+  if (e.target.classList.contains("return_btn")) {
+    e.preventDefault();
+    e.stopPropagation();
+    const returnBtn = document.querySelector(".return_btn");
+    const taskId = returnBtn.dataset.taskId;
+    e.target.disabled = true;
+    try {
+      const returnBtn = document.querySelector(".return_btn");
+      const response = await fetch(`/api/uncheck/${taskId}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (response.ok) {
+        const result = await response.json();
+        console.log("API応答:", result);
+        returnTaskRow(taskId);
+        // moveTaskRow(taskId);
+      } else {
+        console.error("APIエラー:", response.status);
       }
-    });
+    } catch (error) {
+      console.log("通信エラー:", error);
+      e.target.disabled = false;
+    }
   }
 }
 async function handleCheckboxClick(e) {
