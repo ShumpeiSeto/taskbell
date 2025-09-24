@@ -266,7 +266,7 @@
           </thead>
           <tbody id="nc-tbody">
             {% for nc_task in nc_tasks %}
-              <tr class="nc-task-item" data-deadline="{{ nc_task['deadline'] }}" data-task-id="{{ nc_task['task_id']}}">
+              <tr class="nc-task-item" data-deadline="{{ nc_task['deadline'] }}" data-task-id="{{ nc_task['task_id']}}" data-importance="{{ nc_task['importance'] }}">
                 <th width="10%" scope="row" class="px-0 p-md-2 text-center align-middle">
                   <!-- aタグを削除、直接チェックボックスのみ -->
                   <input type="checkbox" class="check_box_fin rounded-circle px-1 py-2" data-task-id="{{ nc_task['task_id'] }}">
@@ -326,7 +326,7 @@
           </thead>
           <tbody>
             {% for c_task in c_tasks %}
-              <tr class="c-task-item" data-deadline="{{ c_task['deadline'] }}" data-task-id="{{ c_task['task_id']}}">
+              <tr class="c-task-item" data-deadline="{{ c_task['deadline'] }}" data-task-id="{{ c_task['task_id'] }}" data-importance="{{ c_task['importance'] }}">
                 <td width="50%" class="px-0 p-md-0 text-center align-middle">
                   <label class="comp_task_name" >{{ c_task['title']}}</label>
                 </td>
@@ -341,9 +341,6 @@
                 </td>
                 <td width="15%" class="px-0 p-md-0 text-center align-middle">
                   <div class="d-flex flex-row handle_buttons px-0 py-auto p-md-2 text-center justify-content-evenly align-middle gap-3 flex-grow">
-                    <a href="{{ url_for('check_task', task_id=c_task['task_id']) }}" class="mb-1">
-                      <button type="button" class="btn btn-gray text-light py-2 px-1">戻す</button>
-                    </a>
                     <button type="button" class="btn btn-gray return_btn text-light py-2 px-1" data-task-id="{{ c_task['task_id'] }}">戻す</button>
                     <button type="button" class="btn btn-danger py-2 px-1 delete-task-btn" data-task-id="{{ c_task['task_id'] }}">削除</button>
                   </div>
@@ -366,6 +363,11 @@
     sessionStorage.setItem('dl_time', convert_dl_time(dl_time));
     const is_first_slack = {{ session.get('is_first_slack') }};
     sessionStorage.setItem('is_first_slack', is_first_slack);
+    const nc_v_mode = {{ session.get('nc_v_mode') }}
+    const c_v_mode = {{ session.get('c_v_mode') }}
+    sessionStorage.setItem('nc_v_mode', nc_v_mode);
+    sessionStorage.setItem('c_v_mode', c_v_mode);
+
   </script>
   <script src="{{ url_for('static', filename='validate.js')}}"></script>
   <script src="{{ url_for('static', filename='script.js') }}"></script>
