@@ -315,6 +315,16 @@ const ncCheckPositionIndex = function (deadline) {
   return result;
 };
 
+const ncCheckPositionIndex2 = function (deadline) {
+  let result = 0;
+  const ncTaskTrs = document.getElementsByClassName("nc-task-item");
+  [...ncTaskTrs].forEach((item, i) => {
+    const target_deadline = item.dataset.deadline;
+    if (new Date(deadline) > new Date(target_deadline)) result = i + 1;
+  });
+  return result;
+};
+
 const cTbody = document.getElementById("c-tbody");
 const cCheckPositionIndex = function (deadline) {
   let result = 0;
@@ -352,11 +362,17 @@ async function deleteViewTask(taskId) {
 }
 
 function addNewTaskRow(task) {
-  const nc_v_mode = int(sessionStorage.getItem("nc_v_mode"));
-  if (nc_v_mode == 0) {
+  const nc_v_mode = sessionStorage.getItem("nc_v_mode");
+  if (nc_v_mode === "0") {
     const positionIndex = ncCheckPositionIndex(task.deadline);
+    console.log(`positionIndex(0): ${positionIndex}`);
+
     const ncTaskTrs = document.querySelectorAll("tr.nc-task-item");
     const targetTr = ncTaskTrs.item(positionIndex);
+    const hours = newDate(task.deadline)
+      .toLocaleString({ timezone: "Asia/Tokyo" })
+      .split(" ")[1]
+      .slice(0, 2);
     const element = `
                 <tr class="nc-task-item" data-deadline="${
                   task.deadline
@@ -379,9 +395,80 @@ function addNewTaskRow(task) {
                     )}</label>
                   </td>
                   <td width="10%" class="px-0 p-md-0 text-center align-middle">
-                    <label class="deadtime my-auto">${new Date(
-                      task.deadline
-                    ).getHours()}:${new Date(
+                    <label class="deadtime my-auto">${hours}:${new Date(
+      task.deadline
+    )
+      .toLocaleString({ timezone: "Asia/Tokyo" })
+      .getMinutes()}</label>
+                  </td>
+                  <td width="10%" class="px-0 p-md-0 text-center align-middle">
+                    <label class="importance my-auto">${convertImportance(
+                      task.importance
+                    )}</label>
+                  </td>
+                  <td width="15%" class="px-0 p-md-0 text-center align-middle">
+                    <div class="handle_buttons d-flex flex-row px-0 py-auto p-md-2 text-center justify-content-evenly align-middle gap-3 flex-grow">
+                      <button type="button" class="btn btn-primary py-2 px-1 edit-task-btn" data-task-id=${
+                        task.task_id
+                      }>編集</button>
+                      <button type="button" class="btn btn-danger py-2 px-1 delete-task-btn" data-task-id=${
+                        task.task_id
+                      }>削除</button>
+                    </div>
+                  </td>
+                </tr>
+    `;
+    if (targetTr) {
+      targetTr.insertAdjacentHTML("beforebegin", element);
+    } else {
+      ncTbody.insertAdjacentHTML("beforeend", element);
+    }
+  } else if (nc_v_mode === "1") {
+    // 重要度順の時
+    const ncTaskTrs = document.querySelectorAll("tr.nc-task-item");
+    let firstSameIndex = 0;
+    ncTaskTrs.forEach((el) => {
+      if (el.dataset.importance === task.importance) {
+        console.log(`
+          el.dataset.importance: ${el.dataset.importance}
+          task.importance: ${task.importance}
+        `);
+        firstSameIndex = el.dataset.importance;
+        return;
+      }
+    });
+    const positionIndex =
+      firstSameIndex + ncCheckPositionIndex2(task.deadline) - 1;
+    console.log(`positionIndex(1): ${positionIndex}`);
+
+    const targetTr = ncTaskTrs.item(positionIndex);
+    const hours = new Date(task.deadline)
+      .toLocaleString({ timezone: "Asia/Tokyo" })
+      .split(" ")[1]
+      .slice(0, 2);
+    const element = `
+                <tr class="nc-task-item" data-deadline="${
+                  task.deadline
+                }" data-task-id="${task.task_id}">
+                  <th width="10%" scope="row" class="px-0 p-md-2 text-center align-middle">
+                    <!-- aタグを削除、直接チェックボックスのみ -->
+                    <input type="checkbox" class="check_box_fin rounded-circle px-1 py-2" data-task-id="${
+                      task.task_id
+                    }">
+                  </th>
+                  <td width="40%" class="px-0 p-md-0 text-center align-middle">
+                    <label class="taskname form-check-label my-auto">${
+                      task.title
+                    }</label>
+                  </td>
+                  <td width="15%" class="px-0 p-md-0 text-center align-middle">
+                    <label class="deaddate my-auto">${convertDate(
+                      convertDate3(new Date(task.deadline).toISOString()),
+                      new Date(task.deadline).getDay()
+                    )}</label>
+                  </td>
+                  <td width="10%" class="px-0 p-md-0 text-center align-middle">
+                    <label class="deadtime my-auto">${hours}:${new Date(
       task.deadline
     ).getMinutes()}</label>
                   </td>
@@ -407,8 +494,14 @@ function addNewTaskRow(task) {
     } else {
       ncTbody.insertAdjacentHTML("beforeend", element);
     }
+    // return result;
+    // const taskImportance = task.importance;
+    // const sameImpTrs = [...ncTaskTrs].filter(
+    //   (el) => el.dataset.importance === String(taskImportance)
+    // );
+
+    // const targetTr = ncTaskTrs.item(positionIndex);
   }
-  // ncTbody.insertBefore(element, targetTr);
 }
 
 async function moveTaskRow(taskId) {
