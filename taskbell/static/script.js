@@ -352,58 +352,62 @@ async function deleteViewTask(taskId) {
 }
 
 function addNewTaskRow(task) {
-  const positionIndex = ncCheckPositionIndex(task.deadline);
-  const ncTaskTrs = document.querySelectorAll("tr.nc-task-item");
-  const targetTr = ncTaskTrs.item(positionIndex);
-  const element = `
-              <tr class="nc-task-item" data-deadline="${
-                task.deadline
-              }" data-task-id="${task.task_id}">
-                <th width="10%" scope="row" class="px-0 p-md-2 text-center align-middle">
-                  <!-- aタグを削除、直接チェックボックスのみ -->
-                  <input type="checkbox" class="check_box_fin rounded-circle px-1 py-2" data-task-id="${
-                    task.task_id
-                  }">
-                </th>
-                <td width="40%" class="px-0 p-md-0 text-center align-middle">
-                  <label class="taskname form-check-label my-auto">${
-                    task.title
-                  }</label>
-                </td>
-                <td width="15%" class="px-0 p-md-0 text-center align-middle">
-                  <label class="deaddate my-auto">${convertDate(
-                    convertDate3(new Date(task.deadline).toISOString()),
-                    new Date(task.deadline).getDay()
-                  )}</label>
-                </td>
-                <td width="10%" class="px-0 p-md-0 text-center align-middle">
-                  <label class="deadtime my-auto">${new Date(
-                    task.deadline
-                  ).getHours()}:${new Date(task.deadline).getMinutes()}</label>
-                </td>
-                <td width="10%" class="px-0 p-md-0 text-center align-middle">
-                  <label class="importance my-auto">${convertImportance(
-                    task.importance
-                  )}</label>
-                </td>
-                <td width="15%" class="px-0 p-md-0 text-center align-middle">
-                  <div class="handle_buttons d-flex flex-row px-0 py-auto p-md-2 text-center justify-content-evenly align-middle gap-3 flex-grow">
-                    <button type="button" class="btn btn-primary py-2 px-1 edit-task-btn" data-task-id=${
+  const nc_v_mode = int(sessionStorage.getItem("nc_v_mode"));
+  if (nc_v_mode == 0) {
+    const positionIndex = ncCheckPositionIndex(task.deadline);
+    const ncTaskTrs = document.querySelectorAll("tr.nc-task-item");
+    const targetTr = ncTaskTrs.item(positionIndex);
+    const element = `
+                <tr class="nc-task-item" data-deadline="${
+                  task.deadline
+                }" data-task-id="${task.task_id}">
+                  <th width="10%" scope="row" class="px-0 p-md-2 text-center align-middle">
+                    <!-- aタグを削除、直接チェックボックスのみ -->
+                    <input type="checkbox" class="check_box_fin rounded-circle px-1 py-2" data-task-id="${
                       task.task_id
-                    }>編集</button>
-                    <button type="button" class="btn btn-danger py-2 px-1 delete-task-btn" data-task-id=${
-                      task.task_id
-                    }>削除</button>
-                  </div>
-                </td>
-              </tr>
-  `;
-  if (targetTr) {
-    targetTr.insertAdjacentHTML("beforebegin", element);
-  } else {
-    ncTbody.insertAdjacentHTML("beforeend", element);
+                    }">
+                  </th>
+                  <td width="40%" class="px-0 p-md-0 text-center align-middle">
+                    <label class="taskname form-check-label my-auto">${
+                      task.title
+                    }</label>
+                  </td>
+                  <td width="15%" class="px-0 p-md-0 text-center align-middle">
+                    <label class="deaddate my-auto">${convertDate(
+                      convertDate3(new Date(task.deadline).toISOString()),
+                      new Date(task.deadline).getDay()
+                    )}</label>
+                  </td>
+                  <td width="10%" class="px-0 p-md-0 text-center align-middle">
+                    <label class="deadtime my-auto">${new Date(
+                      task.deadline
+                    ).getHours()}:${new Date(
+      task.deadline
+    ).getMinutes()}</label>
+                  </td>
+                  <td width="10%" class="px-0 p-md-0 text-center align-middle">
+                    <label class="importance my-auto">${convertImportance(
+                      task.importance
+                    )}</label>
+                  </td>
+                  <td width="15%" class="px-0 p-md-0 text-center align-middle">
+                    <div class="handle_buttons d-flex flex-row px-0 py-auto p-md-2 text-center justify-content-evenly align-middle gap-3 flex-grow">
+                      <button type="button" class="btn btn-primary py-2 px-1 edit-task-btn" data-task-id=${
+                        task.task_id
+                      }>編集</button>
+                      <button type="button" class="btn btn-danger py-2 px-1 delete-task-btn" data-task-id=${
+                        task.task_id
+                      }>削除</button>
+                    </div>
+                  </td>
+                </tr>
+    `;
+    if (targetTr) {
+      targetTr.insertAdjacentHTML("beforebegin", element);
+    } else {
+      ncTbody.insertAdjacentHTML("beforeend", element);
+    }
   }
-
   // ncTbody.insertBefore(element, targetTr);
 }
 
