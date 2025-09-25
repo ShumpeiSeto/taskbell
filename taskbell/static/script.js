@@ -85,7 +85,7 @@ const formatDateStr = function (deadline_obj) {
   return result;
 };
 const makeDeadLine = function (deadDate, deadTime) {
-  const deadLineStr = `${deadDate} ${deadTime}`;
+  const deadLineStr = `${deadDate}T${deadTime}:00+09:00`;
   console.log(deadLineStr);
   return deadLineStr;
 };
@@ -315,13 +315,20 @@ const ncCheckPositionIndex = function (deadline) {
   return result;
 };
 
-const ncCheckPositionIndex2 = function (deadline) {
+const ncCheckPositionIndex2 = function (deadline, importance) {
   let result = 0;
   const ncTaskTrs = document.getElementsByClassName("nc-task-item");
-  [...ncTaskTrs].forEach((item, i) => {
+  const targetTrs = [...ncTaskTrs].filter(
+    (el) => el.dataset.importance === String(importance)
+  );
+
+  targetTrs.forEach((item, i) => {
     const target_deadline = item.dataset.deadline;
-    if (new Date(deadline) > new Date(target_deadline)) result = i + 1;
+    // deadline: 新規追加のもの  target_deadline: そこにあるものたち
+    console.log(new Date(deadline), new Date(target_deadline));
+    if (new Date(deadline) > new Date(target_deadline)) result += 1;
   });
+  console.log(`PositionIndex2: ${result}`);
   return result;
 };
 
@@ -369,10 +376,19 @@ function addNewTaskRow(task) {
 
     const ncTaskTrs = document.querySelectorAll("tr.nc-task-item");
     const targetTr = ncTaskTrs.item(positionIndex);
-    const hours = newDate(task.deadline)
-      .toLocaleString({ timezone: "Asia/Tokyo" })
-      .split(" ")[1]
-      .slice(0, 2);
+    console.log(task.deadline);
+    const deadline = new Date(task.deadline);
+    const dateStr = deadline.toLocaleDateString("ja-JP", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    });
+    const timeStr = deadline.toLocaleTimeString("ja-JP", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    });
+    console.log(dateStr, timeStr);
     const element = `
                 <tr class="nc-task-item" data-deadline="${
                   task.deadline
@@ -389,17 +405,10 @@ function addNewTaskRow(task) {
                     }</label>
                   </td>
                   <td width="15%" class="px-0 p-md-0 text-center align-middle">
-                    <label class="deaddate my-auto">${convertDate(
-                      convertDate3(new Date(task.deadline).toISOString()),
-                      new Date(task.deadline).getDay()
-                    )}</label>
+                    <label class="deaddate my-auto">${dateStr}</label>
                   </td>
                   <td width="10%" class="px-0 p-md-0 text-center align-middle">
-                    <label class="deadtime my-auto">${hours}:${new Date(
-      task.deadline
-    )
-      .toLocaleString({ timezone: "Asia/Tokyo" })
-      .getMinutes()}</label>
+                    <label class="deadtime my-auto">${timeStr}</label>
                   </td>
                   <td width="10%" class="px-0 p-md-0 text-center align-middle">
                     <label class="importance my-auto">${convertImportance(
@@ -438,14 +447,22 @@ function addNewTaskRow(task) {
       }
     });
     const positionIndex =
-      firstSameIndex + ncCheckPositionIndex2(task.deadline) - 1;
+      firstSameIndex +
+      ncCheckPositionIndex2(task.deadline, task.importance) -
+      1;
     console.log(`positionIndex(1): ${positionIndex}`);
 
     const targetTr = ncTaskTrs.item(positionIndex);
-    const hours = new Date(task.deadline)
-      .toLocaleString({ timezone: "Asia/Tokyo" })
-      .split(" ")[1]
-      .slice(0, 2);
+    const dateStr = task["deadline"].toLocaleDateString("ja-JP", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    });
+    const timeStr = task["deadline"].toLocaleTimeString("ja-JP", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    });
     const element = `
                 <tr class="nc-task-item" data-deadline="${
                   task.deadline
@@ -462,15 +479,10 @@ function addNewTaskRow(task) {
                     }</label>
                   </td>
                   <td width="15%" class="px-0 p-md-0 text-center align-middle">
-                    <label class="deaddate my-auto">${convertDate(
-                      convertDate3(new Date(task.deadline).toISOString()),
-                      new Date(task.deadline).getDay()
-                    )}</label>
+                    <label class="deaddate my-auto">${dateStr}</label>
                   </td>
                   <td width="10%" class="px-0 p-md-0 text-center align-middle">
-                    <label class="deadtime my-auto">${hours}:${new Date(
-      task.deadline
-    ).getMinutes()}</label>
+                    <label class="deadtime my-auto">${timeStr}</label>
                   </td>
                   <td width="10%" class="px-0 p-md-0 text-center align-middle">
                     <label class="importance my-auto">${convertImportance(

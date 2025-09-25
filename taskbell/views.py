@@ -118,11 +118,19 @@ def make_deadline(dead_date, dead_time):
     return deadline
 
 
+# def make_deadline2(deadline):
+#     s_format = "%Y-%m-%d %H:%M:%S"
+#     result = datetime.strptime(deadline, s_format)
+#     print(result)
+#     return result
+
+
 def make_deadline2(deadline):
     s_format = "%Y-%m-%d %H:%M:%S"
-    result = datetime.strptime(deadline, s_format)
-    print(result)
-    return result
+    native_dt = datetime.strptime(deadline, s_format)
+    iso_string = native_dt.strftime("%Y-%m-%dT%H:%M:%S+09:00")
+    print(iso_string)
+    return iso_string
 
 
 def convert_dl_time(value):
@@ -611,6 +619,7 @@ def api_check_task(task_id):
         }
     )
 
+
 # API Versionを追加してみる
 @app.route("/api/uncheck/<int:task_id>", methods=["POST"])
 @login_required
@@ -625,6 +634,7 @@ def api_uncheck_task(task_id):
             "is_completed": task.is_completed,
         }
     )
+
 
 # アクセスするとテーブル削除と作成
 @app.route("/make_table")
@@ -743,9 +753,11 @@ def get_mytasks():
 def create_task():
     data = request.get_json()
     data["user_id"] = current_user.id
-    data["deadline"] = make_deadline2(data["deadline"])
+    data["deadline"] = datetime.fromisoformat(make_deadline2(data["deadline"]))
     print(data)
     task = add_new_task(data)
+    # task_response = dict(task)
+    # task_response["deadline"] = task["deadline"].isoformat()
     return jsonify({"success": True, "data": task, "message": "タスクが作成されました"})
 
 
@@ -997,20 +1009,23 @@ def notify_limit_tasks():
 @login_required
 def get_session():
     sessionData = {
-        "c_v_mode": session['c_v_mode'],
-        "nc_v_mode": session['nc_v_mode'],
-        "dl_time": session['dl_time'],
-
+        "c_v_mode": session["c_v_mode"],
+        "nc_v_mode": session["nc_v_mode"],
+        "dl_time": session["dl_time"],
     }
     if len(sessionData) >= 1:
-        return jsonify({
-            "success": True,
-            "message": "session受取成功しました",
-            "session": sessionData,
-        })
+        return jsonify(
+            {
+                "success": True,
+                "message": "session受取成功しました",
+                "session": sessionData,
+            }
+        )
     else:
         print("session受取に失敗しました")
-        return jsonify({
-            "success": False,
-            "message": "session受取失敗しました",
-        })
+        return jsonify(
+            {
+                "success": False,
+                "message": "session受取失敗しました",
+            }
+        )
