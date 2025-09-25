@@ -329,7 +329,7 @@ const ncCheckPositionIndex2 = function (deadline, importance) {
     if (new Date(deadline) > new Date(target_deadline)) result += 1;
   });
   console.log(`PositionIndex2: ${result}`);
-  return result;
+  return parseInt(result);
 };
 
 const cTbody = document.getElementById("c-tbody");
@@ -435,19 +435,22 @@ function addNewTaskRow(task) {
   } else if (nc_v_mode === "1") {
     // 重要度順の時
     const ncTaskTrs = document.querySelectorAll("tr.nc-task-item");
-    let firstSameIndex = 0;
-    ncTaskTrs.forEach((el) => {
-      if (el.dataset.importance === task.importance) {
-        console.log(`
-          el.dataset.importance: ${el.dataset.importance}
-          task.importance: ${task.importance}
-        `);
-        firstSameIndex = el.dataset.importance;
-        return;
-      }
-    });
+    const firstSameIndex = Array.from(ncTaskTrs).findIndex(
+      (el) => el.dataset.importance === `${task.importance}`
+    );
+    // let firstSameIndex = 0;
+    // ncTaskTrs.forEach((el) => {
+    //   if (el.dataset.importance === task.importance) {
+    //     console.log(`
+    //       el.dataset.importance: ${el.dataset.importance}
+    //       task.importance: ${task.importance}
+    //     `);
+    //     firstSameIndex = el.dataset.importance;
+    //     return;
+    //   }
+    // });
     const positionIndex =
-      firstSameIndex +
+      parseInt(firstSameIndex) +
       ncCheckPositionIndex2(task.deadline, task.importance) -
       1;
     console.log(`positionIndex(1): ${positionIndex}`);
