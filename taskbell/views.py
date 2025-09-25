@@ -753,12 +753,16 @@ def get_mytasks():
 def create_task():
     data = request.get_json()
     data["user_id"] = current_user.id
-    data["deadline"] = datetime.fromisoformat(make_deadline2(data["deadline"]))
+    deadline = datetime.fromisoformat(make_deadline2(data["deadline"]))
+    data["deadline"] = deadline
     print(data)
     task = add_new_task(data)
-    # task_response = dict(task)
-    # task_response["deadline"] = task["deadline"].isoformat()
-    return jsonify({"success": True, "data": task, "message": "タスクが作成されました"})
+    task_response = dict(task)
+    task_response["deadline"] = task["deadline"].isoformat().replace(" ", "T") + ".000Z"
+
+    return jsonify(
+        {"success": True, "data": task_response, "message": "タスクが作成されました"}
+    )
 
 
 @app.route("/api/task/update/<int:task_id>", methods=["POST"])

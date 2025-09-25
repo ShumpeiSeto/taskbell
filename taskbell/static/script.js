@@ -438,17 +438,6 @@ function addNewTaskRow(task) {
     const firstSameIndex = Array.from(ncTaskTrs).findIndex(
       (el) => el.dataset.importance === `${task.importance}`
     );
-    // let firstSameIndex = 0;
-    // ncTaskTrs.forEach((el) => {
-    //   if (el.dataset.importance === task.importance) {
-    //     console.log(`
-    //       el.dataset.importance: ${el.dataset.importance}
-    //       task.importance: ${task.importance}
-    //     `);
-    //     firstSameIndex = el.dataset.importance;
-    //     return;
-    //   }
-    // });
     const positionIndex =
       parseInt(firstSameIndex) +
       ncCheckPositionIndex2(task.deadline, task.importance) -
@@ -456,12 +445,13 @@ function addNewTaskRow(task) {
     console.log(`positionIndex(1): ${positionIndex}`);
 
     const targetTr = ncTaskTrs.item(positionIndex);
-    const dateStr = task["deadline"].toLocaleDateString("ja-JP", {
+    const deadline = new Date(task.deadline);
+    const dateStr = deadline.toLocaleDateString("ja-JP", {
       year: "numeric",
       month: "2-digit",
       day: "2-digit",
     });
-    const timeStr = task["deadline"].toLocaleTimeString("ja-JP", {
+    const timeStr = deadline.toLocaleTimeString("ja-JP", {
       hour: "2-digit",
       minute: "2-digit",
       hour12: false,
@@ -504,11 +494,37 @@ function addNewTaskRow(task) {
                   </td>
                 </tr>
     `;
-    if (targetTr) {
-      targetTr.insertAdjacentHTML("beforebegin", element);
+    // 同じ重要度を持つtrが見当たらない場合
+    if (firstSameIndex === -1) {
+      if (task.importance === "2") {
+        ncTbody.insertAdjacentHTML("beforeend", element);
+      } else if (task.importance === "1") {
+        const index = [...ncTaskTrs].findIndex(
+          (el) => el.dataset.importance === "0"
+        );
+        if (index !== -1) {
+          const targetTr2 = ncTaskTrs.item(index);
+          targetTr2.insertAdjacentHTML("beforebegin", element);
+        } else {
+          // 0のものが存在しなければ一番下にいれる
+          ncTbody.insertAdjacentHTML("beforeend", element);
+        }
+      } else {
+        // 0のときでマッチがなければ無条件で一番下にいれる
+        ncTbody.insertAdjacentHTML("beforeend", element);
+      }
     } else {
+      // マッチする重要度をもつtrが存在する場合
+      targetTr.insertAdjacentHTML("beforebegin", element);
+    }
+    // そもそもtr自体がなく、新しくいれる場合
+    if (ncTaskTrs.length === 0) {
       ncTbody.insertAdjacentHTML("beforeend", element);
     }
+    // if (targetTr) {
+    //   targetTr.insertAdjacentHTML("beforebegin", element);
+    // } else {
+    // ncTbody.insertAdjacentHTML("beforeend", element);
     // return result;
     // const taskImportance = task.importance;
     // const sameImpTrs = [...ncTaskTrs].filter(
