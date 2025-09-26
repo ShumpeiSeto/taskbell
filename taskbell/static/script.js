@@ -336,13 +336,22 @@ const cTbody = document.getElementById("c-tbody");
 const cCheckPositionIndex = function (deadline) {
   let result = 0;
   const cTaskTrs = document.querySelectorAll("tr.c-task-item");
-  const count = cTaskTrs.length;
-  for (let i = 0; i < count; i++) {
-    const target_deadline = cTaskTrs.item(i).dataset.deadline;
-    if (new Date(deadline) > new Date(target_deadline)) result = i + 1;
-  }
-  console.log(result);
-  return result;
+  const targetTrs = [...cTaskTrs].filter(
+    (el) => el.dataset.importance === String(importance)
+  );
+  targetTrs.forEach((item, i) => {
+    const target_deadline = item.dataset.deadline;
+    // deadline: 新規追加のもの  target_deadline: そこにあるものたち
+    console.log(new Date(deadline), new Date(target_deadline));
+    if (new Date(deadline) > new Date(target_deadline)) result += 1;
+  });
+  // const count = cTaskTrs.length;
+  // for (let i = 0; i < count; i++) {
+  //   const target_deadline = cTaskTrs.item(i).dataset.deadline;
+  //   if (new Date(deadline) > new Date(target_deadline)) result = i + 1;
+  // }
+  // console.log(result);
+  return parseInt(result);
 };
 
 async function deleteViewTask(taskId) {
@@ -515,11 +524,11 @@ function addNewTaskRow(task) {
       }
     } else {
       // マッチする重要度をもつtrが存在する場合
-      targetTr.insertAdjacentHTML("beforebegin", element);
+      targetTr.insertAdjacentHTML("beforebegin", copyRow);
     }
     // そもそもtr自体がなく、新しくいれる場合
     if (ncTaskTrs.length === 0) {
-      ncTbody.insertAdjacentHTML("beforeend", element);
+      ncTbody.insertAdjacentHTML("beforeend", copyRow);
     }
     // if (targetTr) {
     //   targetTr.insertAdjacentHTML("beforebegin", element);
@@ -536,6 +545,7 @@ function addNewTaskRow(task) {
 }
 
 async function moveTaskRow(taskId) {
+  const c_v_mode = sessionStorage.getItem("c_v_mode");
   const taskRow = document.querySelector(`tr[data-task-id="${taskId}"]`);
   if (!taskRow) {
     console.log(`タスクID ${taskId}の行が見つかりません`);
@@ -573,8 +583,70 @@ async function moveTaskRow(taskId) {
   if (completedTableBody) {
     // console.log(result.session);
 
-    completedTableBody.appendChild(copyRow);
-    console.log(`タスク ${taskId}を完了済みテーブルに移動しました`);
+    const cTaskTrs = document.querySelectorAll("tr.c-task-item");
+    // 完了済みテーブが重要度順の場合
+    if (c_v_mode === "1") {
+      const deadline = new Date(taskRow.dataset.deadline);
+      const importance = taskRow.dataset.importance;
+      const firstSameIndex = Array.from(cTaskTrs).findIndex(
+        (el) => el.dataset.importance === taskRow.dataset.importance
+      );
+      const positionIndex =
+        parseInt(firstSameIndex) +
+        cCheckPositionIndex(deadline, importance) -
+        1;
+      console.log(`positionIndex(1): ${positionIndex}`);
+      const targetTr = cTaskTrs.item(positionIndex);
+      // const dateStr = deadline.toLocaleDateString("jp-JP", {
+      //   year: "numeric",
+      //   month: "2-digit",
+      //   day: "2-digit",
+      // });
+      // const timeStr = deadline.toLocaleTimeString("jp-JP", {
+      //   hour: "2-digit",
+      //   minute: "2-digit",
+      //   hour12: false,
+      // });
+
+      // completedTableBody.appendChild(copyRow);
+      // 同じ重要度を持つtrが見当たらない場合
+      if (firstSameIndex === -1) {
+        if (importance === "2") {
+          cTbody.insertAdjacentHTML("beforeend", copyRow);
+        } else if (importance === "1") {
+          const index = [...cTaskTrs].findIndex(
+            (el) => el.dataset.importance === "0"
+          );
+          if (index !== -1) {
+            const targetTr = cTaskTrs.item(index);
+            targetTr.before(copyRow);
+          } else {
+            // 0のものが存在しなければ一番下にいれる
+            cTbody.append(copyRow);
+          }
+        } else {
+          // 0のときでマッチがなければ無条件で一番下にいれる
+          cTbody.append(copyRow);
+        }
+      } else {
+        // マッチする重要度をもつtrが存在する場合
+        targetTr.before(copyRow);
+      }
+      // そもそもtr自体がなく、新しくいれる場合
+      if (cTaskTrs.length === 0) {
+        cTbody.appendChild(copyRow);
+      }
+      console.log(`タスク ${taskId}を完了済みテーブルに移動しました`);
+    } else if (c_v_mode === "0") {
+      // 完了済みテーブが日付順の場合
+      const positionIndex = cCheckPositionIndex(taskRow.dataset.deadline);
+      const targetTr = cTaskTrs.item(positionIndex);
+      if (targetTr) {
+        targetTr.before(copyRow);
+      } else {
+        cTbody.appendChild(copyRow);
+      }
+    }
   } else {
     console.error("完了済みテーブルが見つかりません");
   }
