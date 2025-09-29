@@ -1013,6 +1013,8 @@ if (ncSortImportanceBtn) {
     ncTbody.innerHTML = "";
     // 並び替えたものを挿入
     sortedImportanceNcTasks.forEach((tr) => ncTbody.appendChild(tr));
+    // Sessionデータ更新
+    sessionStorage.setItem("nc_v_mode", 1);
   });
 }
 if (ncSortDayBtn) {
@@ -1027,6 +1029,8 @@ if (ncSortDayBtn) {
     ncTbody.innerHTML = "";
     // 並び替えたものを挿入
     sortedDayNcTasks.forEach((tr) => ncTbody.appendChild(tr));
+    // Sessionデータ更新
+    sessionStorage.setItem("nc_v_mode", 0);
   });
 }
 // 完了済みタスクのソート
@@ -1045,6 +1049,8 @@ if (cSortImportanceBtn) {
     cTbody.innerHTML = "";
     // 並び替えたものを挿入
     sortedImportanceCTasks.forEach((tr) => cTbody.appendChild(tr));
+    // Sessionデータ更新
+    sessionStorage.setItem("c_v_mode", 1);
   });
 }
 if (cSortDayBtn) {
@@ -1059,6 +1065,8 @@ if (cSortDayBtn) {
     cTbody.innerHTML = "";
     // 並び替えたものを挿入
     SortedDayCTasks.forEach((tr) => cTbody.appendChild(tr));
+    // Sessionデータ更新
+    sessionStorage.setItem("c_v_mode", 0);
   });
 }
 
