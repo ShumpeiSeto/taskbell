@@ -993,6 +993,74 @@ async function checkdatetime() {
 //     this.classList.add("btn-secondary");
 //   });
 // }
+const ncSortImportanceBtn = document.getElementById("nc-sort-importance");
+const ncSortDayBtn = document.getElementById("nc-sort-day");
+const cSortImportanceBtn = document.getElementById("c-sort-importance");
+const cSortDayBtn = document.getElementById("c-sort-day");
+// 未完了タスクのソート
+if (ncSortImportanceBtn) {
+  ncSortImportanceBtn.addEventListener("click", function (e) {
+    e.preventDefault();
+    const ncTbody = document.getElementById("nc-tbody");
+    const ncTaskTrs = document.querySelectorAll(".nc-task-item");
+    const sortedImportanceNcTasks = [...ncTaskTrs].sort((a, b) => {
+      if (a.dataset.importance === b.dataset.importance) {
+        return new Date(a.dataset.deadline) - new Date(b.dataset.deadline);
+      }
+      return b.dataset.importance - a.dataset.importance;
+    });
+    // 初期化
+    ncTbody.innerHTML = "";
+    // 並び替えたものを挿入
+    sortedImportanceNcTasks.forEach((tr) => ncTbody.appendChild(tr));
+  });
+}
+if (ncSortDayBtn) {
+  ncSortDayBtn.addEventListener("click", function (e) {
+    e.preventDefault();
+    const ncTbody = document.getElementById("nc-tbody");
+    const ncTaskTrs = document.querySelectorAll(".nc-task-item");
+    const sortedDayNcTasks = [...ncTaskTrs].sort(
+      (a, b) => new Date(a.dataset.deadline) - new Date(b.dataset.deadline)
+    );
+    // 初期化
+    ncTbody.innerHTML = "";
+    // 並び替えたものを挿入
+    sortedDayNcTasks.forEach((tr) => ncTbody.appendChild(tr));
+  });
+}
+// 完了済みタスクのソート
+if (cSortImportanceBtn) {
+  cSortImportanceBtn.addEventListener("click", function (e) {
+    e.preventDefault();
+    const cTbody = document.getElementById("c-tbody");
+    const cTaskTrs = document.querySelectorAll(".c-task-item");
+    const sortedImportanceCTasks = [...cTaskTrs].sort((a, b) => {
+      if (a.dataset.importance === b.dataset.importance) {
+        return new Date(a.dataset.deadline) - new Date(b.dataset.deadline);
+      }
+      return b.dataset.importance - a.dataset.importance;
+    });
+    // 初期化
+    cTbody.innerHTML = "";
+    // 並び替えたものを挿入
+    sortedImportanceCTasks.forEach((tr) => cTbody.appendChild(tr));
+  });
+}
+if (cSortDayBtn) {
+  cSortDayBtn.addEventListener("click", function (e) {
+    e.preventDefault();
+    const cTbody = document.getElementById("c-tbody");
+    const cTaskTrs = document.querySelectorAll(".c-task-item");
+    const SortedDayCTasks = [...cTaskTrs].sort(
+      (a, b) => new Date(a.dataset.deadline) - new Date(b.dataset.deadline)
+    );
+    // 初期化
+    cTbody.innerHTML = "";
+    // 並び替えたものを挿入
+    SortedDayCTasks.forEach((tr) => cTbody.appendChild(tr));
+  });
+}
 
 // test 用に
 window.testSlack = checkdatetime;
