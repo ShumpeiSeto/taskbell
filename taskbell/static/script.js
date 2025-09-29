@@ -682,6 +682,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 async function returnTaskRow(taskId) {
   const taskRow = document.querySelector(`tr[data-task-id="${taskId}"]`);
+  const c_v_mode = sessionStorage.getItem("c_v_mode");
   if (!taskRow) {
     console.log(`タスクID ${taskId}の行が見つかりません`);
     return;
