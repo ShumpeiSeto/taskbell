@@ -333,7 +333,7 @@ const ncCheckPositionIndex2 = function (deadline, importance) {
 };
 
 const cTbody = document.getElementById("c-tbody");
-const cCheckPositionIndex = function (deadline) {
+const cCheckPositionIndex = function (deadline, importance) {
   let result = 0;
   const cTaskTrs = document.querySelectorAll("tr.c-task-item");
   const targetTrs = [...cTaskTrs].filter(
@@ -585,39 +585,30 @@ async function moveTaskRow(taskId) {
 
     const cTaskTrs = document.querySelectorAll("tr.c-task-item");
     // 完了済みテーブが重要度順の場合
-    if (c_v_mode === "1") {
+    // そもそもtr自体がなく、新しくいれる場合
+    if (cTaskTrs.length === 0) {
+      cTbody.append(copyRow);
+      return;
+    } else if (c_v_mode === "1") {
       const deadline = new Date(taskRow.dataset.deadline);
       const importance = taskRow.dataset.importance;
       const firstSameIndex = Array.from(cTaskTrs).findIndex(
         (el) => el.dataset.importance === taskRow.dataset.importance
       );
       const positionIndex =
-        parseInt(firstSameIndex) +
-        cCheckPositionIndex(deadline, importance) -
-        1;
+        parseInt(firstSameIndex) + cCheckPositionIndex(deadline, importance);
       console.log(`positionIndex(1): ${positionIndex}`);
       const targetTr = cTaskTrs.item(positionIndex);
-      // const dateStr = deadline.toLocaleDateString("jp-JP", {
-      //   year: "numeric",
-      //   month: "2-digit",
-      //   day: "2-digit",
-      // });
-      // const timeStr = deadline.toLocaleTimeString("jp-JP", {
-      //   hour: "2-digit",
-      //   minute: "2-digit",
-      //   hour12: false,
-      // });
-
-      // completedTableBody.appendChild(copyRow);
       // 同じ重要度を持つtrが見当たらない場合
       if (firstSameIndex === -1) {
         if (importance === "2") {
-          cTbody.insertAdjacentHTML("beforeend", copyRow);
+          cTbody.prepend(copyRow);
         } else if (importance === "1") {
           const index = [...cTaskTrs].findIndex(
             (el) => el.dataset.importance === "0"
           );
           if (index !== -1) {
+            // 0のものが
             const targetTr = cTaskTrs.item(index);
             targetTr.before(copyRow);
           } else {
@@ -632,10 +623,6 @@ async function moveTaskRow(taskId) {
         // マッチする重要度をもつtrが存在する場合
         targetTr.before(copyRow);
       }
-      // そもそもtr自体がなく、新しくいれる場合
-      if (cTaskTrs.length === 0) {
-        cTbody.appendChild(copyRow);
-      }
       console.log(`タスク ${taskId}を完了済みテーブルに移動しました`);
     } else if (c_v_mode === "0") {
       // 完了済みテーブが日付順の場合
@@ -644,7 +631,7 @@ async function moveTaskRow(taskId) {
       if (targetTr) {
         targetTr.before(copyRow);
       } else {
-        cTbody.appendChild(copyRow);
+        cTbody.append(copyRow);
       }
     }
   } else {
@@ -722,10 +709,34 @@ async function returnTaskRow(taskId) {
   const nonCompletedTableBody = allTables[1]?.querySelector("tbody");
   console.log("未完了テーブルのtbody:", nonCompletedTableBody);
   if (nonCompletedTableBody) {
-    // console.log(result.session);
-
-    nonCompletedTableBody.appendChild(copyRow);
-    console.log(`タスク ${taskId}を未完了テーブルに移動しました`);
+    const ncTaskTrs = document.querySelectorAll("tr.nc-task-item");
+    // 完了済みテーブが重要度順の場合
+    if (ncTaskTrs.length === 0) {
+      ncTbody.append(copyRow);
+      return;
+    } else if (nc_v_mode === "1") {
+      const deadline = new Date(copyRow.dataset.deadline);
+      const importance = copyRow.dataset.importance;
+      const firstSameIndex = Array.from(ncTaskTrs).findIndex(
+        (el) => el.dataset.importance === copyRow.dataset.importance
+      );
+      const positionIndex =
+        parseInt(firstSameIndex) +
+        cCheckPositionIndex(deadline, importance) -
+        1;
+      console.log(`positionIndex(1): ${positionIndex}`);
+      // const targetTr = ncTaskTrs.item(positionIndex);
+      console.log(`タスク ${taskId}を未完了テーブルに移動しました`);
+    } else if (c_v_mode === "0") {
+      // 完了済みテーブが日付順の場合
+      const positionIndex = ncCheckPositionIndex(copyRow.dataset.deadline);
+      const targetTr = ncTaskTrs.item(positionIndex);
+      if (targetTr) {
+        targetTr.before(copyRow);
+      } else {
+        ncTbody.append(copyRow);
+      }
+    }
   } else {
     console.error("未完了テーブルが見つかりません");
   }
@@ -782,11 +793,10 @@ async function handleReturnTask(e) {
   if (e.target.classList.contains("return_btn")) {
     e.preventDefault();
     e.stopPropagation();
-    const returnBtn = document.querySelector(".return_btn");
-    const taskId = returnBtn.dataset.taskId;
+    const taskRow = e.target.closest("tr");
+    const taskId = taskRow.dataset.taskId;
     e.target.disabled = true;
     try {
-      const returnBtn = document.querySelector(".return_btn");
       const response = await fetch(`/api/uncheck/${taskId}`, {
         method: "POST",
         headers: {
