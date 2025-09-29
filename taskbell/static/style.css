@@ -50,6 +50,11 @@
   background-color: var(--accent-warm) !important;
   border-color: var(--accent-warm) !important;
 }
+.btn-outline-warning {
+  background-color: #ffffff;
+  border-color: var(--accent-warm) !important;
+  color: var(--accent-warm) !important;
+}
 .btn-light {
   background-color: var(--primary-gray) !important;
   border-color: var(--primary-light) !important;

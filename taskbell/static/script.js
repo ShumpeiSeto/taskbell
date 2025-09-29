@@ -333,7 +333,28 @@ const ncCheckPositionIndex2 = function (deadline, importance) {
 };
 
 const cTbody = document.getElementById("c-tbody");
-const cCheckPositionIndex = function (deadline, importance) {
+const cCheckPositionIndex = function (deadline) {
+  let result = 0;
+  const cTaskTrs = document.querySelectorAll("tr.c-task-item");
+  // const targetTrs = [...cTaskTrs].filter(
+  //   (el) => el.dataset.importance === String(importance)
+  // );
+  cTaskTrs.forEach((item, i) => {
+    const target_deadline = item.dataset.deadline;
+    // deadline: 新規追加のもの  target_deadline: そこにあるものたち
+    console.log(new Date(deadline), new Date(target_deadline));
+    if (new Date(deadline) > new Date(target_deadline)) result = i;
+  });
+  // const count = cTaskTrs.length;
+  // for (let i = 0; i < count; i++) {
+  //   const target_deadline = cTaskTrs.item(i).dataset.deadline;
+  //   if (new Date(deadline) > new Date(target_deadline)) result = i + 1;
+  // }
+  console.log(result);
+  return parseInt(result);
+};
+
+const cCheckPositionIndex2 = function (deadline, importance) {
   let result = 0;
   const cTaskTrs = document.querySelectorAll("tr.c-task-item");
   const targetTrs = [...cTaskTrs].filter(
@@ -343,17 +364,16 @@ const cCheckPositionIndex = function (deadline, importance) {
     const target_deadline = item.dataset.deadline;
     // deadline: 新規追加のもの  target_deadline: そこにあるものたち
     console.log(new Date(deadline), new Date(target_deadline));
-    if (new Date(deadline) > new Date(target_deadline)) result += 1;
+    if (new Date(deadline) > new Date(target_deadline)) result = i;
   });
   // const count = cTaskTrs.length;
   // for (let i = 0; i < count; i++) {
   //   const target_deadline = cTaskTrs.item(i).dataset.deadline;
   //   if (new Date(deadline) > new Date(target_deadline)) result = i + 1;
   // }
-  // console.log(result);
+  console.log(result);
   return parseInt(result);
 };
-
 async function deleteViewTask(taskId) {
   try {
     const response = await fetch(`/api/get_task/${taskId}`);
@@ -596,7 +616,7 @@ async function moveTaskRow(taskId) {
         (el) => el.dataset.importance === taskRow.dataset.importance
       );
       const positionIndex =
-        parseInt(firstSameIndex) + cCheckPositionIndex(deadline, importance);
+        parseInt(firstSameIndex) + cCheckPositionIndex2(deadline, importance);
       console.log(`positionIndex(1): ${positionIndex}`);
       const targetTr = cTaskTrs.item(positionIndex);
       // 同じ重要度を持つtrが見当たらない場合
@@ -621,12 +641,12 @@ async function moveTaskRow(taskId) {
         }
       } else {
         // マッチする重要度をもつtrが存在する場合
-        targetTr.before(copyRow);
+        targetTr.after(copyRow);
       }
       console.log(`タスク ${taskId}を完了済みテーブルに移動しました`);
     } else if (c_v_mode === "0") {
       // 完了済みテーブが日付順の場合
-      const positionIndex = cCheckPositionIndex(taskRow.dataset.deadline);
+      const positionIndex = cCheckPositionIndex(copyRow.dataset.deadline);
       const targetTr = cTaskTrs.item(positionIndex);
       if (targetTr) {
         targetTr.before(copyRow);
@@ -644,6 +664,10 @@ function adjustRowForCompletedTable(row, taskId) {
   if (checkboxCell) {
     checkboxCell.remove();
   }
+
+  // クラス名を完了済みのものに変更
+  row.classList.remove("nc-task-item");
+  row.classList.add("c-task-item");
 
   // タスク名のクラスを変更
   const taskNameLabel = row.querySelector(".taskname");
@@ -759,6 +783,10 @@ function reverseAdjustRowForCompletedTable(row, taskId) {
   if (taskNameLabel) {
     taskNameLabel.className = "taskname";
   }
+
+  // クラス名を完了済みのものに変更
+  row.classList.remove("c-task-item");
+  row.classList.add("nc-task-item");
 
   // 期限のクラス調整
   const deadlineCells = row.querySelectorAll(".deaddate, .deadtime");
@@ -950,6 +978,21 @@ async function checkdatetime() {
   });
   // console.log(limity_tasks_arr);
 }
+
+// const sortImportance = document.getElementById("sort-importance");
+// const sortDay = document.getElementById("sort-day");
+// if (sortImportance) {
+//   sortImportance.addEventListener("click", function (e) {
+//     this.classList.remove("btn-outline-warning");
+//     this.classList.add("btn-warning");
+//   });
+// }
+// if (sortDay) {
+//   sortDay.addEventListener("click", function (e) {
+//     this.classList.remove("btn-outline-secondary");
+//     this.classList.add("btn-secondary");
+//   });
+// }
 
 // test 用に
 window.testSlack = checkdatetime;
