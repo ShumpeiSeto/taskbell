@@ -247,8 +247,10 @@
         </div>
         <div class="sort_buttons d-flex flex-row justify-content-end align-items-end px-0 py-1 gap-2"> 
           <h4 class="font-size-m m-auto">未完了タスク</h4>
-          <a href="{{ url_for('button_click', flg=1) }}"><button type="button" class="btn btn-outline-warning btn-sm border-2" id="nc-sort-importance">重要度順</button></a>
-          <a href="{{ url_for('button_click', flg=2) }}"><button type="button" class="btn btn-outline-secondary btn-sm border-2" id="nc-sort-day">日付順</button></a>
+          {# <a href="{{ url_for('button_click', flg=1) }}"><button type="button" class="btn btn-outline-warning btn-sm border-2" id="nc-sort-importance">重要度順</button></a> #}
+          <button type="button" class="btn btn-outline-warning btn-sm border-2" id="nc-sort-importance">重要度順</button>
+          {# <a href="{{ url_for('button_click', flg=2) }}"><button type="button" class="btn btn-outline-secondary btn-sm border-2" id="nc-sort-day">日付順</button></a> #}
+          <button type="button" class="btn btn-outline-secondary btn-sm border-2" id="nc-sort-day">日付順</button>
         </div>
         <table width="100%" class="table table-light table-hover table-bordered">
           <thead>
@@ -307,8 +309,10 @@
       <div class="col-12 col-md-8 col-lg-6 col-xl-5">
         <div class="sort_buttons d-flex flex-row justify-content-end align-items-end px-0 py-1 gap-2"> 
         <h4 class="font-size-m m-auto">完了済みタスク</h4>
-        <a href="{{ url_for('button_click', flg=3) }}"><button type="button" class="btn btn-outline-warning border-2 btn-sm" id="c-sort-importance">重要度順</button></a>
-        <a href="{{ url_for('button_click', flg=4) }}"><button type="button" class="btn btn-outline-secondary border-2 btn-sm" id="c-sort-day">日付順</button></a>
+          {# <a href="{{ url_for('button_click', flg=3) }}"><button type="button" class="btn btn-outline-warning border-2 btn-sm" id="c-sort-importance">重要度順</button></a> #}
+          <button type="button" class="btn btn-outline-warning border-2 btn-sm" id="c-sort-importance">重要度順</button>
+          {# <a href="{{ url_for('button_click', flg=4) }}"><button type="button" class="btn btn-outline-secondary border-2 btn-sm" id="c-sort-day">日付順</button></a> #}
+          <button type="button" class="btn btn-outline-secondary border-2 btn-sm" id="c-sort-day">日付順</button>
         </div>
         <table width="100%" class="table table-light table-hover table-bordered" id="c-table">
           <thead>
