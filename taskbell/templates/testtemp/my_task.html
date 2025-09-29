@@ -247,8 +247,8 @@
         </div>
         <div class="sort_buttons d-flex flex-row justify-content-end align-items-end px-0 py-1 gap-2"> 
           <h4 class="font-size-m m-auto">未完了タスク</h4>
-          <a href="{{ url_for('button_click', flg=1) }}"><button type="button" class="btn btn-outline-warning btn-sm border-2">重要度順</button></a>
-          <a href="{{ url_for('button_click', flg=2) }}"><button type="button" class="btn btn-outline-secondary btn-sm border-2">日付順</button></a>
+          <a href="{{ url_for('button_click', flg=1) }}"><button type="button" class="btn btn-outline-warning btn-sm border-2" id="nc-sort-importance">重要度順</button></a>
+          <a href="{{ url_for('button_click', flg=2) }}"><button type="button" class="btn btn-outline-secondary btn-sm border-2" id="nc-sort-day">日付順</button></a>
         </div>
         <table width="100%" class="table table-light table-hover table-bordered">
           <thead>
@@ -307,8 +307,8 @@
       <div class="col-12 col-md-8 col-lg-6 col-xl-5">
         <div class="sort_buttons d-flex flex-row justify-content-end align-items-end px-0 py-1 gap-2"> 
         <h4 class="font-size-m m-auto">完了済みタスク</h4>
-        <a href="{{ url_for('button_click', flg=3) }}"><button type="button" class="btn btn-outline-warning border-2 btn-sm">重要度順</button></a>
-        <a href="{{ url_for('button_click', flg=4) }}"><button type="button" class="btn btn-outline-secondary border-2 btn-sm">日付順</button></a>
+        <a href="{{ url_for('button_click', flg=3) }}"><button type="button" class="btn btn-outline-warning border-2 btn-sm" id="c-sort-importance">重要度順</button></a>
+        <a href="{{ url_for('button_click', flg=4) }}"><button type="button" class="btn btn-outline-secondary border-2 btn-sm" id="c-sort-day">日付順</button></a>
         </div>
         <table width="100%" class="table table-light table-hover table-bordered" id="c-table">
           <thead>
@@ -367,6 +367,31 @@
     const c_v_mode = {{ session.get('c_v_mode') }}
     sessionStorage.setItem('nc_v_mode', nc_v_mode);
     sessionStorage.setItem('c_v_mode', c_v_mode);
+    const ncSortImportance = document.getElementById("nc-sort-importance");
+    const ncSortDay = document.getElementById("nc-sort-day");
+    const cSortImportance = document.getElementById("c-sort-importance");
+    const cSortDay = document.getElementById("c-sort-day");
+    if (nc_v_mode === 1) {
+      ncSortImportance.classList.remove("btn-outline-warning");
+      ncSortImportance.classList.add("btn-warning");
+      ncSortDay.classList.add('btn-outline-secondary')
+    }
+    else if (nc_v_mode === 0) {
+      ncSortDay.classList.remove("btn-outline-secondary");
+      ncSortDay.classList.add("btn-secondary");
+      ncSortImportance.classList.add('btn-outline-warning')
+    }
+    if (c_v_mode === 1) {
+      cSortImportance.classList.remove("btn-outline-warning");
+      cSortImportance.classList.add("btn-warning");
+      cSortDay.classList.add('btn-outline-secondary')
+    }
+    else if (c_v_mode === 0) {
+      cSortDay.classList.remove("btn-outline-secondary");
+      cSortDay.classList.add("btn-secondary");
+      cSortImportance.classList.add('btn-outline-warning')
+    }
+
 
   </script>
   <script src="{{ url_for('static', filename='validate.js')}}"></script>
