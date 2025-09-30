@@ -364,13 +364,13 @@
       else return 60;
     };
     const dl_time = {{ session.get('dl_time') }};
-    sessionStorage.setItem('dl_time', convert_dl_time(dl_time));
+    localStorage.setItem('dl_time', convert_dl_time(dl_time));
     const is_first_slack = {{ session.get('is_first_slack') }};
     sessionStorage.setItem('is_first_slack', is_first_slack);
     const nc_v_mode = {{ session.get('nc_v_mode') }}
     const c_v_mode = {{ session.get('c_v_mode') }}
-    sessionStorage.setItem('nc_v_mode', nc_v_mode);
-    sessionStorage.setItem('c_v_mode', c_v_mode);
+    localStorage.setItem('nc_v_mode', nc_v_mode);
+    localStorage.setItem('c_v_mode', c_v_mode);
     const ncSortImportance = document.getElementById("nc-sort-importance");
     const ncSortDay = document.getElementById("nc-sort-day");
     const cSortImportance = document.getElementById("c-sort-importance");

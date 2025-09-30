@@ -1,13 +1,13 @@
 {% extends "testtemp/layout.html" %}
 {% block content %}
     <script>
-    if(!sessionStorage.getItem('dl_time')) {
+    if(!localStorage.getItem('dl_time')) {
       if({{ dl_time_mode|default(0) }} === 0 ) {
-        sessionStorage.setItem('dl_time', 15);
+        localStorage.setItem('dl_time', 15);
       } else if ({{ dl_time_mode|default(0) }} === 1) {
-        sessionStorage.setItem('dl_time', 30);
+        localStorage.setItem('dl_time', 30);
       } else {
-        sessionStorage.setItem('dl_time', 60);
+        localStorage.setItem('dl_time', 60);
       }
     }
     </script>

@@ -47,6 +47,7 @@
   border-color: var(--btn-edit) !important;
 }
 .btn-warning {
+  color: #ffffff !important;
   background-color: var(--accent-warm) !important;
   border-color: var(--accent-warm) !important;
 }

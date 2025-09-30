@@ -398,7 +398,7 @@ async function deleteViewTask(taskId) {
 }
 
 function addNewTaskRow(task) {
-  const nc_v_mode = sessionStorage.getItem("nc_v_mode");
+  const nc_v_mode = localStorage.getItem("nc_v_mode");
   if (nc_v_mode === "0") {
     const positionIndex = ncCheckPositionIndex(task.deadline);
     console.log(`positionIndex(0): ${positionIndex}`);
@@ -565,7 +565,7 @@ function addNewTaskRow(task) {
 }
 
 async function moveTaskRow(taskId) {
-  const c_v_mode = sessionStorage.getItem("c_v_mode");
+  const c_v_mode = localStorage.getItem("c_v_mode");
   const taskRow = document.querySelector(`tr[data-task-id="${taskId}"]`);
   if (!taskRow) {
     console.log(`タスクID ${taskId}の行が見つかりません`);
@@ -706,7 +706,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 async function returnTaskRow(taskId) {
   const taskRow = document.querySelector(`tr[data-task-id="${taskId}"]`);
-  const c_v_mode = sessionStorage.getItem("c_v_mode");
+  const c_v_mode = localStorage.getItem("c_v_mode");
   if (!taskRow) {
     console.log(`タスクID ${taskId}の行が見つかりません`);
     return;
@@ -880,7 +880,7 @@ async function handleCheckboxClick(e) {
 intervalId ??= setInterval(checkdatetime, 60000);
 async function checkdatetime() {
   // クライアントセッションからユーザーが設定したタスク通知時間を取得
-  const dl_time = sessionStorage.getItem("dl_time");
+  const dl_time = localStorage.getItem("dl_time");
   // const nctask_items = document.querySelectorAll(".nc-task-item");
   const response = await fetch("/api/tasks/limity");
   const result = await response.json();
@@ -998,6 +998,7 @@ const ncSortDayBtn = document.getElementById("nc-sort-day");
 const cSortImportanceBtn = document.getElementById("c-sort-importance");
 const cSortDayBtn = document.getElementById("c-sort-day");
 // 未完了タスクのソート
+// 重要度順ソート
 if (ncSortImportanceBtn) {
   ncSortImportanceBtn.addEventListener("click", function (e) {
     e.preventDefault();
@@ -1014,9 +1015,33 @@ if (ncSortImportanceBtn) {
     // 並び替えたものを挿入
     sortedImportanceNcTasks.forEach((tr) => ncTbody.appendChild(tr));
     // Sessionデータ更新
-    sessionStorage.setItem("nc_v_mode", 1);
+    localStorage.setItem("nc_v_mode", 1);
+    // 該当ボタンを押している風に見せる
+    ncSortImportanceBtn.classList.remove("btn-outline-warning");
+    ncSortImportanceBtn.classList.add("btn-warning");
+    ncSortDayBtn.classList.remove("btn-secondary");
+    ncSortDayBtn.classList.add("btn-outline-secondary");
   });
+  // flg = 1;
+  // try {
+  //   const response = await fetch(`/api/update_sortinfo/${flg}`, {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //   });
+  //   if (response.ok) {
+  //     const result = await response.json();
+  //     console.log("API応答:", result);
+  //   } else {
+  //     console.error("APIエラー:", response.status);
+  //   }
+  // } catch (error) {
+  //   console.log("通信エラー:", error);
+  //   e.target.disabled = false;
+  // }
 }
+// 日付順ソート
 if (ncSortDayBtn) {
   ncSortDayBtn.addEventListener("click", function (e) {
     e.preventDefault();
@@ -1030,10 +1055,34 @@ if (ncSortDayBtn) {
     // 並び替えたものを挿入
     sortedDayNcTasks.forEach((tr) => ncTbody.appendChild(tr));
     // Sessionデータ更新
-    sessionStorage.setItem("nc_v_mode", 0);
+    localStorage.setItem("nc_v_mode", 0);
+    // 該当ボタンを押している風に見せる
+    ncSortDayBtn.classList.remove("btn-outline-secondary");
+    ncSortDayBtn.classList.add("btn-secondary");
+    ncSortImportanceBtn.classList.remove("btn-warning");
+    ncSortImportanceBtn.classList.add("btn-outline-warning");
   });
+  // flg = 2;
+  // try {
+  //   const response = await fetch(`/api/update_sortinfo/${flg}`, {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //   });
+  //   if (response.ok) {
+  //     const result = await response.json();
+  //     console.log("API応答:", result);
+  //   } else {
+  //     console.error("APIエラー:", response.status);
+  //   }
+  // } catch (error) {
+  //   console.log("通信エラー:", error);
+  //   e.target.disabled = false;
+  // }
 }
 // 完了済みタスクのソート
+// 重要度順ソート
 if (cSortImportanceBtn) {
   cSortImportanceBtn.addEventListener("click", function (e) {
     e.preventDefault();
@@ -1050,9 +1099,15 @@ if (cSortImportanceBtn) {
     // 並び替えたものを挿入
     sortedImportanceCTasks.forEach((tr) => cTbody.appendChild(tr));
     // Sessionデータ更新
-    sessionStorage.setItem("c_v_mode", 1);
+    localStorage.setItem("c_v_mode", 1);
+    // 該当ボタンを押している風に見せる
+    cSortImportanceBtn.classList.remove("btn-outline-warning");
+    cSortImportanceBtn.classList.add("btn-warning");
+    cSortDayBtn.classList.remove("btn-secondary");
+    cSortDayBtn.classList.add("btn-outline-secondary");
   });
 }
+// 日付順ソート
 if (cSortDayBtn) {
   cSortDayBtn.addEventListener("click", function (e) {
     e.preventDefault();
@@ -1066,7 +1121,12 @@ if (cSortDayBtn) {
     // 並び替えたものを挿入
     SortedDayCTasks.forEach((tr) => cTbody.appendChild(tr));
     // Sessionデータ更新
-    sessionStorage.setItem("c_v_mode", 0);
+    localStorage.setItem("c_v_mode", 0);
+    // 該当ボタンを押している風に見せる
+    cSortDayBtn.classList.remove("btn-outline-secondary");
+    cSortDayBtn.classList.add("btn-secondary");
+    cSortImportanceBtn.classList.remove("btn-warning");
+    cSortImportanceBtn.classList.add("btn-outline-warning");
   });
 }
 
