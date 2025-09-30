@@ -390,6 +390,35 @@ def schedule_runner():
             schedule.run_pending()
             time.sleep(180)
 
+@app.route("/api/update_sortinfo/<int:flg>", methods=["POST"])
+@login_required
+def update_sortInfo(flg):
+    with app.app_context():
+        # user = User.query.filter(User.id == current_user.id).one_or_none()
+        try:
+            if flg == 1:
+                current_user.nc_v_mode = 1
+            if flg == 2:
+                current_user.nc_v_mode = 0
+            if flg == 3:
+                current_user.nc_v_mode = 1
+            if flg == 4:
+                current_user.nc_v_mode = 0
+            db.session.commit()
+            return jsonify(
+                {
+                    "status": "success",
+                    "message": "ソート情報を更新しました",
+                })
+        except Exception as e:
+            db.session.rollback()
+            print(f"ソート情報更新エラーしました: {e}")
+        finally:
+            db.session.close()
+            print(f"ソート情報処理終了しました: {e}")
+            
+    
+    
 
 @app.route("/setting", methods=["GET", "POST"])
 @login_required
