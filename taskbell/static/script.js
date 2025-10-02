@@ -967,6 +967,19 @@ async function checkdatetime() {
   });
   // console.log(limity_tasks_arr);
 }
+const limityDeadDate = document.querySelector(".limity-deaddate");
+const limityDeadTime = document.querySelector(".limity-deadtime");
+
+if (limityDeadDate) {
+  limityDeadDate.addEventListener("blur", function () {
+    console.log(limityDeadDate.value, limityDeadTime.value);
+  });
+}
+if (limityDeadTime) {
+  limityDeadTime.addEventListener("blur", function () {
+    console.log(limityDeadDate.value, limityDeadTime.value);
+  });
+}
 
 const ncSortImportanceBtn = document.getElementById("nc-sort-importance");
 const ncSortDayBtn = document.getElementById("nc-sort-day");

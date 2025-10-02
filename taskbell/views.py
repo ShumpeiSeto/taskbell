@@ -839,7 +839,7 @@ def get_limity_tasks():
     print(dl_time)
     # target_time = datetime.now() + datetime.timedelta(minutes=int(dl_time))
     limity_tasks = Tasks.query.filter(
-        Tasks.deadline < now + timedelta(minutes=dl_time),
+        Tasks.deadline < now + timedelta(minutes=convert_dl_time(dl_time)),
         Tasks.is_completed == False,
         Tasks.user_id == current_user.id,
     ).all()
