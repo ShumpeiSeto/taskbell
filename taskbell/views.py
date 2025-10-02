@@ -304,9 +304,6 @@ def index():
 
 @app.before_request
 def initialize_session():
-    # if "nc_mode" not in session and "c_mode" not in session:
-    #     session["nc_mode"] = 0
-    #     session["c_mode"] = 0
     # 30分を期限設定しておく
     if "dl_time" not in session:
         session["dl_time"] = convert_dl_time(1)
@@ -320,6 +317,7 @@ def initialize_session():
 @app.route("/slack_help")
 @login_required
 def slack_help():
+    # 入力途中のメールアドレスが戻ると空にならないかどうか
     return render_template("testtemp/slack_help.html")
 
 
