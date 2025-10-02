@@ -922,43 +922,35 @@ async function checkdatetime() {
 
     // 設定された通知時間以内の場合は表を埋めてモーダル表示する
     if (diff <= dl_time) {
-      const tr = modal_tasks.appendChild(document.createElement("tr"));
-      tr.classList.add("limity_task");
-      const td_taskname = tr.appendChild(document.createElement("td"));
-      const td_deaddate = tr.appendChild(document.createElement("td"));
-      const td_dateinput = td_deaddate.appendChild(
-        document.createElement("input")
-      );
-      td_dateinput.setAttribute("type", "date");
-      // td_dateinput.value = "12/1";
-      // td_dateinput.value = `${
-      //   task.deadline.getMonth() + 1
-      // }/${task.deadline.getDay()}`;
-      const td_deadtime = tr.appendChild(document.createElement("td"));
-      const td_timeinput = td_deadtime.appendChild(
-        document.createElement("input")
-      );
-      td_timeinput.setAttribute("type", "time");
-      // td_timeinput.value = "08:00";
-      // td_timeinput.value = `${task.deadline.getHours()}:${
-      //   task.deadline.getMinutes
-      // }`;
-      const td_importance = tr.appendChild(document.createElement("td"));
-      const td_status = tr.appendChild(document.createElement("td"));
-      td_taskname.textContent = title;
-      td_taskname.classList.add("text-center", "align-middle");
-      // td_deaddate.textContent = convertDate(deaddate, deadday);
-      td_dateinput.value = convertDate2(deadline_obj);
-      td_deaddate.classList.add("text-center", "align-middle");
-      // td_deadtime.textContent = deadtime;
-      td_timeinput.value = deadtime;
-      td_deadtime.classList.add("text-center", "align-middle");
-      td_importance.textContent = convertImportance(importance);
-      td_importance.classList.add("text-center", "align-middle");
-      td_importance.style.color = "red";
+      const insertTr = document.createElement("tr");
+      insertTr.classList.add("limity-item");
+      insertTr.innerHTML = `
+        <td width="45%" class="text-center align-middle limity-title">${title}</td>
+        <td width="20%" class="text-center align-middle">
+          <input type="date" class="limity-deaddate" value=${convertDate2(
+            deadline_obj
+          )}>
+        </td>
+        <td width="10%" class="text-center align-middle">
+          <input type="time" class="limity-deadtime" value="${deadtime}">
+        </td>
+        <td width="10%" class="text-center align-middle limity-importance" style="color: red;">${convertImportance(
+          importance
+        )}</td>
+        ${
+          diff <= 0
+            ? `<td width="15%" class="text-center align-middle limity-status text-danger">期限切れ</td>`
+            : `<td width="15%" class="text-center align-middle limity-status">${diff.toFixed(
+                0
+              )}分前</td>`
+        } 
+      `;
+      const tr = modal_tasks.appendChild(insertTr);
+      // td_status = document.querySelector(".limity-status");
       status_result = diff <= 0 ? "期限切れ" : `${diff.toFixed(0)}分前`;
-      td_status.textContent = status_result;
-      td_status.classList.add("text-center", "align-middle");
+      // if (diff <= 0) {
+      //   td_status.classList.add("text-danger", "fw-bold");
+      // }
 
       // コンソールでテスト出力用
       const test_limity_task = {
@@ -969,30 +961,13 @@ async function checkdatetime() {
         status_result,
       };
       limity_tasks_arr.push(test_limity_task);
-
+      // モーダル表示
       modal.show();
-      if (diff <= 0) {
-        td_status.classList.add("text-danger", "fw-bold");
-      }
     }
   });
   // console.log(limity_tasks_arr);
 }
 
-// const sortImportance = document.getElementById("sort-importance");
-// const sortDay = document.getElementById("sort-day");
-// if (sortImportance) {
-//   sortImportance.addEventListener("click", function (e) {
-//     this.classList.remove("btn-outline-warning");
-//     this.classList.add("btn-warning");
-//   });
-// }
-// if (sortDay) {
-//   sortDay.addEventListener("click", function (e) {
-//     this.classList.remove("btn-outline-secondary");
-//     this.classList.add("btn-secondary");
-//   });
-// }
 const ncSortImportanceBtn = document.getElementById("nc-sort-importance");
 const ncSortDayBtn = document.getElementById("nc-sort-day");
 const cSortImportanceBtn = document.getElementById("c-sort-importance");
@@ -1022,24 +997,6 @@ if (ncSortImportanceBtn) {
     ncSortDayBtn.classList.remove("btn-secondary");
     ncSortDayBtn.classList.add("btn-outline-secondary");
   });
-  // flg = 1;
-  // try {
-  //   const response = await fetch(`/api/update_sortinfo/${flg}`, {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //   });
-  //   if (response.ok) {
-  //     const result = await response.json();
-  //     console.log("API応答:", result);
-  //   } else {
-  //     console.error("APIエラー:", response.status);
-  //   }
-  // } catch (error) {
-  //   console.log("通信エラー:", error);
-  //   e.target.disabled = false;
-  // }
 }
 // 日付順ソート
 if (ncSortDayBtn) {
@@ -1062,24 +1019,6 @@ if (ncSortDayBtn) {
     ncSortImportanceBtn.classList.remove("btn-warning");
     ncSortImportanceBtn.classList.add("btn-outline-warning");
   });
-  // flg = 2;
-  // try {
-  //   const response = await fetch(`/api/update_sortinfo/${flg}`, {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //   });
-  //   if (response.ok) {
-  //     const result = await response.json();
-  //     console.log("API応答:", result);
-  //   } else {
-  //     console.error("APIエラー:", response.status);
-  //   }
-  // } catch (error) {
-  //   console.log("通信エラー:", error);
-  //   e.target.disabled = false;
-  // }
 }
 // 完了済みタスクのソート
 // 重要度順ソート
