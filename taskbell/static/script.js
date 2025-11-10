@@ -1018,7 +1018,7 @@ async function checkdatetime() {
         status_result,
       };
       limity_tasks_arr.push(test_limity_task);
-
+      // モーダル表示
       modal.show();
       if (diff <= 0) {
         td_status.classList.add("text-danger", "fw-bold");
