@@ -218,22 +218,26 @@
           <h1 class="modal-title fs-5" id="exampleModalLabel">期限が近づいたタスクあり</h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <table width="100%" class="table table-lignt table-bordered modal-body" id="nc-table">
-          <thead>
-            <tr>
-              <th width="45%" class="text-center align-middle">タスク名</th>
-              <th width="20%" class="text-center align-middle">期限日</th>
-              <th width="10%" class="text-center align-middle">時間</th>
-              <th width="10%" class="text-center align-middle">重要度</th>
-              <th width="15%" class="text-center align-middle">状態</th>
-            </tr>
-          </thead>
-          <tbody class="modal-tasks">
-          </tbody>
-        </table>
+        <div class="modal-body p-0">
+          <div class="table-responsive">
+            <table width="100%" class="table table-lignt table-bordered mb-0" id="nc-table">
+              <thead>
+                <tr>
+                  <th width="45%" class="text-center align-middle">タスク名</th>
+                  <th width="20%" class="text-center align-middle">期限日</th>
+                  <th width="10%" class="text-center align-middle">時間</th>
+                  <th width="10%" class="text-center align-middle">重要度</th>
+                  <th width="15%" class="text-center align-middle">状態</th>
+                </tr>
+              </thead>
+              <tbody class="modal-tasks">
+              </tbody>
+            </table>
+          </div>
+        </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary close-modal" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Save changes</button>
+          <button type="button" class="btn btn-primary" id="saveDeadlineChanges">Save changes</button>
         </div>
       </div>
     </div>

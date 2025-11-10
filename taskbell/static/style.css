@@ -257,3 +257,52 @@ h4 {
   margin-top: 5px;
   /* display: none; */
 }
+
+/* ============================================
+   通知モーダルのレスポンシブ対応
+   ============================================ */
+
+/* 通知モーダルの基本設定 */
+#exampleModal .modal-dialog {
+  max-width: 90% !important;
+}
+
+/* タブレットサイズ以上 */
+@media screen and (min-width: 768px) {
+  #exampleModal .modal-dialog {
+    max-width: 700px !important;
+  }
+}
+
+/* PC サイズ */
+@media screen and (min-width: 992px) {
+  #exampleModal .modal-dialog {
+    max-width: 750px !important;
+  }
+}
+
+/* モーダル内のテーブル調整 */
+table.modal-body {
+  table-layout: fixed !important;
+  width: 100% !important;
+}
+
+/* 各カラムの幅調整（タブレット・PC） */
+@media screen and (min-width: 576px) {
+  table.modal-body th:nth-child(1), /* タスク名 */
+  table.modal-body td:nth-child(1) {
+    width: 18% !important;
+  }
+
+  table.modal-body th:nth-child(2), /* 期限日 */
+  table.modal-body td:nth-child(2) {
+    width: 24% !important;
+  }
+
+  table.modal-body th:nth-child(3), /* 時間 */
+  table.modal-body td:nth-child(3) {
+    width: 18% !important;
+  }
+
+  table.modal-body th:nth-child(4), /* 重要度 */
+}
