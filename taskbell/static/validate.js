@@ -292,7 +292,7 @@ if (deadDate) {
       deadDate.style.borderColor = "red";
     } else {
       hideElement(deadDate, deaddateError);
-      deadDate.style.borderColor = "null";
+      deadDate.style.borderColor = null;
     }
   });
 }
@@ -311,7 +311,7 @@ if (deadTime) {
       deadDate.style.borderColor = "red";
     } else {
       hideElement(deadTime, deadtimeError);
-      deadDate.style.borderColor = "null";
+      deadDate.style.borderColor = null;
     }
   });
 }
@@ -408,7 +408,7 @@ if (editDeadDate) {
       editDeadDate.style.borderColor = "red";
     } else {
       hideElement(editDeadDate, editDeadDateError);
-      editDeadDate.style.borderColor = "null";
+      editDeadDate.style.borderColor = null;
     }
   });
 }
@@ -432,7 +432,7 @@ if (editDeadTime) {
       editDeadDate.style.borderColor = "red";
     } else {
       hideElement(editDeadTime, editDeadTimeError);
-      editDeadDate.style.borderColor = "null";
+      editDeadDate.style.borderColor = null;
     }
   });
 }
@@ -455,7 +455,7 @@ const isValidEditForm = function () {
   // 日にちチェック
   const now = new Date();
   const nowDate = new Date(
-    `${now.getFullYear()}/${now.getMonth() + 1}/${now.getDay()}`
+    `${now.getFullYear()}/${now.getMonth() + 1}/${now.getDate()}`
   );
   const target_date = new Date(
     `${editDeadDate.value.trim().replaceAll("-", "/")}`
@@ -483,6 +483,7 @@ const isValidEditForm = function () {
     hasErrors = true;
   } else {
     hideElement(editDeadTime, editDeadTimeError);
+    editDeadDate.style.borderColor = null;
   }
   return !hasErrors;
 };
