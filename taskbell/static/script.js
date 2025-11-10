@@ -876,12 +876,11 @@ async function handleCheckboxClick(e) {
   }
 }
 
-// 3分ごとにチェックしている（3分180,000ms）
+// 3分ごとにチェックしている(3分180,000ms)
 intervalId ??= setInterval(checkdatetime, 60000);
 async function checkdatetime() {
   // クライアントセッションからユーザーが設定したタスク通知時間を取得
   const dl_time = localStorage.getItem("dl_time");
-  // const nctask_items = document.querySelectorAll(".nc-task-item");
   const response = await fetch("/api/tasks/limity");
   const result = await response.json();
   const nctasks = result.data;
@@ -897,6 +896,7 @@ async function checkdatetime() {
     (a, b) => new Date(a.deadline) - new Date(b.deadline)
   );
   // console.log(sorted_nctasks);
+
   sorted_nctasks.forEach((task) => {
     const deadline_obj = new Date(task.deadline);
     const deaddate = formatDateStr(deadline_obj);
@@ -909,13 +909,6 @@ async function checkdatetime() {
     const importance = task.importance;
     const taskId = task.id;
     const deadday = deadline_obj.getDay();
-    // const date = item.querySelector(".deaddate").innerHTML;
-    // const time = item.querySelector(".deadtime").innerHTML;
-    // const taskname = item.querySelector(".taskname").innerHTML;
-    // const importance = item.querySelector(".importance").innerHTML;
-
-    // const limity_date = item.dataset.deadline;
-    // const the_task_id = item.dataset.taskId;
 
     // 現在日時との差を計算
     const diff = (deadline_obj.getTime() - now.getTime()) / (60 * 1000);
@@ -924,25 +917,19 @@ async function checkdatetime() {
     if (diff <= dl_time) {
       const tr = modal_tasks.appendChild(document.createElement("tr"));
       tr.classList.add("limity_task");
+      tr.dataset.taskId = taskId;
+      tr.dataset.originalDeadline = task.deadline;
       const td_taskname = tr.appendChild(document.createElement("td"));
       const td_deaddate = tr.appendChild(document.createElement("td"));
       const td_dateinput = td_deaddate.appendChild(
         document.createElement("input")
       );
       td_dateinput.setAttribute("type", "date");
-      // td_dateinput.value = "12/1";
-      // td_dateinput.value = `${
-      //   task.deadline.getMonth() + 1
-      // }/${task.deadline.getDay()}`;
       const td_deadtime = tr.appendChild(document.createElement("td"));
       const td_timeinput = td_deadtime.appendChild(
         document.createElement("input")
       );
       td_timeinput.setAttribute("type", "time");
-      // td_timeinput.value = "08:00";
-      // td_timeinput.value = `${task.deadline.getHours()}:${
-      //   task.deadline.getMinutes
-      // }`;
       const td_importance = tr.appendChild(document.createElement("td"));
       const td_status = tr.appendChild(document.createElement("td"));
       td_taskname.textContent = title;
@@ -956,10 +943,72 @@ async function checkdatetime() {
       td_importance.textContent = convertImportance(importance);
       td_importance.classList.add("text-center", "align-middle");
       td_importance.style.color = "red";
-      status_result = diff <= 0 ? "期限切れ" : `${diff.toFixed(0)}分前`;
+
+      // ★★★ ここが新しい表示ロジック ★★★
+      let status_result;
+      if (diff <= 0) {
+        status_result = "期限切れ";
+      } else {
+        // 分を日・時間・分に変換
+        const days = Math.floor(diff / (60 * 24));
+        const hours = Math.floor((diff % (60 * 24)) / 60);
+        const minutes = Math.floor(diff % 60);
+
+        // 表示する文字列を作成
+        const parts = [];
+        if (days > 0) parts.push(`${days}日`);
+        if (hours > 0) parts.push(`${hours}時間`);
+        if (minutes > 0 || parts.length === 0) parts.push(`${minutes}分`);
+
+        status_result = parts.join("") + "前";
+      }
+
       td_status.textContent = status_result;
       td_status.classList.add("text-center", "align-middle");
 
+      // ★★★ input変更時に「◯日△時間□分前」をリアルタイム更新 ★★★
+      const updateStatus = () => {
+        const newDate = td_dateinput.value;
+        const newTime = td_timeinput.value;
+
+        if (newDate && newTime) {
+          const newDeadline = new Date(`${newDate}T${newTime}:00`);
+          const currentNow = new Date();
+          const newDiff =
+            (newDeadline.getTime() - currentNow.getTime()) / (60 * 1000);
+
+          let newStatus;
+          if (newDiff <= 0) {
+            newStatus = "期限切れ";
+          } else {
+            // 分を日・時間・分に変換
+            const days = Math.floor(newDiff / (60 * 24));
+            const hours = Math.floor((newDiff % (60 * 24)) / 60);
+            const minutes = Math.floor(newDiff % 60);
+
+            // 表示する文字列を作成
+            const parts = [];
+            if (days > 0) parts.push(`${days}日`);
+            if (hours > 0) parts.push(`${hours}時間`);
+            if (minutes > 0 || parts.length === 0) parts.push(`${minutes}分`);
+
+            newStatus = parts.join("") + "前";
+          }
+
+          td_status.textContent = newStatus;
+
+          // スタイル更新
+          if (newDiff <= 0) {
+            td_status.classList.add("text-danger", "fw-bold");
+          } else {
+            td_status.classList.remove("text-danger", "fw-bold");
+          }
+        }
+      };
+
+      // 日付・時間変更時にリアルタイム更新
+      td_dateinput.addEventListener("change", updateStatus);
+      td_timeinput.addEventListener("change", updateStatus);
       // コンソールでテスト出力用
       const test_limity_task = {
         taskId,
@@ -974,25 +1023,10 @@ async function checkdatetime() {
       if (diff <= 0) {
         td_status.classList.add("text-danger", "fw-bold");
       }
-    }
-  });
+    } // ← if (diff <= dl_time) の閉じ括弧
+  }); // ← sorted_nctasks.forEach の閉じ括弧
   // console.log(limity_tasks_arr);
-}
-
-// const sortImportance = document.getElementById("sort-importance");
-// const sortDay = document.getElementById("sort-day");
-// if (sortImportance) {
-//   sortImportance.addEventListener("click", function (e) {
-//     this.classList.remove("btn-outline-warning");
-//     this.classList.add("btn-warning");
-//   });
-// }
-// if (sortDay) {
-//   sortDay.addEventListener("click", function (e) {
-//     this.classList.remove("btn-outline-secondary");
-//     this.classList.add("btn-secondary");
-//   });
-// }
+} // ← checkdatetime 関数の閉じ括弧
 const ncSortImportanceBtn = document.getElementById("nc-sort-importance");
 const ncSortDayBtn = document.getElementById("nc-sort-day");
 const cSortImportanceBtn = document.getElementById("c-sort-importance");
@@ -1022,24 +1056,6 @@ if (ncSortImportanceBtn) {
     ncSortDayBtn.classList.remove("btn-secondary");
     ncSortDayBtn.classList.add("btn-outline-secondary");
   });
-  // flg = 1;
-  // try {
-  //   const response = await fetch(`/api/update_sortinfo/${flg}`, {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //   });
-  //   if (response.ok) {
-  //     const result = await response.json();
-  //     console.log("API応答:", result);
-  //   } else {
-  //     console.error("APIエラー:", response.status);
-  //   }
-  // } catch (error) {
-  //   console.log("通信エラー:", error);
-  //   e.target.disabled = false;
-  // }
 }
 // 日付順ソート
 if (ncSortDayBtn) {
@@ -1062,24 +1078,6 @@ if (ncSortDayBtn) {
     ncSortImportanceBtn.classList.remove("btn-warning");
     ncSortImportanceBtn.classList.add("btn-outline-warning");
   });
-  // flg = 2;
-  // try {
-  //   const response = await fetch(`/api/update_sortinfo/${flg}`, {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //   });
-  //   if (response.ok) {
-  //     const result = await response.json();
-  //     console.log("API応答:", result);
-  //   } else {
-  //     console.error("APIエラー:", response.status);
-  //   }
-  // } catch (error) {
-  //   console.log("通信エラー:", error);
-  //   e.target.disabled = false;
-  // }
 }
 // 完了済みタスクのソート
 // 重要度順ソート
@@ -1131,5 +1129,78 @@ if (cSortDayBtn) {
 }
 
 // test 用に
-window.testSlack = checkdatetime;
-window.returnTask = returnTaskRow;
+// window.testSlack = checkdatetime;
+// window.returnTask = returnTaskRow;
+
+const saveDeadlineChanges = document.getElementById("saveDeadlineChanges");
+if (saveDeadlineChanges) {
+  saveDeadlineChanges.addEventListener("click", async function (e) {
+    e.preventDefault();
+
+    console.log("Save changesボタンがクリックされました");
+
+    const rows = modal_tasks.querySelectorAll("tr.limity_task");
+    console.log("モーダル内の行数:", rows.length);
+
+    const updates = [];
+
+    rows.forEach((row) => {
+      const taskId = row.dataset.taskId;
+      const dateInput = row.querySelector("input[type='date']");
+      const timeInput = row.querySelector("input[type='time']");
+      const originalDeadline = row.dataset.originalDeadline;
+
+      console.log("タスクID:", taskId);
+      console.log("新しい日付:", dateInput.value, "時間:", timeInput.value);
+
+      const newDeadlineStr = `${dateInput.value}T${timeInput.value}:00`;
+
+      if (newDeadlineStr !== originalDeadline) {
+        updates.push({
+          task_id: taskId,
+          deadline: newDeadlineStr,
+        });
+      }
+    });
+
+    console.log("送信するデータ:", updates);
+
+    if (updates.length === 0) {
+      console.log("変更がありません");
+      modal.hide();
+      return;
+    }
+
+    try {
+      console.log("APIリクエスト送信中...");
+      const response = await fetch("/api/update_deadlines", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ updates }),
+      });
+
+      console.log("レスポンスステータス:", response.status);
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log("期限更新成功:", result);
+
+        // DOM更新処理を削除して更新
+        // alert("期限を更新しました！");
+        // 画面を最新にする
+        location.reload();
+      } else {
+        const errorData = await response.json();
+        console.error("APIエラー:", errorData);
+        alert(
+          "期限の更新に失敗しました: " + (errorData.message || "不明なエラー")
+        );
+      }
+    } catch (error) {
+      console.error("通信エラー:", error);
+      alert("通信エラーが発生しました: " + error.message);
+    }
+  });
+}

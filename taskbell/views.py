@@ -390,6 +390,7 @@ def schedule_runner():
             schedule.run_pending()
             time.sleep(180)
 
+
 @app.route("/api/update_sortinfo/<int:flg>", methods=["POST"])
 @login_required
 def update_sortInfo(flg):
@@ -409,16 +410,15 @@ def update_sortInfo(flg):
                 {
                     "status": "success",
                     "message": "ソート情報を更新しました",
-                })
+                }
+            )
         except Exception as e:
             db.session.rollback()
             print(f"ソート情報更新エラーしました: {e}")
         finally:
             db.session.close()
             print(f"ソート情報処理終了しました: {e}")
-            
-    
-    
+
 
 @app.route("/setting", methods=["GET", "POST"])
 @login_required
@@ -1062,3 +1062,50 @@ def get_session():
                 "message": "session受取失敗しました",
             }
         )
+
+
+@app.route("/api/update_deadlines", methods=["POST"])
+@login_required  # ★ ログイン必須も追加
+def update_deadlines():
+    try:
+        print("=" * 50)
+        print("update_deadlines ルートが呼ばれました")
+
+        data = request.json
+        print(f"受信データ: {data}")
+
+        updates = data.get("updates", [])
+        print(f"更新対象タスク数: {len(updates)}")
+
+        for update in updates:
+            task_id = update["task_id"]
+            new_deadline = update["deadline"]
+
+            print(f"タスクID {task_id} を更新中: {new_deadline}")
+
+            # ★★★ Tasks に修正！ ★★★
+            task = Tasks.query.get(task_id)
+            if task:
+                # ISO形式の文字列をdatetimeに変換
+                task.deadline = datetime.fromisoformat(
+                    new_deadline.replace("Z", "+00:00")
+                )
+                print(f"タスクID {task_id} の期限を更新: {task.deadline}")
+            else:
+                print(f"警告: タスクID {task_id} が見つかりません")
+
+        # 全部まとめてコミット
+        db.session.commit()
+        print("データベース更新成功！")
+
+        return jsonify(
+            {"status": "success", "message": f"{len(updates)}件のタスクを更新しました"}
+        )
+
+    except Exception as e:
+        db.session.rollback()
+        print(f"エラー発生: {str(e)}")
+        import traceback
+
+        traceback.print_exc()
+        return jsonify({"status": "error", "message": str(e)}), 500
