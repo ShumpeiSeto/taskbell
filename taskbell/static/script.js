@@ -1,6 +1,6 @@
 let intervalId;
 // modal 用意
-const modal = new bootstrap.Modal(document.getElementById("exampleModal"));
+const modal = new bootstrap.Modal(document.getElementById("limityModal"));
 const addTaskModal = new bootstrap.Modal(
   document.getElementById("addTaskModal")
 );
@@ -157,7 +157,9 @@ if (saveNewTask) {
   });
 }
 function deleteTaskRow(taskId) {
-  const taskRow = document.querySelector(`tr[data-task-id="${taskId}"]`);
+  const taskRow = document.querySelector(
+    `#nc-tbody tr[data-task-id="${taskId}"], #c-tbody tr[data-task-id="${taskId}"]`
+  );
   taskRow.remove();
 }
 const deleteConfirmTask = document.getElementById("deleteConfirmTask");
@@ -566,7 +568,9 @@ function addNewTaskRow(task) {
 
 async function moveTaskRow(taskId) {
   const c_v_mode = localStorage.getItem("c_v_mode");
-  const taskRow = document.querySelector(`tr[data-task-id="${taskId}"]`);
+  const taskRow = document.querySelector(
+    `#nc-tbody tr[data-task-id="${taskId}"]`
+  );
   if (!taskRow) {
     console.log(`タスクID ${taskId}の行が見つかりません`);
     return;
@@ -705,7 +709,9 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 async function returnTaskRow(taskId) {
-  const taskRow = document.querySelector(`tr[data-task-id="${taskId}"]`);
+  const taskRow = document.querySelector(
+    `#c-tbody tr[data-task-id="${taskId}"]`
+  );
   const c_v_mode = localStorage.getItem("c_v_mode");
   if (!taskRow) {
     console.log(`タスクID ${taskId}の行が見つかりません`);
@@ -1023,10 +1029,9 @@ async function checkdatetime() {
       if (diff <= 0) {
         td_status.classList.add("text-danger", "fw-bold");
       }
-    } // ← if (diff <= dl_time) の閉じ括弧
-  }); // ← sorted_nctasks.forEach の閉じ括弧
-  // console.log(limity_tasks_arr);
-} // ← checkdatetime 関数の閉じ括弧
+    }
+  });
+}
 const ncSortImportanceBtn = document.getElementById("nc-sort-importance");
 const ncSortDayBtn = document.getElementById("nc-sort-day");
 const cSortImportanceBtn = document.getElementById("c-sort-importance");
@@ -1050,6 +1055,7 @@ if (ncSortImportanceBtn) {
     sortedImportanceNcTasks.forEach((tr) => ncTbody.appendChild(tr));
     // Sessionデータ更新
     localStorage.setItem("nc_v_mode", 1);
+
     // 該当ボタンを押している風に見せる
     ncSortImportanceBtn.classList.remove("btn-outline-warning");
     ncSortImportanceBtn.classList.add("btn-warning");
@@ -1072,7 +1078,7 @@ if (ncSortDayBtn) {
     sortedDayNcTasks.forEach((tr) => ncTbody.appendChild(tr));
     // Sessionデータ更新
     localStorage.setItem("nc_v_mode", 0);
-    // 該当ボタンを押している風に見せる
+
     ncSortDayBtn.classList.remove("btn-outline-secondary");
     ncSortDayBtn.classList.add("btn-secondary");
     ncSortImportanceBtn.classList.remove("btn-warning");
@@ -1098,7 +1104,7 @@ if (cSortImportanceBtn) {
     sortedImportanceCTasks.forEach((tr) => cTbody.appendChild(tr));
     // Sessionデータ更新
     localStorage.setItem("c_v_mode", 1);
-    // 該当ボタンを押している風に見せる
+
     cSortImportanceBtn.classList.remove("btn-outline-warning");
     cSortImportanceBtn.classList.add("btn-warning");
     cSortDayBtn.classList.remove("btn-secondary");
@@ -1120,7 +1126,7 @@ if (cSortDayBtn) {
     SortedDayCTasks.forEach((tr) => cTbody.appendChild(tr));
     // Sessionデータ更新
     localStorage.setItem("c_v_mode", 0);
-    // 該当ボタンを押している風に見せる
+
     cSortDayBtn.classList.remove("btn-outline-secondary");
     cSortDayBtn.classList.add("btn-secondary");
     cSortImportanceBtn.classList.remove("btn-warning");
@@ -1187,8 +1193,9 @@ if (saveDeadlineChanges) {
         const result = await response.json();
         console.log("期限更新成功:", result);
 
-        // DOM更新処理を削除して更新
+        // DOM更新処理を削除して更新(テスト)
         // alert("期限を更新しました！");
+
         // 画面を最新にする
         location.reload();
       } else {
