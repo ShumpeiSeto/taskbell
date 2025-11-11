@@ -211,7 +211,7 @@
 </div>
 
   <!-- 期限タスク通知odal -->
-  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal fade" id="limityModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
@@ -221,7 +221,7 @@
         <div class="modal-body p-0">
           <div class="table-responsive">
             <table width="100%" class="table table-lignt table-bordered mb-0" id="nc-table">
-              <thead>
+              <thead class="limity-header">
                 <tr>
                   <th width="45%" class="text-center align-middle">タスク名</th>
                   <th width="20%" class="text-center align-middle">期限日</th>
@@ -251,9 +251,7 @@
         </div>
         <div class="sort_buttons d-flex flex-row justify-content-end align-items-end px-0 py-1 gap-2"> 
           <h4 class="font-size-m m-auto">未完了タスク</h4>
-          {# <a href="{{ url_for('button_click', flg=1) }}"><button type="button" class="btn btn-outline-warning btn-sm border-2" id="nc-sort-importance">重要度順</button></a> #}
           <button type="button" class="btn btn-outline-warning btn-sm border-2" id="nc-sort-importance">重要度順</button>
-          {# <a href="{{ url_for('button_click', flg=2) }}"><button type="button" class="btn btn-outline-secondary btn-sm border-2" id="nc-sort-day">日付順</button></a> #}
           <button type="button" class="btn btn-outline-secondary btn-sm border-2" id="nc-sort-day">日付順</button>
         </div>
         <table width="100%" class="table table-light table-hover table-bordered">
@@ -302,26 +300,19 @@
       </div>
     </div>
     <div class="fixed-button text-center align-middle">
-      <a href="{{ url_for('add_task')}}">
-      <button type="button" class="btn btn-primary font-size-l rounded-circle">+</button></a>
-    </div>
-    <div class="left-fixed-button text-center align-middle">
-      <button type="button" class="btn btn-secondary font-size-l rounded-circle" data-bs-toggle="modal", data-bs-target="#addTaskModal">+</button>
+      <button type="button" class="btn btn-primary font-size-l rounded-circle" data-bs-toggle="modal", data-bs-target="#addTaskModal">+</button>
     </div>
 
     <div class="row h-auto justify-content-center align-items-start">
       <div class="col-12 col-md-8 col-lg-6 col-xl-5">
         <div class="sort_buttons d-flex flex-row justify-content-end align-items-end px-0 py-1 gap-2"> 
         <h4 class="font-size-m m-auto">完了済みタスク</h4>
-          {# <a href="{{ url_for('button_click', flg=3) }}"><button type="button" class="btn btn-outline-warning border-2 btn-sm" id="c-sort-importance">重要度順</button></a> #}
           <button type="button" class="btn btn-outline-warning border-2 btn-sm" id="c-sort-importance">重要度順</button>
-          {# <a href="{{ url_for('button_click', flg=4) }}"><button type="button" class="btn btn-outline-secondary border-2 btn-sm" id="c-sort-day">日付順</button></a> #}
           <button type="button" class="btn btn-outline-secondary border-2 btn-sm" id="c-sort-day">日付順</button>
         </div>
         <table width="100%" class="table table-light table-hover table-bordered" id="c-table">
           <thead>
             <tr>
-              {# <th rowspan="2" scope="col" class="p-0 p-md-2 text-center align-middle">#</th> #}
               <th rowspan="2" scope="col" class="p-0 p-md-0 text-center align-middle">タスク名</th>
               <th colspan="2" scope="col" class="p-0 p-md-0 text-center align-middle">期限</th>
               <th rowspan="2" scope="col" class="p-0 p-md-0 text-center align-middle">重要度</th>

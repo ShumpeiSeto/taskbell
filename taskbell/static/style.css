@@ -71,6 +71,12 @@
 }
 .table thead th {
   border-color: #2c5f61; /* ヘッダーより濃いティール */
+  color: #ffffff;
+}
+.table > thead.limity-header > tr th {
+  background-color: var(--accent-warm) !important;
+  border-color: var(--bs-table-border-color) !important;
+  color: #ffffff;
 }
 
 /* 全体レイアウト設定 */
@@ -85,20 +91,6 @@ body {
 }
 .table thead tr th {
   background-color: var(--primary-medium);
-}
-.table:not(.modal-body),
-.table:not(.modal-body) th,
-.table:not(.modal-body) td {
-  /* color: var(--text-dark) !important; */
-  color: var(--primary-white);
-}
-table.modal-body th,
-table.modal-body td {
-  color: var(--primary-dark);
-}
-table.modal-body thead tr th {
-  background-color: var(--accent-warm);
-  font-weight: bold;
 }
 h1,
 p,
@@ -208,23 +200,7 @@ h4 {
   z-index: 9999;
   text-align: center !important;
 }
-.fixed-button a button {
-  line-height: 1 !important;
-  height: 60px;
-  width: 60px;
-  justify-content: center !important;
-  align-items: center !important;
-  opacity: 0.9;
-}
-/* test modal */
-.left-fixed-button {
-  position: fixed;
-  left: 30px;
-  bottom: 30px;
-  z-index: 9999;
-  text-align: center !important;
-}
-.left-fixed-button button {
+.fixed-button button {
   line-height: 1 !important;
   height: 60px;
   width: 60px;
@@ -263,20 +239,20 @@ h4 {
    ============================================ */
 
 /* 通知モーダルの基本設定 */
-#exampleModal .modal-dialog {
+#limityModal .modal-dialog {
   max-width: 90% !important;
 }
 
 /* タブレットサイズ以上 */
 @media screen and (min-width: 768px) {
-  #exampleModal .modal-dialog {
+  #limityModal .modal-dialog {
     max-width: 700px !important;
   }
 }
 
 /* PC サイズ */
 @media screen and (min-width: 992px) {
-  #exampleModal .modal-dialog {
+  #limityModal .modal-dialog {
     max-width: 750px !important;
   }
 }
