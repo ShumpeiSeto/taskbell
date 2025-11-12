@@ -780,12 +780,14 @@ def get_mytasks():
 def create_task():
     data = request.get_json()
     data["user_id"] = current_user.id
-    deadline = datetime.fromisoformat(make_deadline2(data["deadline"]))
-    data["deadline"] = deadline
+    # deadline = datetime.fromisoformat(make_deadline2(data["deadline"]))
+    deadline_str = data["deadline"]
+    deadline = datetime.strptime(deadline_str, "%Y-%m-%d %H:%M")
     print(data)
+    data["deadline"] = deadline
     task = add_new_task(data)
     task_response = dict(task)
-    task_response["deadline"] = task["deadline"].isoformat().replace(" ", "T") + ".000Z"
+    task_response["deadline"] = task["deadline"].isoformat()
 
     return jsonify(
         {"success": True, "data": task_response, "message": "タスクが作成されました"}
