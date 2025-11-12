@@ -2,7 +2,6 @@ from flask import render_template, request, redirect, Flask, flash, session, jso
 from taskbell import app, db, scheduler_thread
 from .models.add_task import Tasks
 from .models.login_user import User
-from .postToSlack import post_to_slack
 from datetime import datetime, timedelta
 import json
 
