@@ -3,6 +3,8 @@ from flask import Flask, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_migrate import Migrate
+from dotenv import load_dotenv
+import os
 import datetime
 
 # slack通知定期実行のためのテスト用２
@@ -16,12 +18,15 @@ schedule_user = {}
 scheduler_thread = None
 
 print("__init__.pyがじっこうされました")
+
+load_dotenv()
+
 app = Flask(__name__)
 print("appがつくられました")
 # config file別途作成している
 
 app.config.from_object("taskbell.config")
-app.secret_key = "abcdefghijk"
+app.secret_key = os.environ.get("SECRET_KEY")
 
 db = SQLAlchemy(app)
 login_manager = LoginManager()
