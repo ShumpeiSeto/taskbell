@@ -13,6 +13,18 @@
 
 ## 📸 スクリーンショット
 
+### タスク一覧画面
+
+![タスク一覧画面](screenshots/home.png)
+
+### 通知画面
+
+![通知画面](screenshots/modal.png)
+
+### 設定画面
+
+![設定画面](screenshots/setting.png)
+
 ## 🚀 セットアップ方法
 
 ### 1. リポジトリのクローン
