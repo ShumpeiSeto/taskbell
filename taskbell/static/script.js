@@ -107,9 +107,10 @@ if (saveNewTask) {
     const newTitle = document.getElementById("title").value;
     const newDeadDate = document.getElementById("dead_date").value;
     const newDeadTime = document.getElementById("dead_time").value;
-    const deadLine = new Date(
-      makeDeadLine(newDeadDate, newDeadTime)
-    ).toLocaleString();
+    const deadLine = `${newDeadDate} ${newDeadTime}`;
+    // const deadLine = new Date(
+    //   makeDeadLine(newDeadDate, newDeadTime)
+    // ).toLocaleString();
     const importances = document.getElementsByName("importance");
     let len = importances.length;
     let importance = "";
@@ -118,7 +119,7 @@ if (saveNewTask) {
     }
     const data = {
       title: newTitle,
-      deadline: format_deadLine(deadLine),
+      deadline: deadLine,
       importance: parseInt(importance),
     };
     console.log(data);
@@ -203,9 +204,7 @@ if (saveEditTask) {
     const editTitle = document.getElementById("editTitle").value;
     const editDeadDate = document.getElementById("editDeadDate").value;
     const editDeadTime = document.getElementById("editDeadTime").value;
-    const editDeadLine = new Date(
-      makeDeadLine(editDeadDate, editDeadTime)
-    ).toLocaleString();
+    const editDeadLine = `${editDeadDate} ${editDeadTime}`;
     const importances = document.getElementsByName("editImportance");
     let len = importances.length;
     let importance = "";
@@ -214,7 +213,7 @@ if (saveEditTask) {
     }
     const data = {
       title: editTitle,
-      deadline: format_deadLine(editDeadLine),
+      deadline: editDeadLine,
       dead_date: editDeadDate,
       dead_time: editDeadTime,
       importance: parseInt(importance),
@@ -251,15 +250,25 @@ function editTaskRow(updateTask) {
     console.log(`タスクID ${taskId}の行が見つかりません`);
     return;
   }
+  const deadlineDate = new Date(
+    `${updateTask.dead_date}T${updateTask.dead_time}:00`
+  );
+  const dateStr = formatDateStr(deadlineDate);
   taskRow.querySelector(".taskname").textContent = updateTask.title;
   taskRow.querySelector(".deaddate").textContent = convertDate(
-    convertDate3(new Date(updateTask.dead_line).toISOString()),
-    new Date(updateTask.dead_line).getDay()
+    dateStr,
+    deadlineDate.getDay()
   );
+  // taskRow.querySelector(".deaddate").textContent = convertDate(
+  //   convertDate3(new Date(updateTask.dead_line).toISOString()),
+  //   new Date(updateTask.dead_line).getDay()
+  // );
   taskRow.querySelector(".deadtime").textContent = updateTask.dead_time;
   taskRow.querySelector(".importance").textContent = convertImportance(
     updateTask.importance
   );
+  // データセットも更新
+  taskRow.dataset.deadline = `${updateTask.dead_date}T${updateTask.dead_time}:00`;
 }
 async function showEditModal(taskId) {
   document.getElementById("editTitle").value = "";
@@ -409,11 +418,8 @@ function addNewTaskRow(task) {
     const targetTr = ncTaskTrs.item(positionIndex);
     console.log(task.deadline);
     const deadline = new Date(task.deadline);
-    const dateStr = deadline.toLocaleDateString("ja-JP", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    });
+    const dateStr = formatDateStr(deadline);
+    const convertedDateStr = convertDate(dateStr, deadline.getDay());
     const timeStr = deadline.toLocaleTimeString("ja-JP", {
       hour: "2-digit",
       minute: "2-digit",
@@ -436,7 +442,7 @@ function addNewTaskRow(task) {
                     }</label>
                   </td>
                   <td width="15%" class="px-0 p-md-0 text-center align-middle">
-                    <label class="deaddate my-auto">${dateStr}</label>
+                    <label class="deaddate my-auto">${convertedDateStr}</label>
                   </td>
                   <td width="10%" class="px-0 p-md-0 text-center align-middle">
                     <label class="deadtime my-auto">${timeStr}</label>
@@ -477,11 +483,7 @@ function addNewTaskRow(task) {
 
     const targetTr = ncTaskTrs.item(positionIndex);
     const deadline = new Date(task.deadline);
-    const dateStr = deadline.toLocaleDateString("ja-JP", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    });
+    const convertedDateStr = convertDate(dateStr, deadline.getDay());
     const timeStr = deadline.toLocaleTimeString("ja-JP", {
       hour: "2-digit",
       minute: "2-digit",
@@ -503,7 +505,7 @@ function addNewTaskRow(task) {
                     }</label>
                   </td>
                   <td width="15%" class="px-0 p-md-0 text-center align-middle">
-                    <label class="deaddate my-auto">${dateStr}</label>
+                    <label class="deaddate my-auto">${convertedDateStr}</label>
                   </td>
                   <td width="10%" class="px-0 p-md-0 text-center align-middle">
                     <label class="deadtime my-auto">${timeStr}</label>
@@ -527,9 +529,9 @@ function addNewTaskRow(task) {
     `;
     // 同じ重要度を持つtrが見当たらない場合
     if (firstSameIndex === -1) {
-      if (task.importance === "2") {
+      if (task.importance === 2) {
         ncTbody.insertAdjacentHTML("beforeend", element);
-      } else if (task.importance === "1") {
+      } else if (task.importance === 1) {
         const index = [...ncTaskTrs].findIndex(
           (el) => el.dataset.importance === "0"
         );
@@ -1003,11 +1005,20 @@ async function checkdatetime() {
 
           td_status.textContent = newStatus;
 
+          // いったんスタイル削除
+          td_status.classList.remove(
+            "text-danger",
+            "fw-bold",
+            "text-warning",
+            "text-success"
+          );
           // スタイル更新
           if (newDiff <= 0) {
             td_status.classList.add("text-danger", "fw-bold");
+          } else if (newDiff <= 60) {
+            td_status.classList.add("text-warning", "fw-bold");
           } else {
-            td_status.classList.remove("text-danger", "fw-bold");
+            td_status.classList.add("text-success", "fw-bold");
           }
         }
       };
@@ -1028,6 +1039,10 @@ async function checkdatetime() {
       modal.show();
       if (diff <= 0) {
         td_status.classList.add("text-danger", "fw-bold");
+      } else if (diff <= 60) {
+        td_status.classList.add("text-warning", "fw-bold");
+      } else {
+        td_status.classList.add("text-success");
       }
     }
   });

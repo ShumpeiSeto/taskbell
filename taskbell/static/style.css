@@ -92,10 +92,12 @@ body {
 .table thead tr th {
   background-color: var(--primary-medium);
 }
-h1,
 p,
 label {
   color: var(--text-dark) !important;
+}
+.modal-header h1 {
+  color: inherit !important;
 }
 h3,
 h4 {
