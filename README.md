@@ -28,7 +28,6 @@
 ## 🚀 セットアップ方法
 
 ### 1. リポジトリのクローン
-
 ```bash
 git clone https://github.com/ShumpeiSeto/taskbell
 cd taskbell
@@ -39,26 +38,43 @@ cd taskbell
 ### 2. 仮想環境の作成と有効化
 
 **Windows の場合:**
-
 ```bash
 python -m venv venv
 venv\Scripts\activate
 ```
 
 **Mac/Linux の場合:**
-
 ```bash
 python3 -m venv venv
 source venv/bin/activate
 ```
 
 ### 3. 依存関係のインストール
-
 ```bash
 pip install -r requirements.txt
 ```
 
-### 4. データベースの初期化
+### 4. 環境変数の設定
+
+**taskbell ルートフォルダに `.env` ファイルを作成し、以下の内容を記述してください：**
+```env
+# Flask Secret Key（セキュリティのため必須）
+SECRET_KEY=your-secret-key-here
+
+# データベースURL（オプション：デフォルトは SQLite）
+# DATABASE_URL=sqlite:///sample_tasks.db
+```
+
+**SECRET_KEY の生成方法：**
+```bash
+python -c "import secrets; print(secrets.token_hex(32))"
+```
+
+生成された文字列を `.env` の `SECRET_KEY` に設定してください。
+
+> ⚠️ **重要:** `.env` ファイルは `.gitignore` に含まれており、Git にコミットされません。セキュリティ情報を含むため、絶対に公開リポジトリにアップロードしないでください。
+
+### 5. データベースの初期化
 
 > ⚠️ **重要な注意事項**
 >
@@ -67,23 +83,20 @@ pip install -r requirements.txt
 > 下記の方法でうまく動かない場合は、`python server.py` で起動後に `/make_table` にアクセスすると、テーブル削除＆作成ができます。
 
 **マイグレーションファイルが既にある場合:**
-
 ```bash
 flask db upgrade
 ```
 
 **初回セットアップの場合:**
-
 ```bash
 flask db init
 flask db migrate -m "Initial migration"
 flask db upgrade
 ```
 
-### 5. アプリケーションの起動
+### 6. アプリケーションの起動
 
 `taskbell` フォルダ内で以下を実行:
-
 ```bash
 python server.py
 ```
@@ -93,7 +106,6 @@ python server.py
 ## 🔧 プロジェクト構成
 
 主な機能は `taskbell/taskbell/` フォルダ内に実装されています。
-
 ```
 taskbell/
 ├── .vscode/              # VSCode設定
@@ -106,6 +118,7 @@ taskbell/
 │   ├── config.py         # 設定ファイル (DBの場所など)
 │   └── views.py          # ビュー関数 (ルーティング, API)
 ├── venv/                 # 仮想環境
+├── .env                  # 環境変数（要作成・Git管理外）
 ├── .flaskenv             # Flask環境変数
 ├── .gitignore            # Git除外設定
 ├── requirements.txt      # Python依存関係
@@ -122,7 +135,6 @@ taskbell/
 3. テーブルの削除＆再作成が実行されます
 
 ### マイグレーションがうまくいかない場合
-
 ```bash
 # マイグレーション環境をリセット
 rm -rf migrations/
@@ -133,6 +145,10 @@ flask db init
 flask db migrate -m "Initial migration"
 flask db upgrade
 ```
+
+### SECRET_KEY のエラーが出る場合
+
+`.env` ファイルが正しく作成されているか確認してください。ファイルは `taskbell` ルートフォルダに配置する必要があります。
 
 ## 📝 ライセンス
 
