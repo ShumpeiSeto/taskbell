@@ -896,11 +896,6 @@ def get_limity_tasks():
 
 def send_to_slack(limity_tasks):
     try:
-        # Slack設定
-        # slack_hook_url = (
-        #     "https://hooks.slack.com/services/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"
-        # )
-        # slack_hook_url = (session['slack_url'])
         slack_hook_url = current_user.slack_url
         slack = slackweb.Slack(url=slack_hook_url)
         attachments = []
