@@ -4,6 +4,7 @@ from .models.add_task import Tasks
 from .models.login_user import User
 from datetime import datetime, timedelta
 import json
+import logging
 
 from sqlalchemy import desc
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -24,6 +25,9 @@ import threading
 # メール送信のため
 from flask_mail import Mail, Message
 from flask import current_app
+
+# ロガー設定
+logger = logging.getLogger(__name__)
 
 # メールのための設定
 app.config["MAIL_SERVER"] = "smtp.gmail.com"
@@ -270,27 +274,54 @@ def remove_user_schedule(user_id):
 # Error Handling
 @app.errorhandler(400)
 def handle_bad_request(e):
-    return render_template("testtemp/error.html"), 400
+    logger.warning(f"400 Bad Request: {e}")
+    return render_template("testtemp/400.html"), 400
 
 
 @app.errorhandler(401)
 def handle_unauthorized(e):
-    return render_template("testtemp/error.html"), 401
+    logger.warning(f"401 Unauthorized: {e}")
+    return render_template("testtemp/401.html"), 401
 
 
 @app.errorhandler(403)
 def handle_forbidden(e):
-    return render_template("testtemp/error.html"), 403
+    logger.warning(f"403 Forbidden: {e}")
+    return render_template("testtemp/403.html"), 403
 
 
 @app.errorhandler(404)
 def handle_not_found(e):
-    return render_template("testtemp/error.html"), 404
+    logger.warning(f"404 Not Found: {e}")
+    return render_template("testtemp/404.html"), 404
 
 
 @app.errorhandler(500)
 def internal_server_error(e):
-    return render_template("testtemp/error.html"), 500
+    logger.error(f"500 Internal Server Error: {e}", exc_info=True)
+    # return render_template("testtemp/error.html"), 500
+    return (
+        """
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <title>エラー - TaskBell</title>
+        <style>
+            body { font-family: sans-serif; text-align: center; padding: 50px; }
+            h1 { color: #dc3545; }
+        </style>
+    </head>
+    <body>
+        <h1>500 - サーバーエラー</h1>
+        <p>申し訳ございません。システムエラーが発生しました。</p>
+        <p>しばらく経ってから再度お試しください。</p>
+        <a href="/">ホームへ戻る</a>
+    </body>
+    </html>
+    """,
+        500,
+    )
 
 
 # app オブジェにルートを登録する
