@@ -39,10 +39,6 @@ app.config["MAIL_PASSWORD"] = os.environ.get("MAIL_PASSWORD")
 app.config["MAIL_DEFAULT_SENDER"] = "[REDACTED_EMAIL]"
 mail = Mail(app)
 
-# スケジュール変数
-# schedule_user = {}
-# scheduler_thread = None
-
 
 def send_email_notification(limity_tasks, user):
     try:
@@ -120,13 +116,6 @@ def make_deadline(dead_date, dead_time):
     deadline = datetime.strptime(s, s_format)
     print(deadline)
     return deadline
-
-
-# def make_deadline2(deadline):
-#     s_format = "%Y-%m-%d %H:%M:%S"
-#     result = datetime.strptime(deadline, s_format)
-#     print(result)
-#     return result
 
 
 def make_deadline2(deadline):
@@ -374,11 +363,6 @@ def my_task():
         c_tasks = all_tasks_desc.filter(Tasks.user_id == current_user.id).filter(
             Tasks.is_completed == 1
         )
-    # print(nc_tasks)
-    # now = datetime.datetime.now()
-    # limity_nctasks_list = [nc_task for nc_task in nc_tasks if nc_task['deadline'] < now]
-    # if len(limity_nctasks_list) >= 1:
-    #     post_to_slack("期限切れのタスクがあります")
 
     return render_template("testtemp/my_task.html", nc_tasks=nc_tasks, c_tasks=c_tasks)
 
@@ -493,25 +477,9 @@ def setting():
         # session["morning_time"] = morning_time
         db.session.commit()
 
-        # user_id = current_user.id
-        # schedule_user[user_id] = {
-        #     "morning_time": morning_time_str,
-        #     "slack_url": slack_url,
-        #     "email": email,
-        # }
-
         # スケジュール登録してみる
         remove_user_schedule(current_user.id)
         schedule.every().days.at(morning_time_str).do(slack_notify, current_user.id)
-        # デバッグ用のコードを追加
-        # if scheduler_thread is None or not scheduler_thread.is_alive():
-        #     scheduler_thread = threading.Thread(target=schedule_runner, daemon=True)
-        #     scheduler_thread.start()
-        #     print("スケジューラ開始")
-        # else:
-        #     print("スケジューラは動作中")
-        # for job in schedule.jobs:
-        #     print(f"Job: {job}, Next run: {job.next_run}")
     return redirect("/my_task")
 
 
@@ -566,26 +534,6 @@ def edit_task(task_id):
         }
         update(task, update_info)
     return redirect("/my_task")
-
-
-# edit_task の API version
-# @app.route("/api/edit_task/<int:task_id>", methods=["GET", "POST"])
-# @login_required
-# def api_edit_task(task_id):
-#     task = Tasks.query.filter(Tasks.task_id == task_id).first()
-#     if request.method == "GET":
-#         pass
-#     elif request.method == "POST":
-#         # check(task_id, task)
-
-#         return jsonify(
-#             {
-#                 "status": "success",
-#                 "message": "タスクを更新しました",
-#                 "task_id": task_id,
-#                 "is_completed": task.is_completed,
-#             }
-#         )
 
 
 @app.route("/api/delete_task/<int:task_id>", methods=["POST"])
@@ -846,15 +794,6 @@ def update_task(task_id):
         "importance": importance,
     }
     update(task, update_info)
-    # dead_date = task.deadline.strftime("%Y-%m-%d")
-    # dead_time = task.deadline.strftime("%H:%M")
-    # update_info2 = {
-    #     task_id,
-    #     title,
-    #     dead_date,
-    #     dead_time,
-    #     importance,
-    # # }
     return jsonify(
         {
             "status": "success",
