@@ -5,6 +5,7 @@ from .models.login_user import User
 from datetime import datetime, timedelta
 import json
 import logging
+import os
 
 from sqlalchemy import desc
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -33,8 +34,8 @@ logger = logging.getLogger(__name__)
 app.config["MAIL_SERVER"] = "smtp.gmail.com"
 app.config["MAIL_PORT"] = 587
 app.config["MAIL_USE_TLS"] = True
-app.config["MAIL_USERNAME"] = "[REDACTED_EMAIL]"
-app.config["MAIL_PASSWORD"] = "[REDACTED_PASSWORD]"
+app.config["MAIL_USERNAME"] = os.environ.get("MAIL_USERNAME")
+app.config["MAIL_PASSWORD"] = os.environ.get("MAIL_PASSWORD")
 app.config["MAIL_DEFAULT_SENDER"] = "[REDACTED_EMAIL]"
 mail = Mail(app)
 
