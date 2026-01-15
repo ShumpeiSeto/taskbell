@@ -111,7 +111,7 @@
                             <small class="form-text text-muted">
                                 受け取りたいSlackチャンネルのURL
                                 <br>
-                                <a href="{{ url_for('slack_help') }}" target="_blank" class="text-primary">
+                                <a href="{{ url_for('tasks.slack_help') }}" target="_blank" class="text-primary">
                                     <i class="bi bi-question-circle"></i> Slack URLの取得方法はこちら
                                 </a>
                             </small>
@@ -123,7 +123,7 @@
                     {# ボタンエリア #}
                     <div class="d-grid buttons gap-3">
                     <button type="submit" class="btn btn-primary btn-lg rounded-pill">保存</button>
-                    <a href="{{ url_for('my_task') }}" class="text-decoration-none"><button type="button" class="btn btn-secondary btn-lg w-100 rounded-pill">キャンセル</button></a>
+                    <a href="{{ url_for('tasks.my_task') }}" class="text-decoration-none"><button type="button" class="btn btn-secondary btn-lg w-100 rounded-pill">キャンセル</button></a>
                     </div>
                   </form>
                 </div>

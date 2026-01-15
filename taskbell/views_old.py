@@ -1,5 +1,6 @@
 from flask import render_template, request, redirect, Flask, flash, session, jsonify
-from taskbell import app, db, scheduler_thread
+from taskbell import db, scheduler_thread
+from flask import current_app
 from .models.add_task import Tasks
 from .models.login_user import User
 from datetime import datetime, timedelta
@@ -702,80 +703,80 @@ def make_table():
     return redirect("/")
 
 
-@app.route("/login", methods=["GET", "POST"])
-def login():
-    if request.method == "GET":
-        return render_template("testtemp/login.html")
-    elif request.method == "POST":
-        # if current_user.is_authenticated:
-        #     return render_template("testtemp/index.html", current_user=current_user)
+# @app.route("/login", methods=["GET", "POST"])
+# def login():
+#     if request.method == "GET":
+#         return render_template("testtemp/login.html")
+#     elif request.method == "POST":
+#         # if current_user.is_authenticated:
+#         #     return render_template("testtemp/index.html", current_user=current_user)
 
-        # ユーザーが存在するかユーザ名で検索する
-        username = request.form.get("username", "").strip()
-        user = User.query.filter(User.username == username).one_or_none()
-        password = request.form.get("password", "").strip()
-        session["nc_v_mode"] = user.nc_v_mode
-        session["c_v_mode"] = user.c_v_mode
-        session["dl_time"] = user.dl_time
-        session["is_first_slack"] = 1
-        # print(user)
+#         # ユーザーが存在するかユーザ名で検索する
+#         username = request.form.get("username", "").strip()
+#         user = User.query.filter(User.username == username).one_or_none()
+#         password = request.form.get("password", "").strip()
+#         session["nc_v_mode"] = user.nc_v_mode
+#         session["c_v_mode"] = user.c_v_mode
+#         session["dl_time"] = user.dl_time
+#         session["is_first_slack"] = 1
+#         # print(user)
 
-        # instanceつくる
-        # overrrideしていたが継承元UserMixinのものでOKだった
-        if (user is not None) and (user.is_authenticated(username, password)):
-            # if user.is_authenticated:
-            login_user(user)
-            flash("認証成しました\n")
-            flash(f"あなたは{user.username}です\n")
-            return redirect("/my_task")
-        else:
-            flash("ユーザー名とパスワードが一致していません")
-            flash("もう一度入力してください")
-            return redirect("/login")
-    return render_template("testtemp/login.html")
-
-
-@app.route("/logout")
-@login_required
-def logout():
-    current_user.nc_v_mode = session["nc_v_mode"]
-    current_user.c_v_mode = session["c_v_mode"]
-    # current_user.dl_time = session["dl_time"]
-    db.session.commit()
-    session.clear()
-    logout_user()
-    return redirect("/")
+#         # instanceつくる
+#         # overrrideしていたが継承元UserMixinのものでOKだった
+#         if (user is not None) and (user.is_authenticated(username, password)):
+#             # if user.is_authenticated:
+#             login_user(user)
+#             flash("認証成しました\n")
+#             flash(f"あなたは{user.username}です\n")
+#             return redirect("/my_task")
+#         else:
+#             flash("ユーザー名とパスワードが一致していません")
+#             flash("もう一度入力してください")
+#             return redirect("/login")
+#     return render_template("testtemp/login.html")
 
 
-@app.route("/signup", methods=["GET", "POST"])
-def signup():
-    if request.method == "GET":
-        return render_template("testtemp/signup.html")
-    elif request.method == "POST":
-        username = request.form.get("username", "").strip()
-        password = request.form.get("password", "").strip()
-        c_password = request.form.get("conf_password", "").strip()
-        target_user = dict(username=username, password=generate_password_hash(password))
+# @app.route("/logout")
+# @login_required
+# def logout():
+#     current_user.nc_v_mode = session["nc_v_mode"]
+#     current_user.c_v_mode = session["c_v_mode"]
+#     # current_user.dl_time = session["dl_time"]
+#     db.session.commit()
+#     session.clear()
+#     logout_user()
+#     return redirect("/")
 
-        # Validation
-        # データチェック
-        # ユーザー存在有無を確認し重複のチェック
-        match_user = User.query.filter(User.username == username).first()
-        if password != c_password:
-            flash("パスワードが一致していません")
-            flash("もう一度入力してください")
-            return redirect("/signup")
-        if match_user == None:
-            signup_user(target_user)
-            return redirect("/login")
-        else:
-            flash("そのユーザー名は既に存在します")
-            flash("別のユーザー名で登録してください")
-            return redirect("/signup")
 
-        # 重複するユーザーが存在する場合は赤メッセージで遷移させない
-        # return redirect("/login")
-    return render_template("testtemp/signup.html")
+# @app.route("/signup", methods=["GET", "POST"])
+# def signup():
+#     if request.method == "GET":
+#         return render_template("testtemp/signup.html")
+#     elif request.method == "POST":
+#         username = request.form.get("username", "").strip()
+#         password = request.form.get("password", "").strip()
+#         c_password = request.form.get("conf_password", "").strip()
+#         target_user = dict(username=username, password=generate_password_hash(password))
+
+#         # Validation
+#         # データチェック
+#         # ユーザー存在有無を確認し重複のチェック
+#         match_user = User.query.filter(User.username == username).first()
+#         if password != c_password:
+#             flash("パスワードが一致していません")
+#             flash("もう一度入力してください")
+#             return redirect("/signup")
+#         if match_user == None:
+#             signup_user(target_user)
+#             return redirect("/login")
+#         else:
+#             flash("そのユーザー名は既に存在します")
+#             flash("別のユーザー名で登録してください")
+#             return redirect("/signup")
+
+#         # 重複するユーザーが存在する場合は赤メッセージで遷移させない
+#         # return redirect("/login")
+#     return render_template("testtemp/signup.html")
 
 
 @app.route("/api/get_mytasks", methods=["GET"])
