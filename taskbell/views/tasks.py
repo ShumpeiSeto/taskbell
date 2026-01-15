@@ -289,3 +289,303 @@ def remove_user_schedule(user_id):
             jobs_to_remove.append(job)
     for job in jobs_to_remove:
         schedule.cancel_job(job)
+
+
+@tasks_bp.route("/api/tasks/limity", methods=["GET"])
+@login_required
+def get_limity_tasks():
+    now = datetime.datetime.now()
+    # セッションまたはDBから設定時間を取得
+    dl_time_value = session.get("dl_time", 15)
+
+    # 期限が近い未完了タスクを取得
+    limity_tasks = Tasks.query.filter(
+        Tasks.deadline < now + datetime.timedelta(minutes=int(dl_time_value)),
+        Tasks.is_completed == False,
+        Tasks.user_id == current_user.id,
+    ).all()
+
+    tasks_data = []
+    for task in limity_tasks:
+        tasks_data.append(
+            {
+                "id": task.task_id,
+                "title": task.title,
+                "deadline": task.deadline.isoformat(),
+                "format_deadline": task.deadline.strftime("%Y/%m/%d %H:%M"),
+                "importance": task.importance,
+                "username": current_user.username,
+            }
+        )
+    return jsonify({"success": True, "data": tasks_data, "count": len(tasks_data)})
+
+
+@tasks_bp.route("/api/get_mytasks", methods=["GET"])
+@login_required
+def get_mytasks():
+    try:
+        my_tasks = Tasks.query.filter(Tasks.user_id == current_user.id).all()
+        tasks_data = []
+        for task in my_tasks:
+            tasks_data.append(
+                {
+                    "id": task.task_id,
+                    "title": task.title,
+                    "deadline": task.deadline.isoformat(),
+                    "format_deadline": task.deadline.strftime("%Y/%m/%d %H:%M"),
+                    "importance": task.importance,
+                }
+            )
+        return jsonify({"success": True, "data": tasks_data})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+@tasks_bp.route("/api/task/create", methods=["POST"])
+@login_required
+def create_task_api():
+    data = request.get_json()
+    deadline = datetime.datetime.strptime(data["deadline"], "%Y-%m-%d %H:%M")
+
+    new_task = Tasks(
+        title=data["title"],
+        deadline=deadline,
+        importance=data["importance"],
+        user_id=current_user.id,
+        is_completed=False,
+    )
+    db.session.add(new_task)
+    db.session.commit()
+
+    return jsonify(
+        {
+            "success": True,
+            "data": {
+                "task_id": new_task.task_id,
+                "title": new_task.title,
+                "deadline": new_task.deadline.isoformat(),
+                "importance": new_task.importance,
+            },
+        }
+    )
+
+
+def check(task_id, task):
+    with current_app.app_context():
+        print("==========1件チェック済==========")
+        task.is_completed = task.is_completed ^ 1
+        try:
+            # db.session.add(task)
+            db.session.merge(task)
+            db.session.commit()
+            print(
+                f"タスクステータスを変更しました:task_id:{task.task_id}, title:{task.title}, is_completed:{task.is_completed}"
+            )
+        except Exception as e:
+            db.session.rollback()
+            print(f"更新エラーしました：{e}")
+        finally:
+            db.session.close()
+    print("チェック処理がおわりました")
+
+
+def delete(task_id):
+    with current_app.app_context():
+        task = Tasks.query.filter(Tasks.task_id == task_id).first()
+        print("==========1件削除==========")
+        try:
+            db.session.delete(task)
+            db.session.commit()
+            print("データ削除成功しました")
+        except Exception as e:
+            db.session.rollback()
+            print(f"削除エラーしました：{e}")
+        finally:
+            db.session.close()
+    print("削除完了しました")
+
+
+# API Versionを追加してみる
+@tasks_bp.route("/api/uncheck/<int:task_id>", methods=["POST"])
+@login_required
+def api_uncheck_task(task_id):
+    task = Tasks.query.filter(Tasks.task_id == task_id).first()
+    check(task_id, task)
+    return jsonify(
+        {
+            "status": "success",
+            "message": "タスクを未完了にしました",
+            "task_id": task_id,
+            "is_completed": task.is_completed,
+        }
+    )
+
+
+def update(task, update_info):
+    with current_app.app_context():
+        print("==========1件更新==========")
+        task.title = update_info["title"]
+        task.deadline = update_info["dead_line"]
+        # task.is_completed = update_info["is_completed"]
+        task.importance = update_info["importance"]
+        try:
+            # db.session.add(task)
+            db.session.merge(task)
+            db.session.commit()
+            print("データ更新に成功しました")
+            print(
+                f"更新後タスク:task_id:{task.task_id}, title:{task.title}, deadline:{task.deadline}"
+            )
+        except Exception as e:
+            db.session.rollback()
+            print(f"更新エラーしました：{e}")
+        finally:
+            db.session.close()
+    print("更新処理がおわりました")
+
+
+@tasks_bp.route("/api/task/update/<int:task_id>", methods=["POST"])
+@login_required
+def update_task(task_id):
+    task = Tasks.query.filter(Tasks.task_id == task_id).first()
+    data = request.get_json()
+    title = data["title"]
+    dead_date = data["dead_date"]
+    dead_time = data["dead_time"]
+    importance = data["importance"]
+    dead_line = make_deadline(data["dead_date"], data["dead_time"])
+    importance = data["importance"]
+    # 更新処理をする
+    update_info = {
+        "task_id": task_id,
+        "title": title,
+        "dead_date": dead_date,
+        "dead_time": dead_time,
+        "dead_line": dead_line,
+        "importance": importance,
+    }
+    update(task, update_info)
+    # dead_date = task.deadline.strftime("%Y-%m-%d")
+    # dead_time = task.deadline.strftime("%H:%M")
+    # update_info2 = {
+    #     task_id,
+    #     title,
+    #     dead_date,
+    #     dead_time,
+    #     importance,
+    # # }
+    return jsonify(
+        {
+            "status": "success",
+            "updateTask": update_info,
+            "message": "タスクが更新されました",
+        }
+    )
+
+
+@tasks_bp.route("/api/get_task/<int:task_id>", methods=["GET"])
+@login_required
+def api_get_task(task_id):
+    with current_app.app_context():
+        try:
+            task = Tasks.query.filter(Tasks.task_id == task_id).first()
+            if task:
+                dead_date = task.deadline.strftime("%Y-%m-%d")
+                dead_time = task.deadline.strftime("%H:%M")
+                return jsonify(
+                    {
+                        "status": "success",
+                        "task": {
+                            "task_id": task.task_id,
+                            "title": task.title,
+                            "dead_date": dead_date,
+                            "dead_time": dead_time,
+                            "importance": task.importance,
+                        },
+                    }
+                )
+            else:
+                return (
+                    jsonify({"status": "error", "message": "タスクが見つかりません"}),
+                    404,
+                )
+        except Exception as e:
+            print("Error:", e)
+
+
+@tasks_bp.route("/delete_task/<int:task_id>", methods=["GET", "POST"])
+@login_required
+def delete_task(task_id):
+    task = Tasks.query.filter(Tasks.task_id == task_id).first()
+    if request.method == "GET":
+        return render_template(
+            "testtemp/delete_confirm_task.html", task_id=task_id, task=task
+        )
+    elif request.method == "POST":
+        print("削除処理がはじまります")
+        delete(task_id)
+    # return render_template("testtemp/delete_confirm_task.html", index=index)
+    return redirect("/my_task")
+
+
+@tasks_bp.route("/api/delete_task/<int:task_id>", methods=["POST"])
+@login_required
+def api_delete_task(task_id):
+    # データの該当タスクの削除する
+    delete(task_id)
+    return jsonify(
+        {
+            "status": "success",
+            "message": "タスクを削除しました",
+            "task": {
+                "task_id": task_id,
+            },
+        }
+    )
+
+
+@tasks_bp.route("/api/update_deadlines", methods=["POST"])
+@login_required  # ★ ログイン必須も追加
+def update_deadlines():
+    try:
+        print("=" * 50)
+        print("update_deadlines ルートが呼ばれました")
+
+        data = request.json
+        print(f"受信データ: {data}")
+
+        updates = data.get("updates", [])
+        print(f"更新対象タスク数: {len(updates)}")
+
+        for update in updates:
+            task_id = update["task_id"]
+            new_deadline = update["deadline"]
+
+            print(f"タスクID {task_id} を更新中: {new_deadline}")
+
+            # ★★★ Tasks に修正！ ★★★
+            task = Tasks.query.get(task_id)
+            if task:
+                # ISO形式の文字列をdatetimeに変換
+                task.deadline = datetime.datetime.fromisoformat(
+                    new_deadline.replace("Z", "+00:00")
+                )
+                print(f"タスクID {task_id} の期限を更新: {task.deadline}")
+            else:
+                print(f"警告: タスクID {task_id} が見つかりません")
+
+        # 全部まとめてコミット
+        db.session.commit()
+        print("データベース更新成功！")
+
+        return jsonify(
+            {"status": "success", "message": f"{len(updates)}件のタスクを更新しました"}
+        )
+
+    except Exception as e:
+        db.session.rollback()
+        print(f"エラー発生: {str(e)}")
+        import traceback
+
+        traceback.print_exc()
+        return jsonify({"status": "error", "message": str(e)}), 500
