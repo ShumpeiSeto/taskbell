@@ -253,10 +253,6 @@ def setting():
         # session["morning_time"] = morning_time
         db.session.commit()
 
-        # スケジュールの再登録
-        # global 宣言は不要（__init__.py の scheduler_thread を直接いじらないため）
-        from taskbell import init_scheduler
-
         # 既存のスケジュールをキャンセルして再登録
         from taskbell.views.tasks import remove_user_schedule, slack_notify
         import schedule
