@@ -21,6 +21,8 @@ from taskbell import db, mail
 from taskbell.models.add_task import Tasks
 from taskbell.models.login_user import User
 
+from taskbell.services import task_service
+
 tasks_bp = Blueprint("tasks", __name__)
 
 # --- ヘルパー関数（内部ロジック） ---
@@ -182,15 +184,7 @@ def add_task():
         )
         importance = int(request.form.get("importance", 0))
 
-        new_task = Tasks(
-            title=title,
-            deadline=deadline,
-            importance=importance,
-            user_id=current_user.id,
-            is_completed=False,
-        )
-        db.session.add(new_task)
-        db.session.commit()
+        task_service.create_task(title, deadline, importance, current_user.id)
         flash(f"タスク「{title}」を登録しました")
         return redirect(url_for("tasks.my_task"))
 
@@ -203,9 +197,10 @@ def api_check_task(task_id):
     task = Tasks.query.filter_by(
         task_id=task_id, user_id=current_user.id
     ).first_or_404()
-    task.is_completed = not task.is_completed
-    db.session.commit()
-    return jsonify({"status": "success", "is_completed": task.is_completed})
+    if not task:
+        return jsonify({"status": "error"}), 404
+    new_status = task_service.toggle_task_status(task)
+    return jsonify({"status": "success", "is_completed": new_status})
 
 
 @tasks_bp.route("/setting", methods=["GET", "POST"])
@@ -366,78 +361,23 @@ def create_task_api():
     )
 
 
-def check(task_id, task):
-    with current_app.app_context():
-        print("==========1件チェック済==========")
-        task.is_completed = task.is_completed ^ 1
-        try:
-            # db.session.add(task)
-            db.session.merge(task)
-            db.session.commit()
-            print(
-                f"タスクステータスを変更しました:task_id:{task.task_id}, title:{task.title}, is_completed:{task.is_completed}"
-            )
-        except Exception as e:
-            db.session.rollback()
-            print(f"更新エラーしました：{e}")
-        finally:
-            db.session.close()
-    print("チェック処理がおわりました")
-
-
-def delete(task_id):
-    with current_app.app_context():
-        task = Tasks.query.filter(Tasks.task_id == task_id).first()
-        print("==========1件削除==========")
-        try:
-            db.session.delete(task)
-            db.session.commit()
-            print("データ削除成功しました")
-        except Exception as e:
-            db.session.rollback()
-            print(f"削除エラーしました：{e}")
-        finally:
-            db.session.close()
-    print("削除完了しました")
-
-
 # API Versionを追加してみる
 @tasks_bp.route("/api/uncheck/<int:task_id>", methods=["POST"])
 @login_required
 def api_uncheck_task(task_id):
     task = Tasks.query.filter(Tasks.task_id == task_id).first()
-    check(task_id, task)
+    # check(task_id, task)
+    if not task:
+        return jsonify({"status": "error", "message": "タスクが見つかりません"}), 404
+    new_status = task_service.toggle_task_status(task)
     return jsonify(
         {
             "status": "success",
             "message": "タスクを未完了にしました",
             "task_id": task_id,
-            "is_completed": task.is_completed,
+            "is_completed": new_status,
         }
     )
-
-
-def update(task, update_info):
-    with current_app.app_context():
-        print("==========1件更新==========")
-        task.title = update_info["title"]
-        task.deadline = update_info["dead_line"]
-        # task.is_completed = update_info["is_completed"]
-        task.importance = update_info["importance"]
-        try:
-            # db.session.add(task)
-            db.session.merge(task)
-            db.session.commit()
-            print("データ更新に成功しました")
-            print(
-                f"更新後タスク:task_id:{task.task_id}, title:{task.title}, deadline:{task.deadline}"
-            )
-        except Exception as e:
-            db.session.rollback()
-            print(f"更新エラーしました：{e}")
-        finally:
-            db.session.close()
-    print("更新処理がおわりました")
 
 
 @tasks_bp.route("/api/task/update/<int:task_id>", methods=["POST"])
@@ -460,16 +400,7 @@ def update_task(task_id):
         "dead_line": dead_line,
         "importance": importance,
     }
-    update(task, update_info)
-    # dead_date = task.deadline.strftime("%Y-%m-%d")
-    # dead_time = task.deadline.strftime("%H:%M")
-    # update_info2 = {
-    #     task_id,
-    #     title,
-    #     dead_date,
-    #     dead_time,
-    #     importance,
-    # # }
+    task_service.update_task_logic(task, update_info)
     return jsonify(
         {
             "status": "success",
@@ -519,8 +450,7 @@ def delete_task(task_id):
         )
     elif request.method == "POST":
         print("削除処理がはじまります")
-        delete(task_id)
-    # return render_template("testtemp/delete_confirm_task.html", index=index)
+        task_service.delete_task_logic(task_id)
     return redirect("/my_task")
 
 
