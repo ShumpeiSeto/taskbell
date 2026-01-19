@@ -366,7 +366,6 @@ def create_task_api():
 @login_required
 def api_uncheck_task(task_id):
     task = Tasks.query.filter(Tasks.task_id == task_id).first()
-    # check(task_id, task)
     if not task:
         return jsonify({"status": "error", "message": "タスクが見つかりません"}), 404
     new_status = task_service.toggle_task_status(task)
@@ -458,7 +457,7 @@ def delete_task(task_id):
 @login_required
 def api_delete_task(task_id):
     # データの該当タスクの削除する
-    delete(task_id)
+    task_service.delete_task_logic(task_id)
     return jsonify(
         {
             "status": "success",
