@@ -90,28 +90,27 @@ python server.py
 
 （`FLASK_ENV=development` が `.flaskenv` で設定されているため、デバッグモードで起動します）
 
-## 🔧 プロジェクト構成
+## プロジェクト構成
 
-主な機能は `taskbell/taskbell/` フォルダ内に実装されています。
+保守性と拡張性を高めるため、Blueprintによる機能分割とサービス層（Service Layer）を導入しています。
 
-```
-taskbell/
-├── .vscode/              # VSCode設定
-├── migrations/           # マイグレーションファイル
-├── taskbell/             # メインアプリケーション
-│   ├── models/           # データモデル (Task, User)
-│   ├── static/           # 静的ファイル (CSS, JS, 画像)
-│   ├── templates/        # HTMLテンプレート
-│   ├── __init__.py       # Flaskアプリ初期化, スケジューラ起動
-│   ├── config.py         # 設定ファイル (DBの場所など)
-│   └── views.py          # ビュー関数 (ルーティング, API)
-├── venv/                 # 仮想環境
-├── .flaskenv             # Flask環境変数
-├── .gitignore            # Git除外設定
-├── requirements.txt      # Python依存関係
-├── server.py             # アプリケーション起動ファイル
-└── sample_tasks.db       # SQLiteデータベース (config.pyで定義)
-```
+```text
+.
+├── migrations/          # データベース移行（Alembic）関連ファイル
+├── screenshots/         # アプリケーション動作画面
+├── taskbell/            # アプリケーションパッケージ
+│   ├── models/          # データベースモデル定義（User, Tasks）
+│   ├── services/        # ビジネスロジック（DB操作、通知処理等）
+│   │   └── task_service.py
+│   ├── static/          # 静的ファイル（JS, CSS, 画像）
+│   ├── templates/       # HTMLテンプレート（Jinja2）
+│   └── views/           # ルーティング・ビュー定義（Blueprint）
+│       ├── auth.py      # 認証関連（ログイン、会員登録）
+│       └── tasks.py     # タスク管理・API関連
+├── .flaskenv            # Flask環境変数設定
+├── requirements.txt     # 依存ライブラリ一覧
+├── server.py            # アプリケーション実行エントリーポイント
+└── startup.sh           # デプロイ用起動スクリプト
 
 ## 💡 トラブルシューティング
 
