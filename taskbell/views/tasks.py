@@ -231,7 +231,7 @@ def setting():
         email = request.form.get("email").strip()
 
         morning_time_str = request.form.get("morning_time")
-        morning_time = datetime.strptime(morning_time_str, "%H:%M").time()
+        morning_time = datetime.datetime.strptime(morning_time_str, "%H:%M").time()
 
         print(f"dl_time: {dl_time}")
         print(f"slack_url: {slack_url}")
