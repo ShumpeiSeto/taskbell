@@ -2,6 +2,10 @@
 
 `TaskBell` は、日々のタスク管理をサポートし、期限が近づくと通知してくれる Web アプリケーションです。Flask をベースに構築されています。
 
+## 🚀 デプロイ先 (Live Demo)
+
+**[アプリをブラウザで開く](https://taskbell-production.up.railway.app/)**
+
 ## ✨ 主な機能
 
 - **ユーザー認証:** 新規登録とログイン機能
@@ -94,7 +98,7 @@ python server.py
 
 保守性と拡張性を高めるため、Blueprintによる機能分割とサービス層（Service Layer）を導入しています。
 
-```text
+````text
 .
 ├── migrations/          # データベース移行（Alembic）関連ファイル
 ├── screenshots/         # アプリケーション動作画面
@@ -131,7 +135,7 @@ rm sample_tasks.db  # (Windowsの場合は del sample_tasks.db)
 flask db init
 flask db migrate -m "Initial migration"
 flask db upgrade
-```
+````
 
 ## 📝 ライセンス
 
